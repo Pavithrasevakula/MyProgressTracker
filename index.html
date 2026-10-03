@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#edf5f0">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>MyProgressTrack</title>
+<style>
+:root{
+  --bg:#f5f8f6;--surface:#ffffff;--surface2:#f0f5f2;--ink:#26352f;--muted:#5f6f67;
+  --line:#dce7e1;--green:#6d9b83;--green2:#47765f;--mint:#dceee4;--sage:#e8f1eb;
+  --blue:#7396aa;--bluebg:#e8f0f4;--lav:#9685aa;--lavbg:#eee9f4;--gold:#b99655;--goldbg:#f6efdf;
+  --danger:#bd6f6f;--shadow:0 12px 35px rgba(57,78,68,.08);--radius:18px;
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+.app{display:flex;min-height:100vh}.sidebar{width:250px;background:#f8fbf9;border-right:1px solid var(--line);padding:22px 15px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:5;overflow:hidden}.sidebar .nav{overflow-y:auto;min-height:0;flex:1;padding-right:4px;scrollbar-width:thin}.sidebar-bottom{flex-shrink:0;padding-top:10px;background:#f8fbf9}
+.brand{display:flex;gap:10px;align-items:center;padding:5px 8px 22px}.logo{width:38px;height:38px;border-radius:13px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;overflow:hidden}.logo img{width:100%;height:100%;object-fit:cover}.brand b{font-size:15px}.brand small{color:var(--muted);display:block}
+.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:11px;color:#5c6c64}.nav button.active,.nav button:hover{background:var(--mint);color:var(--green2);font-weight:700}
+.nav .section-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#9aa8a1;padding:15px 12px 4px}
+.sidebar-bottom{margin-top:auto;display:grid;gap:8px}.sync-pill{padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:12px;color:var(--muted)}
+.main{flex:1;min-width:0}.topbar{height:70px;background:rgba(255,255,255,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:4}.topbar h1{font-size:20px;margin:0}.topbar .date{color:var(--muted);font-size:12px}.top-actions{display:flex;gap:8px}
+.content{padding:26px;max-width:1500px;margin:auto}.page{display:none}.page.active{display:block}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px}.hero h2{margin:0;font-size:28px;letter-spacing:-.03em}.hero p{margin:5px 0 0;color:var(--muted)}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:11px;padding:9px 13px}.btn:hover{border-color:#bfd0c7}.btn.primary{background:var(--green2);color:white;border-color:var(--green2)}.btn.soft{background:var(--mint);color:var(--green2);border-color:transparent}.btn.danger{color:var(--danger)}
+.grid{display:grid;gap:16px}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}.stat{display:flex;justify-content:space-between;align-items:flex-start}.stat .label{color:var(--muted);font-size:12px}.stat .num{font-size:28px;font-weight:800;margin-top:5px}.iconbox{width:40px;height:40px;border-radius:12px;background:var(--sage);display:grid;place-items:center;color:var(--green2);font-weight:800}.blue .iconbox{background:var(--bluebg);color:var(--blue)}.lav .iconbox{background:var(--lavbg);color:var(--lav)}.gold .iconbox{background:var(--goldbg);color:var(--gold)}
+.progress{height:8px;background:#edf2ef;border-radius:20px;overflow:hidden;margin-top:11px}.progress>i{display:block;height:100%;background:var(--green);border-radius:20px}.muted{color:var(--muted)}.tiny{font-size:11px}.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}.section-head h3{margin:0;font-size:16px}.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.panel-pad{padding:18px}
+.two{grid-template-columns:1.25fr .75fr}.three{grid-template-columns:repeat(3,1fr)}
+table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid #edf1ef;text-align:left;vertical-align:middle}th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#66756e;background:#f8faf9;position:sticky;top:0}td{font-size:13px}tr:last-child td{border-bottom:0}
+.table-wrap{overflow:auto;max-height:600px}.input,.select,.textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 9px;outline:none}.input:focus,.select:focus,.textarea:focus{border-color:#9abca8;box-shadow:0 0 0 3px #eaf4ee}.textarea{resize:vertical;min-height:80px}
+.badge{display:inline-flex;align-items:center;border-radius:99px;padding:4px 8px;font-size:11px;font-weight:700;background:var(--sage);color:var(--green2)}.badge.blue{background:var(--bluebg);color:#52758a}.badge.gold{background:var(--goldbg);color:#8b6e36}.badge.lav{background:var(--lavbg);color:#79698d}.badge.red{background:#fae8e8;color:#a65c5c}
+.check{width:22px;height:22px;border:1px solid #c9d7d0;border-radius:7px;background:#fff;display:grid;place-items:center;color:white}.check.on{background:var(--green);border-color:var(--green)}.check.auto{background:#dcebe2;border-color:#b9d3c4;color:var(--green2)}
+.day-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.day{padding:10px 5px;text-align:center;border:1px solid var(--line);border-radius:11px;background:#fff}.day.active{background:var(--mint);border-color:#b9d6c6}.day .d{font-weight:700}.day .n{font-size:11px;color:var(--muted)}
+.calendar{overflow:auto}.calendar table{min-width:900px}.calendar td,.calendar th{text-align:center;min-width:92px}.calendar .task-name{text-align:left;min-width:250px}.tickcell{cursor:pointer;min-height:34px}.tickcell:hover{background:#f3f8f5}.tick{margin:auto}
+.top3{display:grid;gap:8px}.top3-row{display:flex;gap:8px;align-items:center}.top3-row span{width:22px;height:22px;border-radius:7px;background:var(--lavbg);color:var(--lav);display:grid;place-items:center;font-size:11px;font-weight:800}
+.kpi-list{display:grid;gap:11px}.kpi-row{display:grid;grid-template-columns:1fr auto;gap:10px}.kpi-row .bar{grid-column:1/-1}.empty{text-align:center;padding:35px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(35,48,42,.35);display:none;place-items:center;z-index:20;padding:20px}.modal.show{display:grid}.modal-box{width:min(620px,100%);background:#fff;border-radius:20px;box-shadow:0 25px 70px rgba(0,0,0,.2);padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid .full{grid-column:1/-1}.toast{position:fixed;right:22px;bottom:22px;background:#26352f;color:white;padding:10px 14px;border-radius:12px;display:none;z-index:30}.toast.show{display:block}.mobile-menu{display:none}
+.main{min-width:0;min-height:100vh}.content{min-height:calc(100vh - 70px)}
+.sidebar .nav::-webkit-scrollbar{width:6px}.sidebar .nav::-webkit-scrollbar-thumb{background:#d5e1da;border-radius:99px}.sidebar .nav::-webkit-scrollbar-track{background:transparent}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}.sidebar{width:220px}}
+@media(max-width:720px){.sidebar{position:fixed;left:-270px;transition:.25s;width:250px;overflow:hidden}.sidebar.open{left:0}.mobile-menu{display:block}.content{padding:16px}.topbar{padding:0 15px}.cards{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.topbar h1{font-size:16px}}
+
+/* ===== V2 planner enhancements ===== */
+.mission-banner{background:linear-gradient(135deg,#edf6f0,#f7f4ec);border:1px solid #d8e6dd;border-radius:22px;padding:20px;display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:center}
+.mission-title{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:#70857a;font-weight:800}.mission-big{font-size:32px;font-weight:900;letter-spacing:-.04em;margin:3px 0}.mission-sub{color:#728078}.mission-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.mission-metric{background:#fff;border:1px solid #e1e9e4;border-radius:14px;padding:12px}.mission-metric b{display:block;font-size:18px}.mission-metric span{font-size:10px;color:#819088;text-transform:uppercase;letter-spacing:.05em}
+.focus-box{display:flex;align-items:center;gap:15px;padding:16px;background:#fbfcfb;border:1px solid var(--line);border-radius:16px}.timer-ring{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) var(--timer,0%),#e7efea 0);position:relative}.timer-ring:after{content:"";position:absolute;inset:7px;background:#fff;border-radius:50%}.timer-text{position:relative;z-index:1;font-weight:900;font-size:14px}.timer-controls{display:flex;gap:7px;flex-wrap:wrap}
+.alert-list{display:grid;gap:8px}.alert{display:flex;justify-content:space-between;gap:10px;align-items:center;border-radius:12px;padding:10px 12px;background:#fafcfa;border:1px solid #e4ebe7}.alert.urgent{background:#fff3f0;border-color:#f0d6ce}.alert .left{display:flex;gap:9px;align-items:center}.dot{width:8px;height:8px;border-radius:50%;background:var(--green)}.urgent .dot{background:var(--danger)}
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.review-card{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.review-card .v{font-size:22px;font-weight:850}.review-card .l{font-size:11px;color:var(--muted)}
+.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.heat{aspect-ratio:1;border-radius:6px;background:#eef3ef;position:relative}.heat.l1{background:#dcebe2}.heat.l2{background:#bdd9c7}.heat.l3{background:#8fba9f}.heat.l4{background:#5f9277}.heat small{position:absolute;inset:0;display:grid;place-items:center;font-size:9px;color:#52635a}
+.task-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid #edf1ef}.task-row:last-child{border-bottom:0}.task-done{text-decoration:line-through;color:#98a39d}
+@media(max-width:850px){.mission-banner{grid-template-columns:1fr}.mission-metrics{grid-template-columns:repeat(3,1fr)}.review-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.mission-metrics{grid-template-columns:1fr}.review-grid{grid-template-columns:1fr 1fr}}
+
+
+/* ===== Final organization pass ===== */
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}.calendar-day{min-height:110px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:9px;cursor:pointer}.calendar-day:hover{border-color:#b7d0c1;transform:translateY(-1px)}.calendar-day.muted-day{opacity:.45;background:#fafcfb}.calendar-day.today{background:var(--mint);border-color:#a9ccb8}.calendar-day .num{font-weight:850}.calendar-day .mini{font-size:10px;color:var(--muted);margin-top:7px;display:grid;gap:3px}.calendar-head{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#89968f;text-align:center;padding:5px}.analytics-bars{display:grid;gap:11px}.analytics-bar{display:grid;grid-template-columns:110px 1fr 50px;gap:8px;align-items:center}.analytics-bar .bar{height:9px;background:#edf2ef;border-radius:99px;overflow:hidden}.analytics-bar .bar i{display:block;height:100%;background:var(--green);border-radius:99px}.mini-table{width:100%}.mini-table td{padding:7px 0}.nav .section-label{margin-top:3px}.nav button{font-size:13px}.content{max-width:1550px}
+
+
+.custom-nav{display:grid;gap:3px;margin:0 0 4px 10px;padding-left:8px;border-left:1px solid #dce7e1}
+.custom-nav button{font-size:12px!important;padding:8px 10px!important;color:#718078!important}
+.section-label-action{display:flex!important;align-items:center;justify-content:space-between;gap:5px}
+.nav-group-children{margin:0 0 7px 8px;padding-left:9px;border-left:1px solid #dce7e1;display:grid;gap:2px}
+.nav-group-children>button[data-page]{padding-left:11px!important;width:calc(100% - 2px)}.section-add{border:1px solid var(--line);background:#fff;color:#718078;border-radius:7px;font-size:9px;padding:3px 6px;cursor:pointer}.section-add:hover{background:var(--mint);color:var(--green2);border-color:#bfd6c7}.builtin-subnav{display:grid;gap:2px;margin:0 0 5px 10px;padding-left:10px;border-left:1px solid #dce7e1}.builtin-subnav button{font-size:12px!important;padding:7px 9px!important;color:#718078!important;border:0;background:transparent;text-align:left;border-radius:8px}.builtin-subnav button:hover,.builtin-subnav button.active{background:#edf6f0;color:#47765f!important}.add-section-main{background:#edf6f0!important;color:#47765f!important;font-weight:800!important}.custom-group{margin:6px 0 8px}.custom-group-head{background:#f8fbf9;border:1px solid #e3ebe6;border-radius:9px}.custom-group-head .add-sub{background:#fff}.custom-subnav{margin-left:10px}.custom-nav{max-height:none;overflow:visible;padding-right:2px}
+.custom-nav{display:grid;gap:5px;margin:0 0 6px 0;padding-left:0;border-left:0}.custom-group{margin:6px 0 8px}.custom-group-head{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:7px 8px;color:#52635a;font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}.custom-group-head .add-sub{font-size:10px!important;padding:4px 7px!important;min-width:auto}.custom-subnav{display:grid;gap:2px;margin-left:9px;padding-left:9px;border-left:1px solid #dce7e1}.custom-subnav button{font-size:12px!important;padding:7px 9px!important;color:#718078!important;text-align:left}.custom-subnav button.active,.custom-subnav button:hover{background:#edf6f0!important;color:#47765f!important}.section-manager{display:grid;gap:14px}.section-manager .group-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}.section-manager .sub-list{display:grid;gap:8px;margin-top:10px}.section-manager .sub-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid #e8eeea;border-radius:10px;background:#fafcfa}.section-manager .sub-actions{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Clean navigation and interaction fixes */
+.date-picker-btn{display:inline-flex;align-items:center;gap:7px}
+.builtin-subnav button.active,.custom-subnav button.active{background:transparent!important;color:var(--green2)!important;font-weight:750!important;border-left:2px solid var(--green)!important;padding-left:7px!important}
+.custom-group-head{background:transparent!important;border:0!important;padding:7px 4px!important;text-transform:none!important;letter-spacing:normal!important;font-size:13px!important;font-weight:700!important}
+.custom-subnav button{background:transparent!important;border-radius:8px!important}
+.calendar-day.selected-day{outline:2px solid #9abca8;outline-offset:-2px}
+.calendar-day.selected-day .num{color:var(--green2)}
+.custom-subnav button:hover{background:#f2f7f4!important;color:var(--green2)!important}
+.builtin-subnav button{background:transparent!important;border-radius:8px!important}
+.builtin-subnav button:hover{background:#f2f7f4!important}
+@media(max-width:720px){.date-picker-btn span{display:inline}.hero{margin-bottom:16px}.content{overflow-x:hidden}.table-wrap{max-width:100vw}}
+
+/* Inline date picker */
+.date-picker-modal .modal-box{width:min(360px,calc(100vw - 28px));padding:18px}
+.date-picker-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.date-picker-head h3{margin:0;font-size:16px}
+.date-picker-nav{display:flex;gap:6px}
+.date-picker-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.date-picker-weekday{text-align:center;font-size:10px;color:var(--muted);font-weight:800;padding:5px 0}
+.date-picker-day{border:0;background:#fff;border-radius:9px;min-height:38px;color:var(--ink);font-weight:600}
+.date-picker-day:hover{background:var(--sage)}
+.date-picker-day.muted{color:#b0bbb5}
+.date-picker-day.today{outline:1px solid #b7d0c1}
+.date-picker-day.selected{background:var(--green2);color:#fff}
+.date-picker-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+@media(max-width:520px){.date-picker-modal .modal-box{padding:14px}.date-picker-day{min-height:36px}}
+
+/* ===== My Diary / Me Time ===== */
+.diary-intro{background:linear-gradient(135deg,#fff,#f7fbf8);padding:26px 28px;max-width:980px}.diary-greeting{font-size:25px;font-weight:900;letter-spacing:-.03em;margin-bottom:12px}.diary-intro p{margin:10px 0;color:#53635b;line-height:1.75}.diary-intro blockquote{margin:18px 0;padding:12px 16px;border-left:3px solid #9bc2aa;background:#f1f7f3;border-radius:0 10px 10px 0;font-weight:700;color:#476b57}.diary-mantra{color:#476b57!important}.diary-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 12px}.diary-section-head h3{margin:0;font-size:19px}.diary-section-head p{margin:4px 0 0;color:var(--muted)}.diary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.diary-entry-card label{display:grid;gap:4px;margin-bottom:9px}.diary-entry-card label strong{font-size:15px}.diary-entry-card label span{font-size:11px;color:var(--muted)}.diary-text{min-height:135px}.diary-wide{grid-column:1/-1}.diary-questions-panel{background:#fff}.diary-question-list{display:grid;gap:14px}.diary-question{display:grid;grid-template-columns:30px 1fr;gap:11px;align-items:start}.diary-question>span{width:28px;height:28px;border-radius:9px;background:var(--lavbg);color:var(--lav);display:grid;place-items:center;font-weight:800}.diary-question>div{display:grid;gap:7px}.diary-answer{min-height:88px}.diary-score-row{display:flex;align-items:center;gap:14px;margin:14px 0 16px;padding:12px;background:#f8fbf9;border:1px solid #e5ede8;border-radius:12px}.diary-score-row>div:first-child{display:grid;gap:2px;min-width:90px}.diary-score-row strong{font-size:17px}.diary-score-row .progress{margin:0}
+@media(max-width:760px){.diary-grid{grid-template-columns:1fr}.diary-wide{grid-column:auto}.diary-section-head{align-items:flex-start;flex-direction:column}.diary-intro{padding:20px}.diary-greeting{font-size:22px}}
+
+/* ===== Settings manager, Completed, responsive polish ===== */
+.settings-sub-list{display:grid;gap:8px}.settings-sub-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid #e8eeea;border-radius:11px;background:#fafcfa;flex-wrap:wrap}.settings-sub-row .sn{flex:1 1 180px;min-width:0}.settings-sub-row .acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.settings-sub-row .btn{padding:7px 10px;font-size:12px}
+.sec-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 10px}.sec-bar .input{flex:1 1 180px;max-width:320px}.done-box{margin-top:22px;padding-top:16px;border-top:1px dashed var(--line)}
+.sidebar{height:100vh;height:100dvh}.sb-backdrop{display:none}.modal-box{max-height:92vh;overflow:auto}.toast{max-width:calc(100vw - 32px)}
+.table-wrap td .input,.table-wrap td .select{min-width:120px}
+.calendar td.task-name,.calendar th.task-name{position:sticky;left:0;background:#fff;z-index:1;box-shadow:1px 0 0 var(--line)}.calendar th.task-name{background:#f8faf9;z-index:2}
+.hero>div:last-child{max-width:100%}
+@media(max-width:720px){
+ .sidebar{z-index:6}.sidebar.open+.sb-backdrop{display:block;position:fixed;inset:0;background:rgba(35,48,42,.35);z-index:5}
+ .topbar{height:62px}.topbar h1{max-width:52vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top-actions{gap:6px}.top-actions .btn{padding:7px 10px}
+ .hero h2{font-size:23px}#page-personal .hero>div:last-child,#page-diary .hero>div:last-child{flex-wrap:wrap}
+ .calendar-grid{gap:4px}.calendar-day{min-height:58px;padding:5px}.calendar-day .mini{font-size:9px;margin-top:4px}.calendar-day .mini span:not(:first-child){display:none}
+ .analytics-bar{grid-template-columns:72px 1fr 46px}.settings-sub-row .acts{width:100%}.sec-bar .input{max-width:none}.focus-box{flex-wrap:wrap}.diary-score-row{flex-wrap:wrap}.section-head{gap:8px;flex-wrap:wrap}
+}
+@media(max-width:420px){.cards{grid-template-columns:1fr}#exportBtn{display:none}.review-grid{grid-template-columns:1fr 1fr}.content{padding:12px}}
+
+.sec-stack{display:grid;gap:14px}.sec-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}.sec-card .settings-sub-list{margin-top:4px}
+.section-manager-settings{min-width:0}
+
+/* ===== Analytics activity graph, Goals, polish ===== */
+.gh-row{display:flex;gap:8px;align-items:flex-start}.gh-days{display:grid;grid-template-rows:repeat(7,13px);gap:3px;padding-top:19px;font-size:10px;color:var(--muted);line-height:13px;flex-shrink:0}
+.gh-scroll{overflow-x:auto;flex:1;min-width:0;padding-bottom:6px}.gh-months{display:grid;grid-auto-flow:column;grid-auto-columns:13px;gap:3px;height:16px;margin-bottom:3px;font-size:10px;color:var(--muted)}.gh-months span{white-space:nowrap;overflow:visible}
+.gh{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);grid-auto-columns:13px;gap:3px;width:max-content}
+.gh-cell{width:13px;height:13px;border-radius:3px;border:0;padding:0;background:#eaf0ec;display:block}button.gh-cell{cursor:pointer}.gh-cell.fut{background:transparent}.gh-cell.l1{background:#d3e8da}.gh-cell.l2{background:#a9d1b7}.gh-cell.l3{background:#72ad89}.gh-cell.l4{background:#3f7a5c}.gh-cell.now{outline:1.5px solid var(--ink);outline-offset:1px}.gh-cell.sel{outline:2px solid var(--green2);outline-offset:1px}button.gh-cell:hover{filter:brightness(.92)}
+.gh-legend{display:flex;align-items:center;gap:4px;justify-content:flex-end;font-size:11px;color:var(--muted);margin-top:6px}
+.heat-detail{margin-top:14px;padding:12px 14px;background:#f8fbf9;border:1px solid var(--line);border-radius:12px}.heat-detail-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-between;margin-bottom:6px}.heat-detail-top b{margin-right:auto}.heat-detail-row{display:flex;gap:14px;flex-wrap:wrap;color:#53635b}
+.targets-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:6px}.targets-grid label{display:grid;gap:5px;font-size:12px;color:var(--muted)}
+@media(max-width:900px){.targets-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.targets-grid{grid-template-columns:1fr}.gh-days{display:none}}
+
+/* ===== Settings accordions ===== */
+.set-stack{display:grid;gap:12px}
+details.set-acc{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}
+summary{list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent}summary::-webkit-details-marker{display:none}
+details.set-acc>summary{display:flex;align-items:center;gap:10px;padding:16px 18px;font-weight:800;font-size:15px;flex-wrap:wrap}
+details>summary::after{content:"▾";margin-left:auto;color:var(--muted);transition:transform .2s}details[open]>summary::after{transform:rotate(180deg)}
+.set-sub{font-weight:500;font-size:12px;color:var(--muted)}.set-body{padding:0 18px 18px}
+details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:700;font-size:14px}.sec-body{padding:0 14px 14px}
+.pg-ic{width:26px;text-align:center;flex-shrink:0}
+.settings-sub-row .sn{min-width:0}
+@media(max-width:720px){details.set-acc>summary{padding:14px}.set-body{padding:0 14px 14px}.settings-sub-row .acts select,.settings-sub-row .acts .btn{flex:1 1 auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo"><img src="icon.png" alt="MyProgressTrack logo"></div><div><b>MyProgressTrack</b><small>Study • Career • Life</small></div></div>
+  <div class="nav">
+    <div id="navBuiltin" style="display:contents"></div>
+    <div id="customNavItems"></div>
+    <button data-page="settings">⚙ &nbsp; Settings</button>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="sync-pill" id="syncStatus">● Saved in this browser</div>
+    <button class="btn soft" onclick="openModal('syncModal')">☁ Cloud Sync</button>
+  </div>
+</aside>
+<div class="sb-backdrop" onclick="toggleMenu()"></div>
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;gap:12px;align-items:center"><button class="btn mobile-menu" onclick="toggleMenu()">☰</button><div><h1 id="topTitle">Today</h1><div class="date" id="liveDate"></div></div></div>
+  <div class="top-actions"><button class="btn" id="exportBtn" onclick="exportJSON()">Export</button><button class="btn primary" onclick="openModal('quickAddModal')">＋ Add</button></div>
+</header>
+<div class="content">
+
+
+
+<section class="page active" id="page-today">
+  <div class="hero">
+    <div><h2>Today</h2><p>Your one-screen command center — decide, focus, execute, review.</p></div>
+
+  </div>
+
+  <div class="mission-banner" style="grid-template-columns:1fr">
+    <div class="mission-metrics" style="grid-template-columns:repeat(2,1fr)">
+      <div class="mission-metric"><b id="todayCompletion">0%</b><span>Today</span></div>
+      <div class="mission-metric"><b id="weeklyCompletion">0%</b><span>This week</span></div>
+    </div>
+  </div>
+
+  <div class="grid cards section" id="dashboardCards"></div>
+
+  <div class="grid two section">
+    <div class="panel panel-pad">
+      <div class="section-head"><h3>🔥 Today's Top 3</h3><span class="tiny muted">Type to edit</span></div>
+      <div id="todayTop3"></div>
+    </div>
+    <div class="panel panel-pad">
+      <div class="section-head"><h3>⏱️ Focus Session</h3><span class="badge">Deep work</span></div>
+      <div class="focus-box">
+        <div class="timer-ring" id="timerRing"><div class="timer-text" id="timerText">50:00</div></div>
+        <div>
+          <b id="timerMode">Deep Work</b>
+          <div class="tiny muted" id="timerHint">Work for 50 minutes, then take a 10-minute break.</div>
+          <label class="tiny muted" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">Log time to <select class="select" id="focusArea" onchange="setFocusArea(this.value)" style="width:auto;min-width:150px"><option value="academics">🎓 Academics</option><option value="placement">💼 Placements</option><option value="ssc">🏛️ SSC CGL</option><option value="none">Don't log (timer only)</option></select></label>
+          <div class="timer-controls" style="margin-top:9px"><button class="btn primary" onclick="toggleTimer()" id="timerStart">Start</button><button class="btn" onclick="finishFocus()">Stop &amp; log</button><button class="btn" onclick="resetTimer()">Reset</button><button class="btn" onclick="switchTimerMode()" id="timerModeBtn">25/5</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid two section">
+    <div class="panel panel-pad">
+      <div class="section-head"><h3>🚨 Deadline Radar</h3><button class="btn" onclick="go('academics')">Open →</button></div>
+      <div class="alert-list" id="deadlineRadar"></div>
+    </div>
+    <div class="panel panel-pad">
+      <div class="section-head"><h3>⚠️ Needs Attention</h3><span class="tiny muted">Based on your actual logs</span></div>
+      <div class="alert-list" id="attentionList"></div>
+    </div>
+  </div>
+
+  <div class="panel panel-pad section">
+    <div class="section-head"><h3>📋 Today's Checklist</h3><button class="btn" onclick="go('personal')">Full checklist →</button></div>
+    <div id="todayChecklist"></div>
+  </div>
+
+</section>
+
+
+<section class="page" id="page-diary">
+  <div class="hero">
+    <div><h2>My Diary & Me Time 🤍</h2><p>A quiet space to talk to yourself honestly, without judgment or pressure.</p></div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="btn" onclick="changeDay(-1)" title="Previous day">←</button><button class="btn soft date-picker-btn" id="diaryDateBtn" onclick="openCalendarForSelectedDate()" title="Choose diary date">📅 <span></span></button><button class="btn" onclick="changeDay(1)" title="Next day">→</button><button class="btn" onclick="goToday()">Today</button></div>
+  </div>
+  <div class="diary-intro card">
+    <div class="diary-greeting">Hello, Pavithra ❤️</div>
+    <p>This is a new beginning — a journey to become a <strong>better, stronger, happier, and more successful version of yourself</strong>. The version you dream of, the version you love, and most importantly, the version you are <strong>proud to be</strong>. 🌷✨</p>
+    <p>This diary is a space where I talk to myself honestly. I will reflect on my day — what I accomplished, what I learned, where I went wrong, what I could have done better, and what I want to change tomorrow.</p>
+    <p><strong>You are me, and I am you.</strong> So every day, I promise to come here and have an honest conversation with myself. 🤍</p>
+    <p>I believe that <strong>Consistency, Discipline, and Attitude</strong> can completely change my life. 💪 I don't need to transform overnight. Even one small task completed, one better decision, or a tiny improvement every day is enough — <strong>but I must keep going.</strong></p>
+    <p>There will be difficult days, lazy days, failures, distractions, and moments when I don't feel motivated. But this journey isn't about being perfect; it's about <strong>showing up anyway</strong>. 🌱</p>
+    <p>I want to be able to say:</p>
+    <blockquote>“Pavithra, you kept the promise you made to yourself.” 🥹❤️</blockquote>
+    <p>I am not competing with anyone else. <strong>My only competition is the person I was yesterday.</strong></p>
+    <p class="diary-mantra"><strong>One day at a time.</strong><br><strong>One task at a time.</strong><br><strong>One improvement at a time.</strong></p>
+    <p class="diary-mantra"><strong>Keep going. Keep growing. Keep becoming the person you want to be.</strong> 🤍🌷</p>
+  </div>
+
+  <div class="panel panel-pad section" id="moodPanel"><div class="section-head"><h3>How are you feeling today?</h3><span class="tiny muted">One tap</span></div><div id="moodRow" style="display:flex;gap:8px;flex-wrap:wrap"></div></div>
+  <div class="diary-section-head"><div><h3>Write whatever you feel</h3><p>Four simple prompts. Skip any you don't need.</p></div><span class="badge">Me time • <span id="diaryDateLabel"></span></span></div>
+  <div class="diary-grid">
+    <div class="panel panel-pad diary-entry-card diary-wide"><label><strong>Today's story</strong><span>What happened today, and how did I feel? Write freely.</span></label><textarea id="diaryStory" class="textarea diary-text" placeholder="Tell yourself what happened today..."></textarea></div>
+    <div class="panel panel-pad diary-entry-card"><label><strong>Wins & gratitude</strong><span>What am I proud of or thankful for?</span></label><textarea id="diaryWins" class="textarea diary-text" placeholder="Small wins count too..."></textarea></div>
+    <div class="panel panel-pad diary-entry-card"><label><strong>Learned & could do better</strong><span>One lesson from today, and one thing I'd improve.</span></label><textarea id="diaryLearn" class="textarea diary-text" placeholder="Be honest, but be kind to yourself..."></textarea></div>
+    <div class="panel panel-pad diary-entry-card diary-wide"><label><strong>Tomorrow's promise</strong><span>One clear thing I will do differently tomorrow.</span></label><textarea id="diaryTomorrow" class="textarea diary-text" placeholder="One clear promise to yourself for tomorrow..."></textarea></div>
+  </div>
+
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><div><h3>✓ Daily self-check</h3><p class="tiny muted">These questions are part of your diary check-in. Edit them whenever your priorities change.</p></div><div><span class="badge" id="selfCount" style="margin-right:6px">Questions</span><button class="btn soft" onclick="addSelfCheck()">＋ Question</button></div></div><div class="diary-score-row"><div><span class="muted tiny">Today's check-in</span><strong id="diarySelfScore">0 / 5</strong></div><div class="progress" style="flex:1"><i id="diarySelfScoreBar"></i></div></div><div class="table-wrap"><table id="selfTable"></table></div></div></div>
+</section>
+
+<section class="page" id="page-personal">
+  <div class="hero"><div><h2>My Daily Checklist</h2><p>Excel-style habit tracking, but faster to update.</p></div><div style="display:flex;align-items:center;gap:6px"><button class="btn" onclick="changeDay(-1)" title="Previous day">←</button> <button class="btn soft date-picker-btn" id="selectedDateBtn" onclick="openCalendarForSelectedDate()" title="Open calendar">📅 <span></span></button> <button class="btn" onclick="changeDay(1)" title="Next day">→</button> <button class="btn" onclick="goToday()">Today</button></div></div>
+
+  <div class="grid two">
+    <div class="card"><div class="stat"><div><div class="label">Today's score</div><div class="num" id="todayScore">0%</div></div><div class="iconbox">✓</div></div><div class="progress"><i id="todayScoreBar"></i></div></div>
+    <div class="card blue"><div class="stat"><div><div class="label">Month completion</div><div class="num" id="monthScore">0%</div></div><div class="iconbox">◷</div></div><div class="progress"><i id="monthScoreBar"></i></div></div>
+  </div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Today's Top 3 priorities</h3><span class="badge lav">Daily</span></div><div class="top3"><div class="top3-row"><span>1</span><input class="input priority" data-p="1" placeholder="Most important task"></div><div class="top3-row"><span>2</span><input class="input priority" data-p="2" placeholder="Second priority"></div><div class="top3-row"><span>3</span><input class="input priority" data-p="3" placeholder="Third priority"></div></div></div></div>
+  <div class="panel section calendar"><table id="habitTable"></table></div>
+  <p class="tiny muted" style="margin-top:10px">Add, edit or remove habits in <a href="#" onclick="go('settings');openSet('set-routine');return false" style="color:var(--green2)">Settings → Daily routine setup</a>.</p>
+</section>
+
+<section class="page" id="page-academics">
+  <div class="hero"><div><h2>Academics</h2><p>Study log • syllabus tracker • assignments & projects</p></div><button class="btn primary" onclick="openModal('acadLogModal')">＋ Log Study</button></div>
+  <div class="grid cards" id="acadCards"></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Subject / syllabus tracker</h3><button class="btn soft" onclick="addSubject()">＋ Subject</button></div><div class="table-wrap"><table id="subjectTable"></table></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Daily study log</h3><button class="btn" onclick="openModal('acadLogModal')">＋ Add row</button></div><div class="table-wrap"><table id="acadLogTable"></table></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Assignments & Projects</h3><button class="btn soft" onclick="addAssignment()">＋ Add</button></div><div class="table-wrap"><table id="assignTable"></table></div></div></div>
+</section>
+
+<section class="page" id="page-placements">
+  <div class="hero"><div><h2>Placements</h2><p>Prep log • topic tracker • applications</p></div><button class="btn primary" onclick="openModal('placeLogModal')">＋ Log Prep</button></div>
+  <div class="grid cards" id="placeCards"></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Prep topic tracker</h3><button class="btn soft" onclick="addPlacementTopic()">＋ Topic</button></div><div class="table-wrap"><table id="placeTopicTable"></table></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Daily prep log</h3><button class="btn" onclick="openModal('placeLogModal')">＋ Add row</button></div><div class="table-wrap"><table id="placeLogTable"></table></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Company applications</h3><button class="btn soft" onclick="addApplication()">＋ Application</button></div><div class="table-wrap"><table id="appTable"></table></div></div></div>
+</section>
+
+<section class="page" id="page-ssc">
+  <div class="hero"><div><h2>SSC CGL 2027</h2><p>Study log • section progress • mock tests • syllabus</p></div><button class="btn primary" onclick="openModal('sscLogModal')">＋ Log Study</button></div>
+  <div class="grid cards" id="sscCards"></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Section-wise progress</h3></div><div id="sscSectionProgress"></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>SSC syllabus topic tracker</h3><button class="btn soft" onclick="addSSCTopic()">＋ Topic</button></div><div class="table-wrap"><table id="sscTopicTable"></table></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Daily study log</h3><button class="btn" onclick="openModal('sscLogModal')">＋ Add row</button></div><div class="table-wrap"><table id="sscLogTable"></table></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Mock test log</h3><button class="btn soft" onclick="addMock()">＋ Mock</button></div><div class="table-wrap"><table id="mockTable"></table></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Mock analysis</h3><span class="tiny muted">+2 correct, −0.5 wrong</span></div><div id="mockStats"></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Mock details</h3><span class="tiny muted">Fill in to unlock net score, accuracy &amp; pace</span></div><div class="table-wrap"><table id="mockDetailTable"></table></div></div></div>
+</section>
+
+
+
+
+<section class="page" id="page-analytics">
+  <div class="hero"><div><h2>Analytics</h2><p>What actually happened — activity, streaks, milestones and weekly review.</p></div></div>
+  <div class="grid cards" id="analyticsCards"></div>
+  <div class="panel panel-pad section">
+    <div class="section-head"><div><h3>🗓 Activity — last 12 months</h3><p class="tiny muted" style="margin:3px 0 0">Darker = more of your daily routine completed. Tap any day for details.</p></div></div>
+    <div class="review-grid" id="heatStats" style="margin-bottom:14px"></div>
+    <div class="gh-row"><div class="gh-days"><span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span></div><div class="gh-scroll" id="heatScroll"></div></div>
+    <div class="gh-legend"><span>Less</span><i class="gh-cell l0"></i><i class="gh-cell l1"></i><i class="gh-cell l2"></i><i class="gh-cell l3"></i><i class="gh-cell l4"></i><span>More</span></div>
+    <div class="heat-detail" id="heatDetail"></div>
+  </div>
+  <div class="panel panel-pad section"><div class="section-head"><h3>📍 Upcoming milestones</h3><span class="tiny muted">Exams, deadlines &amp; applications</span></div><div id="goalMilestones" class="alert-list"></div></div>
+
+  <div class="panel panel-pad section"><div class="section-head"><h3>🙂 Mood — last 30 days</h3></div><div id="moodStats"></div></div>
+
+  <div class="panel panel-pad section">
+    <div class="section-head"><h3>📈 Weekly Review</h3><span class="badge">Auto-calculated</span></div>
+    <div class="review-grid" id="weeklyReview"></div>
+    <div style="margin-top:14px" class="muted" id="weeklyInsight"></div>
+  </div>
+
+  <div class="grid two section">
+    <div class="panel panel-pad"><div class="section-head"><h3>Last 7 days</h3></div><div id="analyticsWeek"></div></div>
+    <div class="panel panel-pad"><div class="section-head"><h3>Area balance</h3></div><div id="analyticsBalance"></div></div>
+  </div>
+  <div class="grid two section">
+    <div class="panel panel-pad"><div class="section-head"><h3>SSC accuracy by section</h3></div><div id="analyticsSSC"></div></div>
+    <div class="panel panel-pad"><div class="section-head"><h3>Placement topic progress</h3></div><div id="analyticsPlacement"></div></div>
+  </div>
+</section>
+
+<section class="page" id="page-custom">
+  <div class="hero"><div><h2 id="customPageTitle">Section</h2><p id="customPageSubtitle">Choose a subsection from the sidebar, or create one under a section.</p></div></div>
+  <div id="customSections" class="section-manager"></div>
+</section>
+
+<section class="page" id="page-settings">
+  <div class="hero"><div><h2>Settings</h2><p>Tap a group to open it. Rename, re-icon, reorder, move or remove any section and page — nothing is locked.</p></div></div>
+  <div class="set-stack">
+    <details class="set-acc" open id="set-sections"><summary>🗂 Sections &amp; pages<span class="set-sub">rename, move, add, complete</span></summary><div class="set-body">
+      <div class="sec-bar" style="margin-top:0"><p class="tiny muted" style="margin:0;flex:1 1 240px">Open a section to rename or move its pages, and to add, rename or delete subsections. Press “Move to Completed” when something is finished — nothing moves by itself.</p><button class="btn primary" onclick="sAddSec()">＋ New Section</button></div>
+      <div id="sectionSettingsManager" style="margin-top:12px"></div>
+    </div></details>
+    <details class="set-acc" id="set-done"><summary>✅ Completed <span class="badge" id="doneCount">0</span><span class="set-sub">finished pages &amp; subsections</span></summary><div class="set-body"><div id="completedManager"></div></div></details>
+    <details class="set-acc" id="set-targets"><summary>🎯 Daily targets<span class="set-sub">hours per day</span></summary><div class="set-body">
+      <p class="muted" style="margin-top:0">Changing these updates Today, Daily Routine and Analytics automatically.</p>
+      <div class="targets-grid">
+        <label>🎓 Academics (h)<input class="input target-setting" id="targetAcademics" type="number" min="0" step="0.25"></label>
+        <label>🧩 Projects (h)<input class="input target-setting" id="targetProjects" type="number" min="0" step="0.25"></label>
+        <label>💼 Placement (h)<input class="input target-setting" id="targetPlacement" type="number" min="0" step="0.25"></label>
+        <label>🏛️ SSC CGL (h)<input class="input target-setting" id="targetSSC" type="number" min="0" step="0.25"></label>
+        <label>🏛️ SSC exam date<input class="input" id="sscExamDate" type="date"></label>
+        <label>🔔 Daily reminder<input class="input" id="reminderTime" type="time"></label>
+      </div>
+      <div style="text-align:right;margin-top:12px"><button class="btn primary" onclick="saveTargets()">Save targets</button></div>
+    </div></details>
+    <details class="set-acc" id="set-routine"><summary>🌿 Daily routine setup<span class="set-sub">habits &amp; recurring tasks</span></summary><div class="set-body">
+      <div class="section-head"><h3 style="font-size:14px">Habits &amp; tasks</h3><button class="btn soft" onclick="addHabit()">＋ Habit / Task</button></div>
+      <p class="tiny muted">Study habits are tracked automatically from your logs; manual habits can be ticked directly.</p>
+      <div class="table-wrap"><table id="habitManageTable"></table></div>
+      <div class="section-head" style="margin-top:22px"><h3 style="font-size:14px">Recurring tasks</h3><button class="btn soft" onclick="addRecurring()">＋ Recurring Task</button></div>
+      <p class="tiny muted">Repeating tasks in one place. Switch them off without deleting.</p>
+      <div class="table-wrap"><table id="recurringTable"></table></div>
+    </div></details>
+    <details class="set-acc" id="set-data"><summary>☁ Backup &amp; sync<span class="set-sub">cloud sync, export, import</span></summary><div class="set-body">
+      <h3 style="font-size:14px;margin:0 0 4px">Cloud Sync</h3><p class="muted" style="margin-top:0">See the same data on every device by connecting your own Firebase project.</p>
+      <button class="btn primary" onclick="openModal('syncModal')">Configure Cloud Sync</button> <button class="btn" onclick="runSystemCheck()">Run System Check</button> <button class="btn danger" onclick="disconnectSync()">Disconnect sync</button>
+      <div style="margin-top:12px" id="firebaseState"></div>
+      <h3 style="font-size:14px;margin:22px 0 4px">Data safety</h3><p class="muted" style="margin-top:0">Edits are auto-saved in this browser. Export a JSON backup any time.</p>
+      <button class="btn" onclick="exportJSON()">Download Backup</button> <button class="btn" onclick="document.getElementById('importFile').click()">Import Backup</button> <input id="importFile" type="file" accept=".json" style="display:none" onchange="importJSON(this)"> <button class="btn danger" onclick="clearPlannerData()">Clear Planner Data</button>
+    </div></details>
+  </div>
+</section>
+
+</div></main></div>
+
+<!-- Modals -->
+<div class="modal" id="quickAddModal"><div class="modal-box"><div class="modal-head"><h3>Quick Add</h3><button class="btn" onclick="closeModal('quickAddModal')">×</button></div><div class="grid" style="margin-top:16px">
+<button class="btn" onclick="closeModal('quickAddModal');openModal('acadLogModal')">🎓 ＋ Academic study session</button>
+<button class="btn" onclick="closeModal('quickAddModal');openModal('placeLogModal')">💼 ＋ Placement prep session</button>
+<button class="btn" onclick="closeModal('quickAddModal');openModal('sscLogModal')">🏛️ ＋ SSC study session</button>
+<button class="btn" onclick="closeModal('quickAddModal');go('settings');openSet('set-routine');addHabit()">🌿 ＋ Habit / routine</button>
+<button class="btn" onclick="closeModal('quickAddModal');addSelfCheck();go('diary')">✓ ＋ Self-check question</button>
+<button class="btn" onclick="closeModal('quickAddModal');addAssignment();go('academics')">📚 ＋ Assignment</button>
+<button class="btn" onclick="closeModal('quickAddModal');addApplication();go('placements')">💼 ＋ Company application</button>
+</div></div></div>
+
+<div class="modal" id="acadLogModal"><div class="modal-box"><div class="modal-head"><h3>Log Academic Session</h3><button class="btn" onclick="closeModal('acadLogModal')">×</button></div><form id="acadForm" style="margin-top:15px"><div class="form-grid"><label>Date<input class="input" type="date" name="date" required></label><label>Subject<input class="input" name="subject" placeholder="e.g. Machine Learning" required></label><label>Type<select class="select" name="type"><option>Study</option><option>Revision</option><option>Project</option><option>Assignment</option></select></label><label>Hours<input class="input" type="number" step=".25" min="0" name="hours" required></label><label class="full">What I studied / did<input class="input" name="what"></label><label class="full">Notes<textarea class="textarea" name="notes"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn primary">Save session</button></div></form></div></div>
+
+<div class="modal" id="placeLogModal"><div class="modal-box"><div class="modal-head"><h3>Log Placement Prep</h3><button class="btn" onclick="closeModal('placeLogModal')">×</button></div><form id="placeForm" style="margin-top:15px"><div class="form-grid"><label>Date<input class="input" type="date" name="date" required></label><label>Area<input class="input" name="area" placeholder="Aptitude / DSA / SQL..." required></label><label>Hours<input class="input" type="number" step=".25" min="0" name="hours" required></label><label>Problems solved<input class="input" type="number" min="0" name="problems" value="0"></label><label class="full">What I did<input class="input" name="what"></label><label class="full">Notes<textarea class="textarea" name="notes"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn primary">Save session</button></div></form></div></div>
+
+<div class="modal" id="sscLogModal"><div class="modal-box"><div class="modal-head"><h3>Log SSC Study</h3><button class="btn" onclick="closeModal('sscLogModal')">×</button></div><form id="sscForm" style="margin-top:15px"><div class="form-grid"><label>Date<input class="input" type="date" name="date" required></label><label>Subject<select class="select" name="subject"><option>Quant</option><option>Reasoning</option><option>English</option><option>General Awareness</option></select></label><label>Hours<input class="input" type="number" step=".25" min="0" name="hours" required></label><label>Questions attempted<input class="input" type="number" min="0" name="attempted" value="0"></label><label>Correct<input class="input" type="number" min="0" name="correct" value="0"></label><label class="full">Topic / what I did<input class="input" name="what"></label><label class="full">Notes<textarea class="textarea" name="notes"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn primary">Save session</button></div></form></div></div>
+
+<div class="modal" id="syncModal"><div class="modal-box"><div class="modal-head"><h3>☁ Cloud Sync Setup</h3><button class="btn" onclick="closeModal('syncModal')">×</button></div>
+<p class="muted">No login needed. Your data is saved under a private random <b>sync key</b> — use the same key on each device. Firebase details you type here stay only in this browser (never in your code/GitHub).</p>
+<div class="form-grid">
+<label class="full">Sync key (copy the same key to your other devices)<input class="input" id="fb_syncKey" autocomplete="off"></label>
+<label class="full">API Key<input class="input" id="fb_apiKey"></label>
+<label class="full">Auth Domain<input class="input" id="fb_authDomain" placeholder="your-project.firebaseapp.com"></label>
+<label>Project ID<input class="input" id="fb_projectId"></label>
+<label>App ID<input class="input" id="fb_appId"></label>
+</div>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:15px"><button class="btn" onclick="closeModal('syncModal')">Later</button><button class="btn soft" onclick="copySetupLink()">Copy phone setup link</button><button class="btn primary" onclick="saveFirebaseConfig()">Save & Connect</button></div>
+<div class="tiny muted" style="margin-top:12px">Keep your sync key private — anyone with it and your project ID could read this planner. Use the Firestore rules from the README.</div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="firebase-config.js"></script>
+<script type="module">
+
+const SEED = {"version": 1, "profile": {"name": "Pavithra", "monthStart": "2026-10-01", "targets": {"academics": 3, "projects": 2, "placement": 1, "ssc": 1}, "examDate": "2027-06-01"}, "habits": [{"id": "wake", "name": "Wake up at 6:00 AM", "target": "6:00 AM", "auto": false}, {"id": "meditate", "name": "Meditation (5-10 mins)", "target": "5-10 mins", "auto": false}, {"id": "academics", "name": "Academics - study", "target": 3, "auto": true, "source": "academics"}, {"id": "projects", "name": "Projects / college assignments", "target": 2, "auto": true, "source": "projects"}, {"id": "placement", "name": "Placement prep", "target": 1, "auto": true, "source": "placement"}, {"id": "ssc", "name": "SSC CGL prep", "target": 1, "auto": true, "source": "ssc"}, {"id": "learn", "name": "Learn one new thing", "target": "1 thing", "auto": false}, {"id": "read", "name": "Read a book (15-20 mins)", "target": "15-20 mins", "auto": false}, {"id": "care", "name": "Hair / Skin / Personal care", "target": "Daily", "auto": false}, {"id": "phone", "name": "Phone control (non-essential use)", "target": "< 30 mins", "auto": false}, {"id": "compare", "name": "Avoid comparing myself with others", "target": "All day", "auto": false}], "selfChecks": ["Did I give my best effort to today's Top 3 priorities?", "Did I move a step closer to my goal (SSC CGL / placement / degree)?", "Did I look after my body & mind (sleep, food, water, movement)?"], "priorities": {"1": "", "2": "", "3": ""}, "daily": {}, "academics": {"logs": [], "subjects": [], "assignments": []}, "placements": {"logs": [], "topics": [{"name": "Quantitative Aptitude", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Logical Reasoning", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Verbal Ability", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Arrays & Strings", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Linked List, Stack & Queue", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Trees & Graphs", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Recursion & Dynamic Programming", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Sorting & Searching", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "DBMS & SQL", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Operating Systems", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Computer Networks", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "OOPs Concepts", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Resume & LinkedIn", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "HR / Behavioural Interview", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Mock Interviews", "status": "Not started", "targetDate": "", "notes": ""}], "applications": []}, "ssc": {"logs": [], "sections": ["Quant", "Reasoning", "English", "General Awareness"], "mocks": [], "topics": [{"section": "Quant", "name": "Number System", "status": "Not started"}, {"section": "Quant", "name": "Simplification / BODMAS", "status": "Not started"}, {"section": "Quant", "name": "Percentage", "status": "Not started"}, {"section": "Quant", "name": "Ratio & Proportion", "status": "Not started"}, {"section": "Quant", "name": "Average", "status": "Not started"}, {"section": "Quant", "name": "Profit & Loss", "status": "Not started"}, {"section": "Quant", "name": "Discount", "status": "Not started"}, {"section": "Quant", "name": "Simple & Compound Interest", "status": "Not started"}, {"section": "Quant", "name": "Time & Work", "status": "Not started"}, {"section": "Quant", "name": "Time, Speed & Distance", "status": "Not started"}, {"section": "Quant", "name": "Mixture & Alligation", "status": "Not started"}, {"section": "Quant", "name": "Algebra", "status": "Not started"}, {"section": "Quant", "name": "Geometry", "status": "Not started"}, {"section": "Quant", "name": "Mensuration", "status": "Not started"}, {"section": "Quant", "name": "Trigonometry", "status": "Not started"}, {"section": "Quant", "name": "Data Interpretation", "status": "Not started"}, {"section": "Reasoning", "name": "Analogy", "status": "Not started"}, {"section": "Reasoning", "name": "Classification", "status": "Not started"}, {"section": "Reasoning", "name": "Series", "status": "Not started"}, {"section": "Reasoning", "name": "Coding-Decoding", "status": "Not started"}, {"section": "Reasoning", "name": "Blood Relations", "status": "Not started"}, {"section": "Reasoning", "name": "Direction & Distance", "status": "Not started"}, {"section": "Reasoning", "name": "Syllogism", "status": "Not started"}, {"section": "Reasoning", "name": "Venn Diagram", "status": "Not started"}, {"section": "Reasoning", "name": "Order & Ranking", "status": "Not started"}, {"section": "Reasoning", "name": "Non-Verbal (Figures)", "status": "Not started"}, {"section": "English", "name": "Reading Comprehension", "status": "Not started"}, {"section": "English", "name": "Cloze Test", "status": "Not started"}, {"section": "English", "name": "Error Spotting", "status": "Not started"}, {"section": "English", "name": "Sentence Improvement", "status": "Not started"}, {"section": "English", "name": "Fill in the Blanks", "status": "Not started"}, {"section": "English", "name": "Synonyms / Antonyms", "status": "Not started"}, {"section": "English", "name": "One-word Substitution", "status": "Not started"}, {"section": "English", "name": "Idioms & Phrases", "status": "Not started"}, {"section": "English", "name": "Para Jumbles", "status": "Not started"}, {"section": "General Awareness", "name": "History", "status": "Not started"}, {"section": "General Awareness", "name": "Geography", "status": "Not started"}, {"section": "General Awareness", "name": "Polity", "status": "Not started"}, {"section": "General Awareness", "name": "Economy", "status": "Not started"}, {"section": "General Awareness", "name": "General Science", "status": "Not started"}, {"section": "General Awareness", "name": "Static GK", "status": "Not started"}, {"section": "General Awareness", "name": "Current Affairs", "status": "Not started"}]}, "settings": {"theme": "light", "compact": false}};
+let state = loadLocal();
+state.daily??={};
+Object.values(state.daily).forEach(d=>{d.diary??={story:"",feelings:"",wins:"",hard:"",tomorrow:"",learn:"",better:"",different:""};if(!d.diary.tomorrow&&d.reflection)d.diary.tomorrow=d.reflection;});
+// Migration: fold removed diary prompts into the 4 remaining ones so no old writing is lost
+(function(){const add=(x,k,label,v)=>{if(v&&String(v).trim()){x[k]=(x[k]?x[k]+"\n\n":"")+label+v;}};
+ Object.values(state.daily).forEach(d=>{const x=d.diary;if(!x)return;
+  add(x,"story","Inside my mind: ",x.feelings);add(x,"story","Hard parts: ",x.hard);
+  add(x,"learn","Could do better: ",x.better);add(x,"tomorrow","",x.different);
+  x.feelings="";x.hard="";x.better="";x.different="";});
+ const old5=["Did I give my best effort to today's Top 3 priorities?", "Did I stay focused and in control of my phone / distractions?", "Did I move a step closer to my goal (SSC CGL / placement / degree)?", "Did I look after my body & mind (sleep, food, water, movement)?", "Did I compete only with yesterday's me (no comparing with others)?"];
+ if(Array.isArray(state.selfChecks)&&state.selfChecks.length===5&&old5.every((q,i)=>state.selfChecks[i]===q)){
+  const keep=[0,2,3];state.selfChecks=keep.map(i=>old5[i]);
+  Object.values(state.daily).forEach(d=>{if(d.self){const n={};keep.forEach((o,ni)=>{if(d.self[o]!==undefined)n[ni]=d.self[o];});d.self=n;}});}
+})();
+state.recurring ??= [
+ {name:"Daily 10-minute planning",category:"Personal",frequency:"Daily",time:"6:10 AM",active:true},
+ {name:"End-of-day review",category:"Personal",frequency:"Daily",time:"9:30 PM",active:true},
+ {name:"Weekly review",category:"Planning",frequency:"Weekly",time:"Sunday evening",active:true}
+ ]; state.customSections ??= [];
+let selectedDate = todayISO();
+let firebaseApp=null, db=null, auth=null, syncTimer=null;
+
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function loadLocal(){try{return JSON.parse(localStorage.getItem("dailyPlannerState"))||clone(SEED)}catch{return clone(SEED)}}
+function saveLocal(){try{localStorage.setItem("dailyPlannerState",JSON.stringify(state));updateSyncLabel("● Saved in this browser")}catch(e){console.error(e);updateSyncLabel("● SAVE FAILED — export a backup now");toast("Could not save (browser storage full?) — export a backup",5000)}}
+function todayISO(){
+ const d=new Date();
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+window.todayISO=todayISO;
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function toast(m,ms){const t=document.getElementById("toast");clearTimeout(window._tt);t.textContent=m;t.classList.add("show");window._tt=setTimeout(()=>t.classList.remove("show"),ms||1800)}
+function openModal(id){document.getElementById(id).classList.add("show"); if(id.endsWith("LogModal")) fillModalDate(id); if(id==="syncModal"){document.getElementById("fb_syncKey").value=getSyncKey();const c=fbConfig()||{};["apiKey","authDomain","projectId","appId"].forEach(k=>document.getElementById("fb_"+k).value=c[k]||"")}}
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+window.openModal=openModal;window.closeModal=closeModal;
+function fillModalDate(id){const form=document.querySelector("#"+id+" form");if(form&&form.date)form.date.value=selectedDate}
+function updateSyncLabel(x){document.getElementById("syncStatus").textContent=x;document.getElementById("firebaseState").textContent=x}
+function save(){saveLocal(); if(db) queueCloudSave()}
+function queueCloudSave(){clearTimeout(syncTimer);syncTimer=setTimeout(cloudSave,700)}
+let fb=null,dbRef=null;
+async function loadFB(){if(fb)return fb;const [a,f]=await Promise.all([import("https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"),import("https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js")]);fb={...a,...f};return fb}
+function getSyncKey(){let k=localStorage.getItem("syncKey");if(!k){k=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,"0")).join("");localStorage.setItem("syncKey",k)}return k}
+function fbConfig(){if(window.FIREBASE_CONFIG&&window.FIREBASE_CONFIG.projectId)return window.FIREBASE_CONFIG;try{return JSON.parse(localStorage.getItem("firebaseConfig"))}catch{return null}}
+async function cloudSave(){if(!db||!dbRef||!fb)return;try{await fb.setDoc(dbRef,{state,updatedAt:new Date().toISOString()});localStorage.setItem("lastCloudSync",new Date().toISOString());updateSyncLabel("● Cloud synced")}catch(e){console.error(e);updateSyncLabel("● Cloud sync error (check rules / data size)")}}
+async function connectFirebase(cfg){
+ try{
+  updateSyncLabel("● Connecting…");
+  const F=await loadFB();firebaseApp=F.getApps().length?F.getApp():F.initializeApp(cfg);db=F.getFirestore(firebaseApp);dbRef=F.doc(db,"planners",getSyncKey());
+  const snap=await F.getDoc(dbRef);
+  if(snap.exists()&&snap.data().state){
+   const cloudAt=snap.data().updatedAt||"",last=localStorage.getItem("lastCloudSync")||"";
+   if(!last||cloudAt>last){
+    if(confirm("Cloud data found (saved "+cloudAt.slice(0,16).replace("T"," ")+" UTC).\n\nOK = load the cloud data here (this device's data is downloaded as a backup first).\nCancel = keep this device's data and overwrite the cloud.")){
+     exportJSON();localStorage.setItem("dailyPlannerState",JSON.stringify(snap.data().state));localStorage.setItem("lastCloudSync",new Date().toISOString());localStorage.setItem("syncOn","1");setTimeout(()=>location.reload(),700);return}
+   }
+  }
+  localStorage.setItem("syncOn","1");await cloudSave();toast("Cloud sync connected");
+ }catch(e){console.error(e);db=null;toast("Could not connect — check Firebase details & rules");updateSyncLabel("● Saved in this browser")}
+}
+window.saveFirebaseConfig=async function(){
+ const g=id=>document.getElementById(id).value.trim();
+ const cfg={apiKey:g("fb_apiKey"),authDomain:g("fb_authDomain"),projectId:g("fb_projectId"),appId:g("fb_appId")};
+ if(Object.values(cfg).some(v=>!v)){toast("Please fill all Firebase fields");return}
+ const k=g("fb_syncKey");if(k.length<16){toast("Sync key must be at least 16 characters");return}
+ localStorage.setItem("syncKey",k);localStorage.setItem("firebaseConfig",JSON.stringify(cfg));closeModal("syncModal");await connectFirebase(cfg)
+};
+window.disconnectSync=()=>{if(!confirm("Disconnect cloud sync on this device? Your local data stays."))return;["syncOn","firebaseConfig","lastCloudSync"].forEach(k=>localStorage.removeItem(k));location.reload()};
+function tryAutoFirebase(){const c=fbConfig();if(c&&localStorage.getItem("syncOn")==="1")connectFirebase(c)}
+
+function pct(n,d){return d?Math.round(100*n/d):0}
+function fmtDate(s){
+ const [y,m,d]=String(s).split("-").map(Number);
+ return new Date(y,m-1,d).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+}
+function daysLeft(date){if(!date)return null;return Math.ceil((new Date(date+"T00:00:00")-new Date(todayISO()+"T00:00:00"))/86400000)}
+function autoHabitDone(h,date){
+ if(!h.auto)return !!state.daily?.[date]?.habits?.[h.id]
+ if(h.source==="academics")return state.academics.logs.filter(x=>x.date===date&&["Study","Revision"].includes(x.type)).reduce((a,x)=>a+Number(x.hours||0),0)>=Number(h.target)
+ if(h.source==="projects")return state.academics.logs.filter(x=>x.date===date&&["Project","Assignment"].includes(x.type)).reduce((a,x)=>a+Number(x.hours||0),0)>=Number(h.target)
+ if(h.source==="placement")return state.placements.logs.filter(x=>x.date===date).reduce((a,x)=>a+Number(x.hours||0),0)>=Number(h.target)
+ if(h.source==="ssc")return state.ssc.logs.filter(x=>x.date===date).reduce((a,x)=>a+Number(x.hours||0),0)>=Number(h.target)
+ return false
+}
+function habitDone(h,date){return autoHabitDone(h,date)}
+function ensureDay(date){
+ state.daily[date]??={habits:{},self:{},reflection:"",priorities:{"1":"","2":"","3":""},diary:{story:"",feelings:"",wins:"",hard:"",tomorrow:"",learn:"",better:"",different:""}};
+ state.daily[date].diary??={story:"",feelings:"",wins:"",hard:"",tomorrow:"",learn:"",better:"",different:""};
+ return state.daily[date];
+}
+function dayScore(date){return state.habits.filter(h=>habitDone(h,date)).length}
+function monthDays(){
+ const y=+selectedDate.slice(0,4),m=+selectedDate.slice(5,7),selectedDay=+selectedDate.slice(8,10);
+ const last=new Date(y,m,0).getDate(), end=Math.min(selectedDay,last);
+ let out=[];
+ for(let d=1;d<=end;d++) out.push(`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`);
+ return out;
+}
+function renderDashboard(){
+ const today=todayISO(), acad=state.academics.logs.filter(x=>x.date===today&&["Study","Revision"].includes(x.type)).reduce((a,x)=>a+Number(x.hours||0),0), place=state.placements.logs.filter(x=>x.date===today).reduce((a,x)=>a+Number(x.hours||0),0), ssc=state.ssc.logs.filter(x=>x.date===today).reduce((a,x)=>a+Number(x.hours||0),0), score=pct(dayScore(today),state.habits.length);
+ document.getElementById("dashboardCards").innerHTML=[
+  ["Today's checklist",score+"%",score+"% completed","✓",""],
+  ["Academics today",acad.toFixed(1)+"h","Target "+state.profile.targets.academics+"h","▣","blue"],
+  ["Placement prep",place.toFixed(1)+"h","Target "+state.profile.targets.placement+"h","⌁","lav"],
+  ["SSC CGL study",ssc.toFixed(1)+"h","Target "+state.profile.targets.ssc+"h","◎","gold"]
+ ].map(x=>{
+  const progress=x[0]==="Today's checklist"?score:
+    x[0]==="Academics today"?pct(acad,state.profile.targets.academics):
+    x[0]==="Placement prep"?pct(place,state.profile.targets.placement):
+    x[0]==="SSC CGL study"?pct(ssc,state.profile.targets.ssc):0;
+  return `<div class="card ${x[4]}"><div class="stat"><div><div class="label">${x[0]}</div><div class="num">${x[1]}</div><div class="tiny muted">${x[2]}</div></div><div class="iconbox">${x[3]}</div></div><div class="progress"><i style="width:${progress}%"></i></div></div>`;
+ }).join("");
+}
+function renderPersonal(){
+ const d=ensureDay(selectedDate), score=dayScore(selectedDate), md=monthDays(), total=md.reduce((a,x)=>a+dayScore(x),0), max=md.length*state.habits.length;
+ document.querySelector("#selectedDateBtn span").textContent=fmtDate(selectedDate);
+ document.getElementById("todayScore").textContent=pct(score,state.habits.length)+"%";document.getElementById("todayScoreBar").style.width=pct(score,state.habits.length)+"%";
+ document.getElementById("monthScore").textContent=pct(total,max)+"%";document.getElementById("monthScoreBar").style.width=pct(total,max)+"%";
+ document.querySelectorAll(".priority").forEach(i=>{i.value=d.priorities[i.dataset.p]||"";i.oninput=()=>{d.priorities[i.dataset.p]=i.value;save();}});
+ const dates=monthDays();let head=`<thead><tr><th class="task-name">Habit / task</th><th>Target</th>${dates.map(x=>`<th>${new Date(x+"T00:00:00").getDate()}<br><span class="tiny">${new Date(x+"T00:00:00").toLocaleDateString("en",{weekday:"short"})}</span></th>`).join("")}</tr></thead>`;
+ let body="<tbody>"+state.habits.map(h=>`<tr><td class="task-name"><b>${esc(h.name)}</b>${h.auto?'<br><span class="badge">Auto from log</span>':""}</td><td>${esc(h.target)}${h.auto?' h/day':''}</td>${dates.map(dt=>{let on=habitDone(h,dt),manual=!h.auto;return `<td class="tickcell" title="${manual?'Click to toggle':'Calculated from study logs'}" onclick="${manual?`toggleHabit('${h.id}','${dt}')`:''}"><div class="check tick ${on?'on':''} ${h.auto?'auto':''}">${on?'✓':''}</div></td>`}).join("")}</tr>`).join("")+"</tbody>";
+ document.getElementById("habitTable").innerHTML=head+body;
+ {const w=document.querySelector("#page-personal .calendar");if(w)w.scrollLeft=w.scrollWidth}
+}
+window.toggleHabit=(id,date)=>{const d=ensureDay(date);d.habits[id]=!d.habits[id];save();renderAll()};
+window.setSelf=(i,v)=>{ensureDay(selectedDate).self[i]=v;save();renderAll()};
+window.goToday=()=>{selectedDate=todayISO();renderPersonal();renderDiary();toast("Showing today")};
+window.changeDay=(n)=>{
+ const [y,m,dn]=selectedDate.split("-").map(Number);
+ const d=new Date(y,m-1,dn);
+ d.setDate(d.getDate()+n);
+ selectedDate=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+ renderPersonal();renderDiary();
+};
+
+function renderAcademics(){
+ const logs=state.academics.logs, today=todayISO(), todayA=logs.filter(x=>x.date===today&&["Study","Revision"].includes(x.type)).reduce((a,x)=>a+Number(x.hours||0),0), todayP=logs.filter(x=>x.date===today&&["Project","Assignment"].includes(x.type)).reduce((a,x)=>a+Number(x.hours||0),0), total=logs.reduce((a,x)=>a+Number(x.hours||0),0), completed=state.academics.subjects.reduce((a,x)=>a+Number(x.done||0),0), units=state.academics.subjects.reduce((a,x)=>a+Number(x.total||0),0), pending=state.academics.assignments.filter(x=>x.status!=="Done").length, overdue=state.academics.assignments.filter(x=>x.status!=="Done"&&x.due&&x.due<today).length;
+ document.getElementById("acadCards").innerHTML=[["Academics today",todayA.toFixed(1)+"h","Target "+state.profile.targets.academics+"h",""],["Projects today",todayP.toFixed(1)+"h","Target "+state.profile.targets.projects+"h","blue"],["Total logged",total.toFixed(1)+"h","All sessions","lav"],["Syllabus",""+pct(completed,units)+"%","Units completed","gold"]].map(x=>`<div class="card ${x[3]}"><div class="stat"><div><div class="label">${x[0]}</div><div class="num">${x[1]}</div><div class="tiny muted">${x[2]}</div></div><div class="iconbox">▣</div></div></div>`).join("");
+ document.getElementById("subjectTable").innerHTML="<thead><tr><th>Subject</th><th>Total units</th><th>Done</th><th>Progress</th><th>Exam date</th><th></th></tr></thead><tbody>"+state.academics.subjects.map((s,i)=>`<tr><td><input class="input" value="${esc(s.name)}" onchange="editSubject(${i},'name',this.value)"></td><td><input class="input" type="number" min="0" value="${s.total||0}" onchange="editSubject(${i},'total',this.value)"></td><td><input class="input" type="number" min="0" value="${s.done||0}" onchange="editSubject(${i},'done',this.value)"></td><td><div class="progress"><i style="width:${pct(s.done,s.total)}%"></i></div><span class="tiny">${pct(s.done,s.total)}%</span></td><td><input class="input" type="date" value="${s.examDate||""}" onchange="editSubject(${i},'examDate',this.value)"></td><td><button class="btn danger" onclick="delSubject(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+ document.getElementById("acadLogTable").innerHTML="<thead><tr><th>Date</th><th>Subject</th><th>Type</th><th>Hours</th><th>What I did</th><th>Notes</th><th></th></tr></thead><tbody>"+logs.map((x,i)=>[x,i]).sort((a,b)=>String(b[0].date).localeCompare(String(a[0].date))||b[1]-a[1]).map(([x,i])=>`<tr><td>${esc(x.date)}</td><td>${esc(x.subject)}</td><td><span class="badge ${x.type==='Project'||x.type==='Assignment'?'lav':''}">${esc(x.type)}</span></td><td>${x.hours}</td><td>${esc(x.what)}</td><td>${esc(x.notes)}</td><td><button class="btn danger" onclick="delAcadLog(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+ document.getElementById("assignTable").innerHTML="<thead><tr><th>Title</th><th>Subject</th><th>Due date</th><th>Priority</th><th>Status</th><th>Days left</th><th></th></tr></thead><tbody>"+state.academics.assignments.map((x,i)=>`<tr><td><input class="input" value="${esc(x.title)}" onchange="editAssign(${i},'title',this.value)"></td><td><input class="input" value="${esc(x.subject)}" onchange="editAssign(${i},'subject',this.value)"></td><td><input class="input" type="date" value="${x.due||""}" onchange="editAssign(${i},'due',this.value)"></td><td><select class="select" onchange="editAssign(${i},'priority',this.value)">${["High","Medium","Low"].map(v=>`<option ${x.priority===v?"selected":""}>${v}</option>`).join("")}</select></td><td><select class="select" onchange="editAssign(${i},'status',this.value)">${["Not started","In progress","Done"].map(v=>`<option ${x.status===v?"selected":""}>${v}</option>`).join("")}</select></td><td>${x.status==="Done"?"—":daysLeft(x.due)??"—"}</td><td><button class="btn danger" onclick="delAssign(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+}
+window.editSubject=(i,k,v)=>{state.academics.subjects[i][k]=k==="total"||k==="done"?Number(v):v;save();renderAcademics()};
+window.delSubject=i=>{state.academics.subjects.splice(i,1);save();renderAcademics()};window.addSubject=()=>{state.academics.subjects.push({name:"New subject",total:0,done:0,examDate:""});save();renderAcademics()};
+window.delAcadLog=i=>{state.academics.logs.splice(i,1);save();renderAll()};window.editAssign=(i,k,v)=>{state.academics.assignments[i][k]=v;save();renderAcademics()};window.delAssign=i=>{state.academics.assignments.splice(i,1);save();renderAcademics()};
+window.addAssignment=()=>{state.academics.assignments.push({title:"New assignment",subject:"",due:"",priority:"Medium",status:"Not started"});save();renderAcademics()};
+
+function renderPlacements(){
+ const logs=state.placements.logs,today=todayISO(),hours=logs.filter(x=>x.date===today).reduce((a,x)=>a+Number(x.hours||0),0),total=logs.reduce((a,x)=>a+Number(x.hours||0),0),probs=logs.reduce((a,x)=>a+Number(x.problems||0),0),done=state.placements.topics.filter(x=>x.status==="Done").length, apps=state.placements.applications.filter(x=>["Applied","Test","Interview"].includes(x.status)).length, offers=state.placements.applications.filter(x=>x.status==="Offer").length;
+ document.getElementById("placeCards").innerHTML=[["Prep today",hours.toFixed(1)+"h","Target "+state.profile.targets.placement+"h",""],["Total prep",total.toFixed(1)+"h","All sessions","blue"],["Problems solved",probs,"Across all logs","lav"],["Topics done",pct(done,state.placements.topics.length)+"%","Topic tracker","gold"]].map(x=>`<div class="card ${x[3]}"><div class="stat"><div><div class="label">${x[0]}</div><div class="num">${x[1]}</div><div class="tiny muted">${x[2]}</div></div><div class="iconbox">⌁</div></div></div>`).join("");
+ document.getElementById("placeTopicTable").innerHTML="<thead><tr><th>Topic</th><th>Status</th><th>Target date</th><th>Notes</th><th></th></tr></thead><tbody>"+state.placements.topics.map((x,i)=>`<tr><td><input class="input" value="${esc(x.name)}" onchange="editPlaceTopic(${i},'name',this.value)"></td><td><select class="select" onchange="editPlaceTopic(${i},'status',this.value)">${["Not started","In progress","Done"].map(v=>`<option ${x.status===v?"selected":""}>${v}</option>`).join("")}</select></td><td><input class="input" type="date" value="${x.targetDate||""}" onchange="editPlaceTopic(${i},'targetDate',this.value)"></td><td><input class="input" value="${esc(x.notes)}" onchange="editPlaceTopic(${i},'notes',this.value)"></td><td><button class="btn danger" onclick="delPlaceTopic(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+ document.getElementById("placeLogTable").innerHTML="<thead><tr><th>Date</th><th>Area</th><th>Hours</th><th>What I did</th><th>Problems</th><th>Notes</th><th></th></tr></thead><tbody>"+logs.map((x,i)=>[x,i]).sort((a,b)=>String(b[0].date).localeCompare(String(a[0].date))||b[1]-a[1]).map(([x,i])=>`<tr><td>${x.date}</td><td>${esc(x.area)}</td><td>${x.hours}</td><td>${esc(x.what)}</td><td>${x.problems}</td><td>${esc(x.notes)}</td><td><button class="btn danger" onclick="delPlaceLog(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+ document.getElementById("appTable").innerHTML="<thead><tr><th>Company</th><th>Status</th><th>Apply by</th><th>Role</th><th>Next step</th><th></th></tr></thead><tbody>"+state.placements.applications.map((x,i)=>`<tr><td><input class="input" value="${esc(x.company)}" onchange="editApp(${i},'company',this.value)"></td><td><select class="select" onchange="editApp(${i},'status',this.value)">${["Interested","Applied","Test","Interview","Offer","Rejected"].map(v=>`<option ${x.status===v?"selected":""}>${v}</option>`).join("")}</select></td><td><input class="input" type="date" value="${x.applyBy||""}" onchange="editApp(${i},'applyBy',this.value)"></td><td><input class="input" value="${esc(x.role)}" onchange="editApp(${i},'role',this.value)"></td><td><input class="input" value="${esc(x.next)}" onchange="editApp(${i},'next',this.value)"></td><td><button class="btn danger" onclick="delApp(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+}
+window.editPlaceTopic=(i,k,v)=>{state.placements.topics[i][k]=v;save();renderPlacements()};window.delPlaceTopic=i=>{state.placements.topics.splice(i,1);save();renderPlacements()};window.addPlacementTopic=()=>{state.placements.topics.push({name:"New topic",status:"Not started",targetDate:"",notes:""});save();renderPlacements()};
+window.delPlaceLog=i=>{state.placements.logs.splice(i,1);save();renderAll()};window.editApp=(i,k,v)=>{state.placements.applications[i][k]=v;save();renderPlacements()};window.delApp=i=>{state.placements.applications.splice(i,1);save();renderPlacements()};window.addApplication=()=>{state.placements.applications.push({company:"New company",status:"Interested",applyBy:"",role:"",next:""});save();renderPlacements()};
+
+function renderSSC(){
+ const logs=state.ssc.logs,today=todayISO(),hrs=logs.filter(x=>x.date===today).reduce((a,x)=>a+Number(x.hours||0),0),total=logs.reduce((a,x)=>a+Number(x.hours||0),0),att=logs.reduce((a,x)=>a+Number(x.attempted||0),0),cor=logs.reduce((a,x)=>a+Number(x.correct||0),0),done=state.ssc.topics.filter(x=>x.status==="Done").length;
+ document.getElementById("sscCards").innerHTML=[["SSC today",hrs.toFixed(1)+"h","Target "+state.profile.targets.ssc+"h",""],["Total hours",total.toFixed(1)+"h","All sessions","blue"],["Practice accuracy",pct(cor,att)+"%","From logged questions","lav"],["Exam countdown",(daysLeft(state.profile.examDate)??"—")+"d","Target date "+fmtDate(state.profile.examDate),"gold"]].map(x=>`<div class="card ${x[3]}"><div class="stat"><div><div class="label">${x[0]}</div><div class="num">${x[1]}</div><div class="tiny muted">${x[2]}</div></div><div class="iconbox">◎</div></div></div>`).join("");
+ document.getElementById("sscSectionProgress").innerHTML=state.ssc.sections.map(s=>{const ts=state.ssc.topics.filter(x=>x.section===s),d=ts.filter(x=>x.status==="Done").length;return `<div style="margin:12px 0"><div class="kpi-row"><span>${esc(s)}</span><b>${d}/${ts.length} • ${pct(d,ts.length)}%</b></div><div class="progress"><i style="width:${pct(d,ts.length)}%"></i></div></div>`}).join("");
+ document.getElementById("sscTopicTable").innerHTML="<thead><tr><th>Section</th><th>Topic</th><th>Status</th><th></th></tr></thead><tbody>"+state.ssc.topics.map((x,i)=>`<tr><td><span class="badge">${esc(x.section)}</span></td><td><input class="input" value="${esc(x.name)}" onchange="editSSCTopic(${i},'name',this.value)"></td><td><select class="select" onchange="editSSCTopic(${i},'status',this.value)">${["Not started","In progress","Done"].map(v=>`<option ${x.status===v?"selected":""}>${v}</option>`).join("")}</select></td><td><button class="btn danger" onclick="delSSCTopic(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+ document.getElementById("sscLogTable").innerHTML="<thead><tr><th>Date</th><th>Subject</th><th>Hours</th><th>What I did</th><th>Attempted</th><th>Correct</th><th>Accuracy</th><th>Notes</th><th></th></tr></thead><tbody>"+logs.map((x,i)=>[x,i]).sort((a,b)=>String(b[0].date).localeCompare(String(a[0].date))||b[1]-a[1]).map(([x,i])=>`<tr><td>${x.date}</td><td>${esc(x.subject)}</td><td>${x.hours}</td><td>${esc(x.what)}</td><td>${x.attempted}</td><td>${x.correct}</td><td>${pct(x.correct,x.attempted)}%</td><td>${esc(x.notes)}</td><td><button class="btn danger" onclick="delSSCLog(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+ document.getElementById("mockTable").innerHTML="<thead><tr><th>Date</th><th>Mock name</th><th>Quant</th><th>Reasoning</th><th>English</th><th>GA</th><th>Total /200</th><th></th></tr></thead><tbody>"+state.ssc.mocks.map((x,i)=>`<tr><td><input class="input" type="date" value="${x.date||""}" onchange="editMock(${i},'date',this.value)"></td><td><input class="input" value="${esc(x.name)}" onchange="editMock(${i},'name',this.value)"></td>${["quant","reasoning","english","ga"].map(k=>`<td><input class="input" type="number" min="0" max="50" value="${x[k]??""}" onchange="editMock(${i},'${k}',this.value)"></td>`).join("")}<td><b>${["quant","reasoning","english","ga"].reduce((a,k)=>a+Number(x[k]||0),0)}</b></td><td><button class="btn danger" onclick="delMock(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+}
+window.editSSCTopic=(i,k,v)=>{state.ssc.topics[i][k]=v;save();renderSSC()};window.delSSCTopic=i=>{state.ssc.topics.splice(i,1);save();renderSSC()};window.addSSCTopic=()=>{state.ssc.topics.push({section:"Quant",name:"New topic",status:"Not started"});save();renderSSC()};window.delSSCLog=i=>{state.ssc.logs.splice(i,1);save();renderAll()};window.editMock=(i,k,v)=>{state.ssc.mocks[i][k]=["date","name"].includes(k)?v:Number(v);save();renderSSC()};window.delMock=i=>{state.ssc.mocks.splice(i,1);save();renderSSC()};window.addMock=()=>{state.ssc.mocks.push({date:todayISO(),name:"New mock",quant:0,reasoning:0,english:0,ga:0});save();renderSSC()};
+
+function ensureCustomGroups(){
+  ensureSectionSubsections();
+  if(!Array.isArray(state.customGroups)){
+    const old=Array.isArray(state.customSections)?state.customSections:[];
+    state.customGroups=old.map((s,i)=>({id:'g'+Date.now()+i,name:s.name||'Section',subsections:[{id:'s'+Date.now()+i,name:s.name||'Subsection',tasks:Array.isArray(s.tasks)?s.tasks:[]}]}));
+    state.customSections=[];
+    save();
+  }
+  state.customGroups.forEach((g,gi)=>{g.id??='g'+Date.now()+gi;g.name??='Section';g.subsections??=[];g.subsections.forEach((sub,si)=>{sub.id??='s'+Date.now()+gi+'_'+si;sub.name??='Subsection';sub.tasks??=[]})});
+  if(state.selectedCustomGroup==null && state.customGroups.length) state.selectedCustomGroup=0;
+  if(state.selectedCustomSub==null && state.customGroups.length && state.customGroups[0].subsections.length) state.selectedCustomSub=0;
+}
+
+function ensureSectionSubsections(){state.secMeta??={};state.deletedSecs??=[];state.pageMeta??={};state.completed??=[];state.hiddenPages??=[];
+  state.builtinSubsections??={life:[],study:[],track:[]};
+  ['plan','diary','life','study','track'].forEach(k=>{if(!Array.isArray(state.builtinSubsections[k]))state.builtinSubsections[k]=[];});
+  state.builtinSubsections.study??=[];
+  applySec();
+}
+function renderBuiltinSubsections(){
+  ensureSectionSubsections();
+  const map={plan:'builtinPlanNav',diary:'builtinDiaryNav',life:'builtinLifeNav',study:'builtinStudyNav',track:'builtinTrackNav'};
+  Object.entries(map).forEach(([key,id])=>{
+    const el=document.getElementById(id); if(!el)return;
+    el.innerHTML=(state.builtinSubsections[key]||[]).map((sub,i)=>`<button type="button" class="${state.selectedBuiltin?.group===key&&state.selectedBuiltin?.index===i?'active':''}" onclick="openBuiltinSubsection('${key}',${i})">↳ ${esc(sub.name)}</button>`).join('');
+  });
+}
+window.addBuiltinSubsection=(key)=>{
+  ensureSectionSubsections();
+  const labels=BLAB;
+  if(!state.builtinSubsections[key]) state.builtinSubsections[key]=[];
+  const index=state.builtinSubsections[key].length;
+  state.builtinSubsections[key].push({id:'b'+Date.now(),name:'New Subsection',tasks:[]});
+  state.selectedBuiltin={group:key,index};
+  save();
+  renderAll();
+  go('custom');
+  renderBuiltinSubsectionPage(key,index);
+  toast(`New subsection created under ${labels[key]} — rename it below`);
+};
+window.openBuiltinSubsection=(key,i)=>{ensureSectionSubsections();if(!state.builtinSubsections[key]?.[i])return;state.selectedBuiltin={group:key,index:i};save();go('custom');renderBuiltinSubsectionPage(key,i);};
+function renderBuiltinSubsectionPage(key,i){
+  ensureSectionSubsections(); const sub=state.builtinSubsections[key]?.[i]; if(!sub){renderCustom();return;}
+  const labels=BLAB;
+  const root=document.getElementById('customSections');
+  document.getElementById('customPageTitle').textContent=sub.name;
+  document.getElementById('customPageSubtitle').textContent=`${labels[key]} • ${sub.tasks.length} task${sub.tasks.length===1?'':'s'}`;
+  const destinations=[];
+  Object.entries(state.builtinSubsections).forEach(([g,arr])=>arr.forEach((x,j)=>destinations.push({value:`builtin:${g}:${j}`,label:`${labels[g]} → ${x.name}`})));
+  (state.customGroups||[]).forEach((g,gi)=>g.subsections.forEach((x,j)=>destinations.push({value:`custom:${gi}:${j}`,label:`${g.name} → ${x.name}`})));
+  root.innerHTML=`<div class="panel panel-pad"><div class="section-head"><div><b>${esc(labels[key])}</b><div class="tiny muted">Subsection</div></div><div><button class="btn" onclick="addTaskToBuiltin('${key}',${i})">＋ Task</button></div></div><div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr><td><div class="check ${t.done?'on':''}" onclick="toggleBuiltinTask('${key}',${i},${ti})">${t.done?'✓':''}</div></td><td><input class="input" value="${esc(t.name||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'name',this.value)"></td><td><input class="input" value="${esc(t.note||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'note',this.value)"></td><td><select class="select" onchange="moveBuiltinTask('${key}',${i},${ti},this.value)"><option value="">Keep here</option>${destinations.filter(d=>d.value!==`builtin:${key}:${i}`).map(d=>`<option value="${esc(d.value)}">${esc(d.label)}</option>`).join('')}</select></td><td><button class="btn danger" onclick="deleteBuiltinTask('${key}',${i},${ti})">Delete</button></td></tr>`).join('')}</tbody></table></div></div>`;
+}
+window.renameBuiltinSubsection=(key,i)=>{const s=state.builtinSubsections?.[key]?.[i];if(!s)return;const n=prompt('Rename subsection:',s.name);if(n?.trim()){s.name=n.trim();save();renderBuiltinSubsections();renderBuiltinSubsectionPage(key,i);}};
+window.deleteBuiltinSubsection=(key,i)=>{const s=state.builtinSubsections?.[key]?.[i];if(!s)return;if(!confirm(`Delete "${s.name}" and its tasks?`))return;state.builtinSubsections[key].splice(i,1);state.selectedBuiltin=null;save();renderBuiltinSubsections();renderCustom();go('custom');};
+window.addTaskToBuiltin=(key,i)=>{state.builtinSubsections[key][i].tasks.push({id:'t'+Date.now(),name:'New task',note:'',done:false});save();renderBuiltinSubsectionPage(key,i);};
+window.toggleBuiltinTask=(key,i,t)=>{state.builtinSubsections[key][i].tasks[t].done=!state.builtinSubsections[key][i].tasks[t].done;save();renderBuiltinSubsectionPage(key,i);};
+window.editBuiltinTask=(key,i,t,k,v)=>{state.builtinSubsections[key][i].tasks[t][k]=v;save();};
+window.deleteBuiltinTask=(key,i,t)=>{state.builtinSubsections[key][i].tasks.splice(t,1);save();renderBuiltinSubsectionPage(key,i);};
+window.moveBuiltinTask=(key,i,t,target)=>{if(!target)return;const task=state.builtinSubsections[key][i].tasks.splice(t,1)[0];const p=target.split(':');if(p[0]==='builtin')state.builtinSubsections[p[1]][Number(p[2])].tasks.push(task);else state.customGroups[Number(p[1])].subsections[Number(p[2])].tasks.push(task);save();renderBuiltinSubsectionPage(key,i);renderCustomNav();};
+
+window.manageSections=()=>{state.selectedBuiltin=null;save();go("custom");renderCustom();};
+
+function renderCustomNav(){
+  const nav=document.getElementById('customNavItems'); if(!nav)return;
+  ensureCustomGroups();
+  const groups=state.customGroups||[];
+  nav.className='custom-nav';
+  renderBuiltinSubsections();
+  nav.innerHTML=groups.map((g,gi)=>`<div class="custom-group">
+    <div class="custom-group-head"><span>${esc(g.name||'Section')}</span></div>
+    <div class="custom-subnav">${pagesIn('c:'+g.id).map(id=>{const p=pageDef(id);return `<button type="button" data-page="${id}" class="${id===window._curPage?'active':''}" onclick="go('${id}')">${p.icon} ${esc(p.name)}</button>`}).join('')}${g.subsections.map((sub,si)=>`<button type="button" class="${state.selectedCustomGroup===gi&&state.selectedCustomSub===si?'active':''}" onclick="openSubsection(${gi},${si})">↳ ${esc(sub.name||'Subsection')}</button>`).join('')}</div>
+  </div>`).join('');
+}
+
+function renderSelectedSubsection(){
+  ensureCustomGroups();
+  const root=document.getElementById('customSections');
+  const gi=Number(state.selectedCustomGroup), si=Number(state.selectedCustomSub);
+  const g=state.customGroups?.[gi], sub=g?.subsections?.[si];
+  if(!g||!sub){renderCustom();return;}
+  document.getElementById('customPageTitle').textContent=sub.name||'Subsection';
+  document.getElementById('customPageSubtitle').textContent=(g.name||'Section')+'  •  '+sub.tasks.length+' task'+(sub.tasks.length===1?'':'s');
+  root.innerHTML=`<div class="panel panel-pad">
+    <div class="section-head"><div><b>${esc(g.name)}</b><div class="tiny muted">Subsection</div></div><div><button class="btn" onclick="addCustomTask(${gi},${si})">＋ Task</button></div></div>
+    <div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr>
+      <td><div class="check ${t.done?'on':''}" onclick="toggleCustom(${gi},${si},${ti})">${t.done?'✓':''}</div></td>
+      <td><input class="input" value="${esc(t.name||'')}" onchange="editCustom(${gi},${si},${ti},'name',this.value)"></td>
+      <td><input class="input" value="${esc(t.note||'')}" onchange="editCustom(${gi},${si},${ti},'note',this.value)"></td>
+      <td><select class="select" onchange="moveCustomTask(${gi},${si},${ti},this.value)"><option value="">Keep here</option>${[...Object.entries(state.builtinSubsections||{}).flatMap(([bk,arr])=>arr.map((ds,dsi)=>`<option value="builtin:${bk}:${dsi}">${esc(BLAB[bk])} → ${esc(ds.name)}</option>`)),...groups.flatMap((dg,dgi)=>dg.subsections.map((ds,dsi)=>(dgi===gi&&dsi===si)?'':`<option value="custom:${dgi}:${dsi}">${esc(dg.name)} → ${esc(ds.name)}</option>`))].join('')}</select></td>
+      <td><button class="btn danger" onclick="delCustomTask(${gi},${si},${ti})">Delete</button></td>
+    </tr>`).join('')}</tbody></table></div>
+  </div>`;
+  renderCustomNav();
+}
+
+window.addSectionGroup=()=>{
+  ensureCustomGroups();
+  const g={id:'g'+Date.now(),name:'New Section',subsections:[]};
+  state.customGroups.push(g);
+  state.selectedBuiltin=null;
+  state.selectedCustomGroup=state.customGroups.length-1;
+  state.selectedCustomSub=null;
+  save();
+  renderAll();
+  go('custom');
+  renderCustom();
+  toast('New section created — rename it below');
+};
+window.addSubsection=(gi)=>{
+  ensureCustomGroups();
+  const g=state.customGroups?.[gi];
+  if(!g)return;
+  const sub={id:'s'+Date.now(),name:'New Subsection',tasks:[]};
+  g.subsections.push(sub);
+  state.selectedBuiltin=null;
+  state.selectedCustomGroup=gi;
+  state.selectedCustomSub=g.subsections.length-1;
+  save();
+  renderAll();
+  go('custom');
+  renderSelectedSubsection();
+  toast('New subsection created — rename it below');
+};
+window.addSubsectionToCurrentGroup=()=>{
+  ensureCustomGroups();
+  if(state.selectedBuiltin?.group!=null){ addBuiltinSubsection(state.selectedBuiltin.group); return; }
+  const gi=Number(state.selectedCustomGroup);
+  if(Number.isInteger(gi) && state.customGroups?.[gi]){ addSubsection(gi); return; }
+  addSectionGroup();
+};
+window.addSubsectionToSelected=window.addSubsectionToCurrentGroup;
+window.openSubsection=(gi,si)=>{state.selectedBuiltin=null;state.selectedCustomGroup=gi;state.selectedCustomSub=si;save();go('custom');renderSelectedSubsection();};
+window.editSectionGroup=(gi,v)=>{if(state.customGroups?.[gi]){state.customGroups[gi].name=v?.trim()||'Section';save();renderCustomNav();renderSelectedSubsection();}};
+window.renameSubsection=(gi,si)=>{const sub=state.customGroups?.[gi]?.subsections?.[si];if(!sub)return;const name=prompt('Rename subsection:',sub.name);if(name?.trim()){sub.name=name.trim();save();renderSelectedSubsection();}};
+window.renameSubsectionInline=(gi,si,v)=>{const sub=state.customGroups?.[gi]?.subsections?.[si];if(!sub)return;sub.name=(v||'').trim()||'Subsection';save();renderCustomNav();if(Number(state.selectedCustomGroup)===gi&&Number(state.selectedCustomSub)===si)renderSelectedSubsection();};
+window.deleteSectionGroup=(gi)=>{if(!state.customGroups?.[gi])return;if(!confirm('Delete this section and all its subsections?'))return;state.customGroups.splice(gi,1);state.selectedCustomGroup=Math.max(0,Math.min(gi,state.customGroups.length-1));state.selectedCustomSub=0;save();renderCustom();if(state.customGroups.length)openSubsection(state.selectedCustomGroup,0);else go('dashboard');};
+window.deleteSubsection=(gi,si)=>{const g=state.customGroups?.[gi];if(!g)return;if(!confirm('Delete this subsection and its tasks?'))return;g.subsections.splice(si,1);if(state.selectedCustomGroup===gi)state.selectedCustomSub=Math.max(0,Math.min(si,g.subsections.length-1));save();renderCustom();if(g.subsections.length)openSubsection(gi,state.selectedCustomSub);else go('custom');};
+window.addCustomTask=(gi,si)=>{const sub=state.customGroups?.[gi]?.subsections?.[si];if(!sub)return;sub.tasks.push({name:'New task',note:'',done:false});save();renderSelectedSubsection();};
+window.delCustomTask=(gi,si,ti)=>{state.customGroups[gi].subsections[si].tasks.splice(ti,1);save();renderSelectedSubsection();};
+window.toggleCustom=(gi,si,ti)=>{const t=state.customGroups[gi].subsections[si].tasks[ti];t.done=!t.done;save();renderSelectedSubsection();};
+window.editCustom=(gi,si,ti,k,v)=>{state.customGroups[gi].subsections[si].tasks[ti][k]=v;save();renderSelectedSubsection();};
+window.moveCustomTask=(gi,si,ti,to)=>{if(!to)return;const source=state.customGroups[gi]?.subsections[si];if(!source)return;const task=source.tasks.splice(ti,1)[0];if(!task)return;const p=to.split(':');let dest=null;if(p[0]==='builtin'){dest=state.builtinSubsections?.[p[1]]?.[Number(p[2])];}else{dest=state.customGroups[Number(p[1])]?.subsections?.[Number(p[2])];}if(!dest){source.tasks.splice(ti,0,task);return;}dest.tasks.push(task);save();renderSelectedSubsection();renderCustomNav();toast('Moved to '+dest.name);};
+
+function renderTargetSettings(){
+ const ids = {
+   targetAcademics: state.profile.targets.academics,
+   targetProjects: state.profile.targets.projects,
+   targetPlacement: state.profile.targets.placement,
+   targetSSC: state.profile.targets.ssc
+ };
+ {const ed=document.getElementById("sscExamDate");if(ed)ed.value=state.profile.examDate||"";const rt=document.getElementById("reminderTime");if(rt)rt.value=state.settings?.reminder||""}
+ Object.entries(ids).forEach(([id,val])=>{
+   const el=document.getElementById(id);
+   if(el) el.value=val;
+ });
+}
+window.saveTargets=()=>{
+ const vals={
+   academics:Number(document.getElementById("targetAcademics").value),
+   projects:Number(document.getElementById("targetProjects").value),
+   placement:Number(document.getElementById("targetPlacement").value),
+   ssc:Number(document.getElementById("targetSSC").value)
+ };
+ if(Object.values(vals).some(v=>!Number.isFinite(v)||v<0)){toast("Targets must be 0 or greater");return}
+ state.profile.targets=vals;state.profile.examDate=document.getElementById("sscExamDate").value||"";state.settings??={};state.settings.reminder=document.getElementById("reminderTime").value;if(state.settings.reminder&&"Notification" in window&&Notification.permission==="default")Notification.requestPermission();
+ // Keep the corresponding automatic habit targets synchronized too.
+ state.habits.forEach(h=>{
+   if(h.source==="academics") h.target=vals.academics;
+   if(h.source==="projects") h.target=vals.projects;
+   if(h.source==="placement") h.target=vals.placement;
+   if(h.source==="ssc") h.target=vals.ssc;
+ });
+ save(); renderAll(); toast("Daily targets updated");
+};
+
+let timerSeconds=3000,timerTotal=3000,timerRunning=false,timerInterval=null,timerMode="deep";
+
+function startOfWeek(dateStr){
+ const d=new Date(dateStr+"T00:00:00"), day=d.getDay(); d.setDate(d.getDate()-(day===0?6:day-1)); return localISODate(d.getFullYear(),d.getMonth()+1,d.getDate());
+}
+function renderToday(){
+ const score=pct(dayScore(todayISO()),state.habits.length);
+ document.getElementById("todayCompletion").textContent=score+"%";
+ const ws=startOfWeek(todayISO()), weekDates=[];
+ for(let i=0;i<7;i++){let d=new Date(ws+"T12:00:00");d.setDate(d.getDate()+i);weekDates.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`)}
+ const elapsed=weekDates.filter(d=>d<=todayISO()),wc=Math.round(elapsed.reduce((a,d)=>a+pct(dayScore(d),state.habits.length),0)/Math.max(1,elapsed.length));
+ document.getElementById("weeklyCompletion").textContent=wc+"%";
+
+ const d=ensureDay(todayISO());
+ const t3=document.getElementById("todayTop3");t3.innerHTML=["1","2","3"].map(k=>`<div class="top3-row" style="margin-bottom:8px"><span>${k}</span><input class="input" data-k="${k}" placeholder="${k==="1"?"Most important task":k==="2"?"Second priority":"Third priority"}" value="${esc(d.priorities[k]||"")}"></div>`).join("");t3.querySelectorAll("input").forEach(i=>i.oninput=()=>{d.priorities[i.dataset.k]=i.value;save()});
+
+ document.getElementById("todayChecklist").innerHTML=state.habits.map(h=>{
+   const on=habitDone(h,todayISO());
+   return `<div class="task-row"><div class="check ${on?'on':''} ${h.auto?'auto':''}" ${h.auto?'':`onclick="toggleHabit('${h.id}',todayISO());window.renderToday()"`}>${on?'✓':''}</div><div class="${on?'task-done':''}"><b>${esc(h.name)}</b><div class="tiny muted">${esc(h.target)}${h.auto?' h/day':''}</div></div><span class="badge">${on?"Done":"Open"}</span><span></span></div>`;
+ }).join("");
+
+ const allDead=[];
+ state.academics.assignments.forEach(x=>{if(x.status!=="Done"&&x.due)allDead.push({title:x.title,date:x.due,cat:"Academic"})});
+ state.placements.applications.forEach(x=>{if(x.applyBy&&x.status==="Interested")allDead.push({title:`${x.company} — application`,date:x.applyBy,cat:"Placement"})});
+ allDead.sort((a,b)=>a.date.localeCompare(b.date));
+ document.getElementById("deadlineRadar").innerHTML=allDead.slice(0,6).map(x=>{const dl=daysLeft(x.date);return `<div class="alert ${dl!==null&&dl<=2?'urgent':''}"><div class="left"><i class="dot"></i><div><b>${esc(x.title)}</b><div class="tiny muted">${esc(x.cat)} • ${fmtDate(x.date)}</div></div></div><span class="badge ${dl<=2?'red':''}">${dl<0?Math.abs(dl)+"d overdue":dl===0?"Today":dl+"d"}</span></div>`}).join("")||`<div class="empty">No upcoming deadlines 🎉</div>`;
+
+ const attention=[];
+ const acadH=state.academics.logs.filter(x=>x.date===todayISO()&&["Study","Revision"].includes(x.type)).reduce((a,x)=>a+Number(x.hours||0),0);
+ const placeH=state.placements.logs.filter(x=>x.date===todayISO()).reduce((a,x)=>a+Number(x.hours||0),0);
+ const sscH=state.ssc.logs.filter(x=>x.date===todayISO()).reduce((a,x)=>a+Number(x.hours||0),0);
+ if(acadH<state.profile.targets.academics) attention.push(["Academics",`${(state.profile.targets.academics-acadH).toFixed(1)}h remaining today`]);
+ if(placeH<state.profile.targets.placement) attention.push(["Placement",`${(state.profile.targets.placement-placeH).toFixed(1)}h remaining today`]);
+ if(sscH<state.profile.targets.ssc) attention.push(["SSC CGL",`${(state.profile.targets.ssc-sscH).toFixed(1)}h remaining today`]);
+ const weakSSC=state.ssc.sections.map(s=>{const l=state.ssc.logs.filter(x=>x.subject===s),a=l.reduce((n,z)=>n+Number(z.attempted||0),0),c=l.reduce((n,z)=>n+Number(z.correct||0),0);return [s,pct(c,a),a]}).filter(x=>x[2]>=10).sort((a,b)=>a[1]-b[1])[0]||null;
+ if(weakSSC&&weakSSC[1]<75)attention.push([weakSSC[0],`Logged accuracy is ${weakSSC[1]}% — consider revision`]);
+ document.getElementById("attentionList").innerHTML=attention.map(x=>`<div class="alert"><div class="left"><i class="dot"></i><div><b>${esc(x[0])}</b><div class="tiny muted">${esc(x[1])}</div></div></div><span class="badge">Focus</span></div>`).join("")||`<div class="empty">Nothing needs special attention today.</div>`;
+
+ renderWeeklyReview();
+ updateTimerUI();
+}
+function renderWeeklyReview(){
+ const end=new Date(todayISO()+"T00:00:00"), dates=[];for(let i=6;i>=0;i--){let d=new Date(end);d.setDate(d.getDate()-i);dates.push(localISODate(d.getFullYear(),d.getMonth()+1,d.getDate()))}
+ const acad=state.academics.logs.filter(x=>dates.includes(x.date)).reduce((a,x)=>a+Number(x.hours||0),0);
+ const place=state.placements.logs.filter(x=>dates.includes(x.date)).reduce((a,x)=>a+Number(x.hours||0),0);
+ const ssc=state.ssc.logs.filter(x=>dates.includes(x.date)).reduce((a,x)=>a+Number(x.hours||0),0);
+ const comp=Math.round(dates.reduce((a,d)=>a+pct(dayScore(d),state.habits.length),0)/7);
+ document.getElementById("weeklyReview").innerHTML=[["Academics",acad.toFixed(1)+"h"],["Placement",place.toFixed(1)+"h"],["SSC CGL",ssc.toFixed(1)+"h"],["Habit completion",comp+"%"]].map(x=>`<div class="review-card"><div class="v">${x[1]}</div><div class="l">${x[0]}</div></div>`).join("");
+ const vals=[["Academics",acad,state.profile.targets.academics*7],["Placement",place,state.profile.targets.placement*7],["SSC CGL",ssc,state.profile.targets.ssc*7]];
+ const lowest=vals.sort((a,b)=>(a[1]/Math.max(a[2],.01))-(b[1]/Math.max(b[2],.01)))[0];
+ document.getElementById("weeklyInsight").innerHTML=`<b>Weekly insight:</b> ${lowest[0]} currently has the largest gap against its weekly target. Use next week's plan to rebalance intentionally.`;
+}
+let timerEnd=0;
+const FOCUS_LABEL={academics:"Academics",placement:"Placements",ssc:"SSC CGL"};
+function focusArea(){return state.settings?.focusArea||"academics"}
+function logFocus(sec){
+ const area=focusArea(),mins=Math.floor(sec/60);
+ if(area==="none"||mins<1)return false;
+ const hours=Math.round(sec/3600*100)/100,date=todayISO();
+ if(area==="academics")state.academics.logs.push({date,subject:"Focus session",type:"Study",hours,what:"Timed focus session",notes:""});
+ else if(area==="placement")state.placements.logs.push({date,area:"Focus session",hours,what:"Timed focus session",problems:0,notes:""});
+ else state.ssc.logs.push({date,subject:"Focus session",hours,what:"Timed focus session",attempted:0,correct:0,notes:""});
+ save();renderAll();toast(`Logged ${mins} min to ${FOCUS_LABEL[area]}`);return true;
+}
+const leftSecs=()=>Math.max(0,Math.round((timerEnd-Date.now())/1000));
+window.toggleTimer=()=>{
+ if(timerRunning){clearInterval(timerInterval);timerRunning=false;timerSeconds=leftSecs();updateTimerUI();return}
+ if(timerSeconds<=0)timerSeconds=timerTotal;
+ timerRunning=true;timerEnd=Date.now()+timerSeconds*1000;
+ timerInterval=setInterval(()=>{timerSeconds=leftSecs();if(timerSeconds<=0){clearInterval(timerInterval);timerRunning=false;timerSeconds=timerTotal;if(!logFocus(timerTotal))toast("Focus session complete 🌿");updateTimerUI()}else updateTimerUI()},500);
+ updateTimerUI();
+};
+window.finishFocus=()=>{
+ const elapsed=timerTotal-(timerRunning?leftSecs():timerSeconds);
+ clearInterval(timerInterval);timerRunning=false;timerSeconds=timerTotal;
+ if(elapsed<60){toast("Less than 1 minute — nothing to log");updateTimerUI();return}
+ if(focusArea()==="none"){toast("Session stopped");updateTimerUI();return}
+ logFocus(elapsed);
+};
+window.resetTimer=()=>{clearInterval(timerInterval);timerRunning=false;timerSeconds=timerTotal;updateTimerUI()};
+window.setFocusArea=v=>{state.settings??={};state.settings.focusArea=v;save()};
+function updateTimerUI(){
+ const fa=document.getElementById("focusArea");if(fa)fa.value=focusArea();
+ const m=Math.floor(timerSeconds/60),s=timerSeconds%60,txt=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+ const el=document.getElementById("timerText"),ring=document.getElementById("timerRing"),start=document.getElementById("timerStart");
+ if(!el)return;el.textContent=txt;ring.style.setProperty("--timer",`${((timerTotal-timerSeconds)/timerTotal)*100}%`);
+ start.textContent=timerRunning?"Pause":"Start";
+}
+window.switchTimerMode=()=>{clearInterval(timerInterval);timerRunning=false;timerMode=timerMode==="deep"?"pomodoro":"deep";document.getElementById("timerModeBtn").textContent=timerMode==="deep"?"25/5":"50/10";timerTotal=timerSeconds=timerMode==="deep"?3000:1500;document.getElementById("timerMode").textContent=timerMode==="deep"?"Deep Work":"Pomodoro";document.getElementById("timerHint").textContent=timerMode==="deep"?"Work for 50 minutes, then take a 10-minute break.":"Work for 25 minutes, then take a 5-minute break.";updateTimerUI()};
+
+function renderRecurring(){
+ const a=state.recurring||[];const t=document.getElementById("recurringTable");if(!t)return;
+ t.innerHTML="<thead><tr><th>Task</th><th>Category</th><th>Frequency</th><th>Target time</th><th>Active</th><th></th></tr></thead><tbody>"+a.map((x,i)=>`<tr><td><input class="input" value="${esc(x.name)}" onchange="editRecurring(${i},'name',this.value)"></td><td><input class="input" value="${esc(x.category)}" onchange="editRecurring(${i},'category',this.value)"></td><td><select class="select" onchange="editRecurring(${i},'frequency',this.value)">${["Daily","Weekdays","Weekly"].map(v=>`<option ${x.frequency===v?"selected":""}>${v}</option>`).join("")}</select></td><td><input class="input" value="${esc(x.time)}" placeholder="e.g. 7:00 PM" onchange="editRecurring(${i},'time',this.value)"></td><td><select class="select" onchange="editRecurring(${i},'active',this.value)"><option value="true" ${x.active?"selected":""}>Yes</option><option value="false" ${!x.active?"selected":""}>No</option></select></td><td><button class="btn danger" onclick="delRecurring(${i})">Delete</button></td></tr>`).join("")+"</tbody>";
+}
+window.addRecurring=()=>{state.recurring??=[];state.recurring.push({name:"New recurring task",category:"Personal",frequency:"Daily",time:"",active:true});save();renderCustom();renderRecurring()};
+window.editRecurring=(i,k,v)=>{state.recurring[i][k]=k==="active"?v==="true":v;save();renderRecurring()};
+window.delRecurring=i=>{state.recurring.splice(i,1);save();renderRecurring()};
+
+
+
+function renderHabitManager(){
+ const t=document.getElementById("habitManageTable");
+ if(!t)return;
+ t.innerHTML=`<thead><tr><th>Habit / Task</th><th>Target</th><th>Tracking</th><th>Action</th></tr></thead><tbody>`+
+ state.habits.map((h,i)=>{
+   const tracking=h.auto
+     ? `<span class="badge">Auto • ${esc(h.source||"log")}</span>`
+     : `<span class="badge lav">Manual check</span>`;
+   return `<tr>
+     <td><input class="input" value="${esc(h.name)}" onchange="editHabit(${i},'name',this.value)"></td>
+     <td>${h.auto
+       ? `<input class="input" value="${esc(h.target)}" disabled title="Change this target in Settings → Daily targets">`
+       : `<input class="input" value="${esc(h.target)}" onchange="editHabit(${i},'target',this.value)">`
+     }</td>
+     <td>${tracking}</td>
+     <td><button class="btn danger" onclick="deleteHabit(${i})">Delete</button></td>
+   </tr>`;
+ }).join("")+`</tbody>`;
+}
+window.addHabit=()=>{
+ const id="habit_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);
+ state.habits.push({id,name:"New daily habit",target:"Daily",auto:false});
+ save();renderAll();toast("New habit added — edit it below");
+ setTimeout(()=>{
+   const inputs=document.querySelectorAll("#habitManageTable input");
+   const last=inputs[inputs.length-2];
+   if(last){last.focus();last.select();}
+ },50);
+};
+window.editHabit=(i,k,v)=>{
+ if(!state.habits[i])return;
+ state.habits[i][k]=v;
+ save();renderAll();
+};
+window.deleteHabit=(i)=>{
+ if(!state.habits[i])return;
+ const name=state.habits[i].name;
+ if(confirm(`Delete "${name}" from your daily checklist? Historical data will remain in backups, but this habit will no longer appear.`)){
+   state.habits.splice(i,1);save();renderAll();toast("Habit deleted");
+ }
+};
+
+function renderDiary(){
+ const d=ensureDay(selectedDate), x=d.diary||{};
+ const btn=document.querySelector("#diaryDateBtn span"); if(btn)btn.textContent=fmtDate(selectedDate);
+ const label=document.getElementById("diaryDateLabel"); if(label)label.textContent=fmtDate(selectedDate);
+ const fields={diaryStory:"story",diaryWins:"wins",diaryTomorrow:"tomorrow",diaryLearn:"learn"};
+ Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(!el)return;el.value=x[key]||"";el.oninput=()=>{d.diary[key]=el.value;save();}});
+ const score=Object.values(d.self||{}).filter(v=>v==="Y").length;
+ const scoreEl=document.getElementById("diarySelfScore"); if(scoreEl)scoreEl.textContent=score+" / "+state.selfChecks.length;
+ const bar=document.getElementById("diarySelfScoreBar"); if(bar)bar.style.width=(state.selfChecks.length?pct(score,state.selfChecks.length):0)+"%";
+ renderSelfCheckManager();
+}
+
+function renderSelfCheckManager(){
+ const count=document.getElementById("selfCount"); if(count) count.textContent=state.selfChecks.length+" question"+(state.selfChecks.length===1?"":"s");
+ const t=document.getElementById("selfTable");
+ if(!t)return;
+ const d=ensureDay(selectedDate);
+ t.innerHTML=`<thead><tr><th>Question</th><th>Answer for ${esc(fmtDate(selectedDate))}</th><th>Action</th></tr></thead><tbody>`+
+ state.selfChecks.map((q,i)=>`<tr>
+   <td><input class="input" value="${esc(q)}" onchange="editSelfCheck(${i},this.value)"></td>
+   <td><select class="select" style="max-width:150px" onchange="setSelf(${i},this.value)">
+     <option value="">—</option>
+     <option value="Y" ${d.self[i]==="Y"?"selected":""}>Yes</option>
+     <option value="N" ${d.self[i]==="N"?"selected":""}>No</option>
+   </select></td>
+   <td><button class="btn danger" onclick="deleteSelfCheck(${i})">Delete</button></td>
+ </tr>`).join("")+`</tbody>`;
+}
+window.addSelfCheck=()=>{
+ state.selfChecks.push("New self-check question");
+ save();renderAll();toast("Self-check question added");
+ setTimeout(()=>{
+   const inputs=document.querySelectorAll("#selfTable input");
+   const last=inputs[inputs.length-1];
+   if(last){last.focus();last.select();}
+ },50);
+};
+window.editSelfCheck=(i,v)=>{
+ if(!state.selfChecks[i])return;
+ state.selfChecks[i]=v;
+ save();renderAll();
+};
+window.deleteSelfCheck=(i)=>{
+ if(state.selfChecks.length<=1){toast("Keep at least one self-check question");return}
+ const q=state.selfChecks[i];
+ if(confirm(`Delete this self-check question?\n\n${q}`)){
+   state.selfChecks.splice(i,1);
+   // Rebuild answers for every day so indexes remain aligned.
+   Object.values(state.daily||{}).forEach(d=>{
+     if(d.self){
+       const next={};
+       Object.keys(d.self).forEach(k=>{
+         const n=Number(k);
+         if(n<i) next[n]=d.self[k];
+         else if(n>i) next[n-1]=d.self[k];
+       });
+       d.self=next;
+     }
+   });
+   save();renderAll();toast("Self-check deleted");
+ }
+};
+
+
+window.runSystemCheck=()=>{
+ const requiredIds=["dashboardCards","habitTable","selfTable","diaryStory","diaryLearn","habitManageTable","subjectTable","acadLogTable","assignTable","placeTopicTable","placeLogTable","appTable","sscTopicTable","sscLogTable","mockTable","customSections","todayChecklist","deadlineRadar","attentionList"];
+ const missing=requiredIds.filter(id=>!document.getElementById(id));
+ const checks=[
+   ["Local save",typeof saveLocal==="function"],
+   ["Cloud save",typeof cloudSave==="function"],
+   ["Date navigation",typeof changeDay==="function"&&typeof goToday==="function"],
+   ["Habit management",typeof addHabit==="function"&&typeof deleteHabit==="function"],
+   ["Self-check management",typeof addSelfCheck==="function"&&typeof deleteSelfCheck==="function"],
+   ["Target management",typeof saveTargets==="function"],
+   ["Backup export",typeof exportJSON==="function"],
+   ["Backup import",typeof importJSON==="function"]
+ ];
+ const bad=checks.filter(x=>!x[1]).map(x=>x[0]);
+ if(missing.length||bad.length){
+   toast("System check found "+(missing.length+bad.length)+" issue(s)");
+   console.warn("Planner system check",{missing,missingFunctions:bad});
+ }else{
+   toast("✓ System check passed");
+   console.info("Planner system check passed");
+ }
+};
+
+
+
+window.renderToday=renderToday;
+
+function renderMilestones(){
+ const ms=[];
+ state.academics.subjects.filter(x=>x.examDate&&daysLeft(x.examDate)>=0).sort((a,b)=>a.examDate.localeCompare(b.examDate)).slice(0,3).forEach(x=>ms.push({title:x.name,date:x.examDate,cat:"Academic exam"}));
+ if(state.profile.examDate)ms.push({title:"SSC CGL target date",date:state.profile.examDate,cat:"SSC CGL"});
+ state.placements.applications.filter(x=>x.applyBy&&x.status==="Interested"&&daysLeft(x.applyBy)>=0).sort((a,b)=>a.applyBy.localeCompare(b.applyBy)).slice(0,2).forEach(x=>ms.push({title:x.company+" application",date:x.applyBy,cat:"Placement"}));
+ ms.sort((a,b)=>a.date.localeCompare(b.date));
+ document.getElementById("goalMilestones").innerHTML=ms.slice(0,6).map(x=>`<div class="alert"><div class="left"><i class="dot"></i><div><b>${esc(x.title)}</b><div class="tiny muted">${esc(x.cat)} • ${fmtDate(x.date)}</div></div></div><span class="badge">${daysLeft(x.date)<0?"Passed":daysLeft(x.date)+"d"}</span></div>`).join("")||`<div class="empty">Add exam dates or deadlines to see milestones here.</div>`;
+}
+
+function localISODate(y,m,d){return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`}
+let datePickerCursor=null;
+function renderDatePicker(){
+ const y=datePickerCursor.getFullYear(), m=datePickerCursor.getMonth();
+ const title=datePickerCursor.toLocaleDateString("en-IN",{month:"long",year:"numeric"});
+ const titleEl=document.getElementById("datePickerMonth"), grid=document.getElementById("datePickerGrid");
+ if(!titleEl||!grid)return; titleEl.textContent=title;
+ const first=new Date(y,m,1), start=(first.getDay()+6)%7, last=new Date(y,m+1,0).getDate();
+ const weekdays=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+ let out=weekdays.map(d=>`<div class="date-picker-weekday">${d}</div>`).join("");
+ for(let i=0;i<start;i++) out+=`<button class="date-picker-day muted" type="button" tabindex="-1"></button>`;
+ for(let d=1;d<=last;d++){
+   const iso=localISODate(y,m+1,d);
+   const cls=(iso===selectedDate?" selected":"")+(iso===todayISO()?" today":"");
+   out+=`<button class="date-picker-day${cls}" type="button" onclick="selectDateFromPicker('${iso}')">${d}</button>`;
+ }
+ grid.innerHTML=out;
+}
+window.openCalendarForSelectedDate=()=>{
+ const [y,m]=selectedDate.split("-").map(Number);
+ datePickerCursor=new Date(y,m-1,1);
+ renderDatePicker();
+ openModal("datePickerModal");
+};
+window.changeDatePickerMonth=(n)=>{
+ if(!datePickerCursor) datePickerCursor=new Date(Number(selectedDate.slice(0,4)),Number(selectedDate.slice(5,7))-1,1);
+ datePickerCursor.setMonth(datePickerCursor.getMonth()+n);
+ renderDatePicker();
+};
+window.selectDateFromPicker=(iso)=>{
+ selectedDate=iso;
+ closeModal("datePickerModal");
+ renderPersonal();renderDiary();
+ toast(`Showing ${fmtDate(iso)}`);
+};
+window.selectDatePickerToday=()=>{
+ selectedDate=todayISO();
+ closeModal("datePickerModal");
+ renderPersonal();renderDiary();
+ toast("Showing today");
+};
+
+function renderAnalytics(){
+ const dates=[];let d=new Date();d.setHours(12,0,0,0);for(let i=6;i>=0;i--){let x=new Date(d);x.setDate(x.getDate()-i);dates.push(localISODate(x.getFullYear(),x.getMonth()+1,x.getDate()))}
+ const acad=state.academics.logs.filter(x=>dates.includes(x.date)).reduce((a,x)=>a+Number(x.hours||0),0);
+ const place=state.placements.logs.filter(x=>dates.includes(x.date)).reduce((a,x)=>a+Number(x.hours||0),0);
+ const ssc=state.ssc.logs.filter(x=>dates.includes(x.date)).reduce((a,x)=>a+Number(x.hours||0),0);
+ const routine=Math.round(dates.reduce((a,x)=>a+pct(dayScore(x),state.habits.length),0)/7);
+ document.getElementById("analyticsCards").innerHTML=[
+   ["Study hours",`${(acad+ssc).toFixed(1)}h`,"Academics + SSC",""],
+   ["Placement hours",`${place.toFixed(1)}h`,"Last 7 days","blue"],
+   ["Routine",`${routine}%`,"Average completion","lav"],
+   ["Total logged",`${(acad+place+ssc).toFixed(1)}h`,"All focus areas","gold"]
+ ].map(x=>`<div class="card ${x[3]}"><div class="stat"><div><div class="label">${x[0]}</div><div class="num">${x[1]}</div><div class="tiny muted">${x[2]}</div></div><div class="iconbox">↗</div></div></div>`).join("");
+ const daily=dates.map(x=>({date:x,hrs:state.academics.logs.filter(z=>z.date===x).reduce((a,z)=>a+Number(z.hours||0),0)+state.placements.logs.filter(z=>z.date===x).reduce((a,z)=>a+Number(z.hours||0),0)+state.ssc.logs.filter(z=>z.date===x).reduce((a,z)=>a+Number(z.hours||0),0)}));
+ const max=Math.max(1,...daily.map(x=>x.hrs));
+ document.getElementById("analyticsWeek").innerHTML=`<div class="analytics-bars">${daily.map(x=>`<div class="analytics-bar"><span>${new Date(x.date+"T12:00:00").toLocaleDateString("en",{weekday:"short"})}</span><div class="bar"><i style="width:${Math.min(100,x.hrs/max*100)}%"></i></div><b>${x.hrs.toFixed(1)}h</b></div>`).join("")}</div>`;
+ const areas=[["Academics",acad,state.profile.targets.academics*7],["Placement",place,state.profile.targets.placement*7],["SSC CGL",ssc,state.profile.targets.ssc*7]];
+ document.getElementById("analyticsBalance").innerHTML=`<div class="analytics-bars">${areas.map(x=>`<div class="analytics-bar"><span>${x[0]}</span><div class="bar"><i style="width:${Math.min(100,x[1]/Math.max(1,x[2])*100)}%"></i></div><b>${Math.round(x[1]/Math.max(1,x[2])*100)}%</b></div>`).join("")}</div>`;
+ const sscRows=state.ssc.sections.map(s=>{const ls=state.ssc.logs.filter(x=>x.subject===s),a=ls.reduce((n,x)=>n+Number(x.attempted||0),0),c=ls.reduce((n,x)=>n+Number(x.correct||0),0);return [s,pct(c,a),a]});
+ document.getElementById("analyticsSSC").innerHTML=`<table class="mini-table">${sscRows.map(x=>`<tr><td>${esc(x[0])}</td><td><div class="progress"><i style="width:${x[1]}%"></i></div></td><td><b>${x[1]}%</b></td></tr>`).join("")}</table>`;
+ const pt=state.placements.topics,done=pt.filter(x=>x.status==="Done").length,ip=pt.filter(x=>x.status==="In progress").length;
+ document.getElementById("analyticsPlacement").innerHTML=`<div class="analytics-bars">${[["Done",done],["In progress",ip],["Not started",Math.max(0,pt.length-done-ip)]].map(x=>`<div class="analytics-bar"><span>${x[0]}</span><div class="bar"><i style="width:${pct(x[1],pt.length)}%"></i></div><b>${x[1]}</b></div>`).join("")}</div>`;
+}
+
+
+const SECL={plan:'📅 Plan',diary:'♡ My Diary',life:'🌱 My Life',study:'🎓 Study & Career',track:'📊 Track'};
+const BLAB={plan:'Plan',diary:'My Diary',life:'My Life',study:'Study & Career',track:'Track'};
+const PAGES={today:{n:'Today',i:'🏠',s:'plan'},diary:{n:'My Diary',i:'📔',s:'diary'},personal:{n:'Daily Routine',i:'✅',s:'life'},academics:{n:'Academics',i:'🎓',s:'study'},placements:{n:'Placements',i:'💼',s:'study'},ssc:{n:'SSC CGL 2027',i:'🏛️',s:'study'},analytics:{n:'Analytics',i:'📊',s:'track'}};
+const NAVLBL={plan:'Plan',diary:'Diary',life:'My Life',study:'Study & Career',track:'Track'};
+const SECD={plan:['📅','Plan'],diary:['♡','My Diary'],life:['🌱','My Life'],study:['🎓','Study & Career'],track:['📊','Track']};
+function applySec(){Object.keys(SECD).forEach(k=>{const m=(state.secMeta||{})[k]||{},n=m.name||SECD[k][1];SECL[k]=(m.icon||SECD[k][0])+' '+n;NAVLBL[k]=n;BLAB[k]=n})}
+function secKeys(){return Object.keys(SECD).filter(k=>!(state.deletedSecs||[]).includes(k))}
+function pageDef(id){const d=PAGES[id],m=(state.pageMeta||{})[id]||{};let sec=m.section||d.s;
+  if(sec.startsWith('c:')){if(!(state.customGroups||[]).some(g=>'c:'+g.id===sec))sec=secKeys()[0]||'plan'}else if((state.deletedSecs||[]).includes(sec))sec=secKeys()[0]||'plan';
+  return{id,name:m.name||d.n,icon:m.icon||d.i,section:sec}}
+function pagesIn(sec,all){const ids=Object.keys(PAGES);const o=id=>(state.pageMeta[id]?.order)??ids.indexOf(id);return ids.filter(id=>(all||!state.hiddenPages.includes(id))&&pageDef(id).section===sec).sort((a,b)=>o(a)-o(b))}
+const secStr=(t,i)=>t==='b'?i:'c:'+state.customGroups[i]?.id;
+function renderNav(){
+  const el=document.getElementById('navBuiltin');if(!el)return;
+  ensureSectionSubsections();
+  el.innerHTML=secKeys().map(k=>{
+    const ids=pagesIn(k);
+    if(!ids.length&&!(state.builtinSubsections[k]||[]).length)return '';
+    return `<div class="section-label">${esc(NAVLBL[k])}</div><div class="nav-group-children">${ids.map(id=>{const p=pageDef(id);return `<button type="button" data-page="${id}" class="${id===window._curPage?'active':''}" onclick="go('${id}')">${p.icon} &nbsp; ${esc(p.name)}</button>`}).join('')}<div id="builtin${k[0].toUpperCase()+k.slice(1)}Nav" class="builtin-subnav"></div></div>`;
+  }).join('');
+}
+function applyPageTitle(id){
+  if(!PAGES[id])return;const n=pageDef(id).name;
+  document.getElementById('topTitle').textContent=n;
+  const h=document.querySelector('#page-'+id+' .hero h2');
+  if(h){if(h.dataset.orig===undefined)h.dataset.orig=h.textContent;h.textContent=(state.pageMeta||{})[id]?.name?n:h.dataset.orig}
+}
+window.openSet=id=>{const d=document.getElementById(id);if(d)d.open=true};
+window.pgRen=(id,v)=>{state.pageMeta??={};const m=state.pageMeta[id]??={};v=(v||'').trim();if(!v||v===PAGES[id].n)delete m.name;else m.name=v;if(!Object.keys(m).length)delete state.pageMeta[id];save();renderAll();applyPageTitle(window._curPage)};
+window.pgIcon=(id,v)=>{state.pageMeta??={};const m=state.pageMeta[id]??={};v=(v||'').trim();if(!v||v===PAGES[id].i)delete m.icon;else m.icon=v;save();renderAll()};
+window.pgMove=(id,v)=>{if(!v)return;const [t,x]=v.split(':'),sec=secStr(t,t==='b'?x:Number(x));if(!sec||sec==='c:undefined')return;state.pageMeta??={};const m=state.pageMeta[id]??={};m.section=sec;m.order=999;window._secOpen.add(t+'-'+x);save();renderAll();toast('Page moved')};
+window.pgOrder=(id,d)=>{const l=pagesIn(pageDef(id).section,true),i=l.indexOf(id),j=i+d;if(j<0||j>=l.length)return;[l[i],l[j]]=[l[j],l[i]];l.forEach((p,n)=>{(state.pageMeta[p]??={}).order=n});save();renderAll()};
+window.sRenBSec=(k,v)=>{state.secMeta[k]??={};v=(v||'').trim();if(!v||v===SECD[k][1])delete state.secMeta[k].name;else state.secMeta[k].name=v;save();renderAll()};
+window.sIcoBSec=(k,v)=>{state.secMeta[k]??={};v=(v||'').trim();if(!v||v===SECD[k][0])delete state.secMeta[k].icon;else state.secMeta[k].icon=v;save();renderAll()};
+window.sDelBSec=k=>{if(secKeys().length+(state.customGroups||[]).length<=1){alert('Keep at least one section.');return}
+  const rest=secKeys().filter(x=>x!==k),tgt=rest[0]||'c:'+state.customGroups[0].id,pg=pagesIn(k,true),n=(state.builtinSubsections[k]||[]).length;
+  if(!confirm(`Delete section "${BLAB[k]}"? Its ${pg.length} page(s) move to ${tgt.startsWith('c:')?'another section':BLAB[tgt]}${n?` and its ${n} subsection(s) are removed`:''}.`))return;
+  pg.forEach(p=>{(state.pageMeta[p]??={}).section=tgt});state.builtinSubsections[k]=[];state.deletedSecs.push(k);window._secSel='b:'+(rest[0]||'life');structChanged();toast('Section deleted')};
+window._secSel=window._secSel||'b:life';
+const subsOf=(t,i)=>t==='b'?state.builtinSubsections[i]:state.customGroups[i]?.subsections;
+function secOptions(){const o=secKeys().map(k=>({v:'b:'+k,l:SECL[k]}));(state.customGroups||[]).forEach((g,gi)=>o.push({v:'c:'+gi,l:'📁 '+g.name}));return o}
+function focusLast(sel){setTimeout(()=>{const a=document.querySelectorAll(sel),e=a[a.length-1];if(e){e.focus();e.select()}},40)}
+function structChanged(){state.selectedBuiltin=null;state.selectedCustomSub=0;save();renderAll()}
+window._secOpen=window._secOpen||new Set();window.secToggle=el=>{el.open?window._secOpen.add(el.dataset.k):window._secOpen.delete(el.dataset.k)};
+function applyNavVisibility(){document.querySelectorAll('.nav button[data-page]').forEach(b=>{b.style.display=(state.hiddenPages||[]).includes(b.dataset.page)?'none':''})}
+window.toggleMenu=()=>document.getElementById('sidebar').classList.toggle('open');
+window.setSecSel=v=>{window._secSel=v;renderSectionSettings()};
+
+function renderSectionSettings(){
+  const root=document.getElementById('sectionSettingsManager');if(!root)return;
+  ensureSectionSubsections();ensureCustomGroups();
+  const all=[...secKeys().map(k=>({t:'b',i:k,name:SECL[k]})),...(state.customGroups||[]).map((g,gi)=>({t:'c',i:gi,name:'📁 '+g.name,g}))];
+  root.innerHTML='<div class="sec-stack">'+all.map(S=>{
+    const key=S.t+'-'+S.i,subs=subsOf(S.t,S.i)||[],q=`'${S.t}',${S.t==='b'?`'${S.i}'`:S.i}`;
+    const cur=secStr(S.t,S.i),pages=pagesIn(cur);
+    const n=pages.length+subs.length;
+    const moveSel=`<select class="select" style="width:auto;min-width:112px" onchange="pgMove(this.dataset.p,this.value)" data-p="@">`+'<option value="">Move to…</option>'+secOptions().filter(o=>o.v!==S.t+':'+S.i).map(o=>`<option value="${o.v}">${esc(o.l)}</option>`).join('')+'</select>';
+    const top=S.g?`<input class="input sec-name-input" value="${esc(S.g.name)}" aria-label="Section name" onchange="sRenSec(${S.i},this.value)"><button class="btn danger" onclick="sDelSec(${S.i})">Delete section</button>`:`<input class="input" style="width:54px;text-align:center" value="${esc((state.secMeta[S.i]||{}).icon||SECD[S.i][0])}" aria-label="Section icon" onchange="sIcoBSec('${S.i}',this.value)"><input class="input sec-name-input" value="${esc(BLAB[S.i])}" aria-label="Section name" onchange="sRenBSec('${S.i}',this.value)"><button class="btn danger" onclick="sDelBSec('${S.i}')">Delete section</button>`;
+    return `<details class="sec-card" id="sec-${key}" data-k="${key}" ${window._secOpen.has(key)?'open':''} ontoggle="secToggle(this)"><summary><span class="sum-t">${S.g?'📁 '+esc(S.g.name):S.name}</span><span class="badge">${n} item${n===1?'':'s'}</span></summary><div class="sec-body"><div class="sec-bar" style="margin-top:0">${top}<button class="btn primary" onclick="sAddSub(${q})">＋ Subsection</button></div><div class="settings-sub-list">`
+    +pages.map(id=>{const p=pageDef(id);return `<div class="settings-sub-row"><input class="input" style="width:50px;text-align:center;flex:none" value="${esc(p.icon)}" aria-label="Page icon" onchange="pgIcon('${id}',this.value)"><input class="input sn" value="${esc(p.name)}" aria-label="Page name" onchange="pgRen('${id}',this.value)"><div class="acts"><button class="btn" onclick="pgOrder('${id}',-1)" title="Move up">↑</button><button class="btn" onclick="pgOrder('${id}',1)" title="Move down">↓</button><button class="btn" onclick="go('${id}')">Open</button>${moveSel.replace('@',id)}${id!=='today'?`<button class="btn soft" onclick="sHidePage('${id}')">✓ Move to Completed</button>`:''}</div></div>`}).join('')
+    +subs.map((x,j)=>`<div class="settings-sub-row"><span class="pg-ic">↳</span><input class="input sn sn-input" value="${esc(x.name)}" aria-label="Subsection name" onchange="sRenSub(${q},${j},this.value)"><div class="acts"><span class="tiny muted">${x.tasks.length} task${x.tasks.length===1?'':'s'}</span><button class="btn" onclick="sOpenSub(${q},${j})">Open</button><button class="btn soft" onclick="sCompSub(${q},${j})">✓ Move to Completed</button><button class="btn danger" onclick="sDelSub(${q},${j})">Delete</button></div></div>`).join('')
+    +(!n?'<div class="tiny muted">Empty — tap “＋ Subsection” to add one.</div>':'')+'</div></div></details>';
+  }).join('')+'</div>';
+  renderCompletedManager();
+}
+function renderCompletedManager(){
+  const el=document.getElementById('completedManager');if(!el)return;
+  const hp=Object.keys(PAGES).filter(id=>state.hiddenPages.includes(id)),dest=secOptions().map(o=>`<option value="${o.v}">${esc(o.l)}</option>`).join('');
+  const dc=document.getElementById('doneCount');if(dc)dc.textContent=hp.length+state.completed.length;
+  el.innerHTML='<p class="tiny muted" style="margin:0 0 10px">Finished items are hidden from the sidebar. Restore them any time.</p><div class="settings-sub-list">'
+  +hp.map(id=>{const p=pageDef(id);return `<div class="settings-sub-row"><span class="pg-ic">${p.icon}</span><span class="sn"><b>${esc(p.name)}</b><div class="tiny muted">Page • ${esc(p.section.startsWith('c:')?((state.customGroups.find(g=>'c:'+g.id===p.section)||{}).name||'—'):BLAB[p.section])}</div></span><div class="acts"><button class="btn" onclick="go('${id}')">Open</button><button class="btn" onclick="sShowPage('${id}')">↩ Restore</button></div></div>`}).join('')
+  +state.completed.map((x,k)=>`<div class="settings-sub-row"><span class="pg-ic">↳</span><span class="sn"><b>${esc(x.name)}</b><div class="tiny muted">From ${esc(x.from||'—')}${x.completedOn?' • '+fmtDate(x.completedOn):''} • ${x.tasks.length} task${x.tasks.length===1?'':'s'}</div></span><div class="acts"><button class="btn" onclick="sViewDone(${k})">View</button><select class="select" style="width:auto" onchange="sRestore(${k},this.value)"><option value="">↩ Restore to…</option>${dest}</select><button class="btn danger" onclick="sDelDone(${k})">Delete</button></div></div>`).join('')
+  +(hp.length+state.completed.length?'':'<div class="tiny muted">Nothing completed yet.</div>')+'</div>';
+}
+window.sAddSub=(t,i)=>{window._secOpen.add(t+'-'+i);subsOf(t,i).push({id:'s'+Date.now(),name:'New Subsection',tasks:[]});save();renderAll();focusLast('#sec-'+t+'-'+i+' .sn-input')};
+window.sRenSub=(t,i,j,v)=>{const s=subsOf(t,i)[j];if(!s)return;s.name=v.trim()||'Subsection';save();renderCustomNav()};
+window.sDelSub=(t,i,j)=>{const a=subsOf(t,i),s=a[j];if(!s||!confirm(`Delete "${s.name}" and its ${s.tasks.length} task(s)? This cannot be undone.`))return;a.splice(j,1);structChanged();toast('Subsection deleted')};
+window.sCompSub=(t,i,j)=>{const a=subsOf(t,i),s=a[j];if(!s||!confirm(`Move "${s.name}" to Completed? You can restore it any time from Settings.`))return;a.splice(j,1);state.completed.push({...s,from:t==='b'?SECL[i]:state.customGroups[i].name,completedOn:todayISO()});structChanged();toast('Moved to Completed')};
+window.sOpenSub=(t,i,j)=>{t==='b'?openBuiltinSubsection(i,j):openSubsection(i,j)};
+window.sAddSec=()=>{ensureCustomGroups();window._secOpen.add('c-'+state.customGroups.length);state.customGroups.push({id:'g'+Date.now(),name:'New Section',subsections:[]});window._secSel='c:'+(state.customGroups.length-1);save();renderAll();focusLast('.sec-name-input')};
+window.sRenSec=(gi,v)=>{const g=state.customGroups[gi];if(!g)return;g.name=v.trim()||'Section';save();renderCustomNav();renderSectionSettings()};
+window.sDelSec=gi=>{const g=state.customGroups[gi];if(!g||!confirm(`Delete section "${g.name}" with ${g.subsections.length} subsection(s)? This cannot be undone.`))return;state.customGroups.splice(gi,1);state.selectedCustomGroup=0;window._secSel='b:life';structChanged();toast('Section deleted')};
+window.sHidePage=p=>{if(!PAGES[p]||p==='today')return;const n=pageDef(p).name;if(!confirm(`Move "${n}" to Completed? It leaves the sidebar, your data is kept, and you can restore it from Settings → Completed.`))return;if(!state.hiddenPages.includes(p))state.hiddenPages.push(p);if(window._curPage===p)go('settings');save();renderAll();toast('Moved to Completed')};
+window.sShowPage=p=>{state.hiddenPages=state.hiddenPages.filter(z=>z!==p);save();renderAll();toast('Restored to sidebar')};
+window.sRestore=(k,v)=>{if(!v)return;window._secOpen.add(v.replace(':','-'));const s=state.completed[k];if(!s)return;const [t,x]=v.split(':'),arr=subsOf(t,t==='b'?x:Number(x));if(!arr)return;const {from,completedOn,...sub}=s;arr.push(sub);state.completed.splice(k,1);structChanged();toast('Restored')};
+window.sDelDone=k=>{const s=state.completed[k];if(!s||!confirm(`Permanently delete "${s.name}" and its tasks?`))return;state.completed.splice(k,1);save();renderAll()};
+window.sViewDone=k=>{window._viewCompleted=k;go('custom')};
+function renderCompletedView(k){
+  const s=state.completed[k],root=document.getElementById('customSections');
+  if(!s){window._viewCompleted=null;renderCustom();return}
+  document.getElementById('customPageTitle').textContent=s.name+' ✓';
+  document.getElementById('customPageSubtitle').textContent=`Completed • from ${s.from||'—'} • ${s.tasks.length} task${s.tasks.length===1?'':'s'}`;
+  root.innerHTML=`<div class="panel panel-pad"><div class="section-head"><div><b>Read-only</b><div class="tiny muted">Restore it from Settings to edit.</div></div><button class="btn" onclick="go('settings')">← Back to Settings</button></div><div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Note</th></tr></thead><tbody>${s.tasks.map(t=>`<tr><td><div class="check ${t.done?'on':''}">${t.done?'✓':''}</div></td><td>${esc(t.name)}</td><td>${esc(t.note)}</td></tr>`).join('')||'<tr><td colspan="3" class="muted">No tasks.</td></tr>'}</tbody></table></div></div>`;
+}
+function renderCustom(){
+  ensureCustomGroups();renderCustomNav();
+  document.getElementById('customPageTitle').textContent='My Sections';
+  document.getElementById('customPageSubtitle').textContent='Pick a subsection from the sidebar.';
+  document.getElementById('customSections').innerHTML='<div class="panel empty">Sections are added, renamed, completed and deleted from <b>Settings</b> only.<br><button class="btn primary" style="margin-top:12px" onclick="go(\'settings\')">Open Settings</button></div>';
+}
+['openSubsection','openBuiltinSubsection'].forEach(n=>{const f=window[n];window[n]=(...a)=>{window._viewCompleted=null;return f(...a)}});
+
+window._heatSel=null;
+function renderHeatmap(){
+ const sc=document.getElementById('heatScroll');if(!sc)return;
+ const sum=arr=>{const m={};arr.forEach(x=>{m[x.date]=(m[x.date]||0)+Number(x.hours||0)});return m};
+ const A=sum(state.academics.logs),Pl=sum(state.placements.logs),S=sum(state.ssc.logs);
+ const today=todayISO(),n=state.habits.length,[ty,tm,td]=today.split('-').map(Number),t=new Date(ty,tm-1,td);
+ const start=new Date(t);start.setDate(t.getDate()-((t.getDay()+6)%7)-52*7);
+ const info=iso=>{const done=state.habits.filter(h=>habitDone(h,iso)).length,r=pct(done,n),hrs=(A[iso]||0)+(Pl[iso]||0)+(S[iso]||0);return{iso,r,hrs,active:done>0||hrs>0}};
+ let cells='',months='',list=[];
+ for(let w=0;w<53;w++){
+  const mon=new Date(start);mon.setDate(start.getDate()+w*7);
+  const prev=new Date(mon);prev.setDate(mon.getDate()-7);
+  months+=`<span>${(w===0||mon.getMonth()!==prev.getMonth())?mon.toLocaleDateString('en',{month:'short'}):''}</span>`;
+  for(let d=0;d<7;d++){
+   const c=new Date(start);c.setDate(start.getDate()+w*7+d);
+   const iso=localISODate(c.getFullYear(),c.getMonth()+1,c.getDate());
+   if(iso>today){cells+='<i class="gh-cell fut"></i>';continue}
+   const x=info(iso);list.push(x);
+   const lvl=x.r>=90?4:x.r>=70?3:x.r>=40?2:(x.r>0||x.hrs>0)?1:0;
+   cells+=`<button type="button" class="gh-cell l${lvl}${iso===today?' now':''}${iso===window._heatSel?' sel':''}" data-iso="${iso}" title="${fmtDate(iso)} • ${x.r}% routine • ${x.hrs.toFixed(1)}h" aria-label="${fmtDate(iso)}: ${x.r}% routine" onclick="heatPick('${iso}')"></button>`;
+  }
+ }
+ const keep=sc.dataset.pos?sc.scrollLeft:null;
+ sc.innerHTML=`<div class="gh-months">${months}</div><div class="gh">${cells}</div>`;
+ sc.scrollLeft=keep!==null?keep:sc.scrollWidth;
+ if(sc.clientWidth>0)sc.dataset.pos='1';
+ let longest=0,run=0;list.forEach(x=>{run=x.active?run+1:0;longest=Math.max(longest,run)});
+ let cur=0;for(let k=list.length-1;k>=0;k--){if(list[k].active)cur++;else if(k===list.length-1)continue;else break}
+ const last30=list.slice(-30),avg=last30.length?Math.round(last30.reduce((a,x)=>a+x.r,0)/last30.length):0;
+ document.getElementById('heatStats').innerHTML=[['🔥 '+cur+(cur===1?' day':' days'),'Current streak'],[longest+(longest===1?' day':' days'),'Longest streak'],[list.filter(x=>x.active).length+' days','Active days'],[avg+'%','Avg routine (30 days)']].map(x=>`<div class="review-card"><div class="v">${x[0]}</div><div class="l">${x[1]}</div></div>`).join('');
+ renderHeatDetail(window._heatSel||today);
+}
+function renderHeatDetail(iso){
+ const el=document.getElementById('heatDetail');if(!el)return;
+ const f=arr=>arr.filter(x=>x.date===iso).reduce((a,x)=>a+Number(x.hours||0),0);
+ const done=state.habits.filter(h=>habitDone(h,iso)).length,n=state.habits.length;
+ const dl=state.academics.assignments.filter(x=>x.due===iso&&x.status!=="Done").length+state.placements.applications.filter(x=>x.applyBy===iso).length;
+ el.innerHTML=`<div class="heat-detail-top"><b>${fmtDate(iso)}</b>${iso===todayISO()?' <span class="badge">Today</span>':''}<button class="btn soft" onclick="heatOpen('${iso}')">Open this day →</button></div><div class="heat-detail-row"><span>✓ Routine ${done}/${n}</span><span>🎓 ${f(state.academics.logs).toFixed(1)}h</span><span>💼 ${f(state.placements.logs).toFixed(1)}h</span><span>🏛️ ${f(state.ssc.logs).toFixed(1)}h</span>${dl?`<span>⚠ ${dl} deadline${dl>1?'s':''}</span>`:''}</div>`;
+}
+window.heatPick=iso=>{window._heatSel=iso;document.querySelectorAll('.gh-cell.sel').forEach(e=>e.classList.remove('sel'));const b=document.querySelector(`.gh-cell[data-iso="${iso}"]`);if(b)b.classList.add('sel');renderHeatDetail(iso)};
+window.heatOpen=iso=>{selectedDate=iso;go('personal');renderPersonal();renderDiary()};
+function renderAll(){ensureSectionSubsections();renderNav();renderBuiltinSubsections();renderSectionSettings();renderDashboard();renderPersonal();renderDiary();renderAcademics();renderPlacements();renderSSC();renderCustom();renderRecurring();renderTargetSettings();renderHabitManager();renderSelfCheckManager();renderToday();renderMilestones();renderAnalytics();renderHeatmap();document.getElementById("liveDate").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+function go(page){
+  const target=document.getElementById("page-"+page);
+  if(!target) page="today";
+  const resolved=document.getElementById("page-"+page)?page:"today";
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+resolved).classList.add("active");
+  document.querySelectorAll(".nav button[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===resolved));
+  const titleMap={today:"Today",dashboard:"Dashboard",personal:"Daily Routine",diary:"My Diary & Me Time",academics:"Academics",placements:"Placements",ssc:"SSC CGL 2027",analytics:"Analytics",custom:"My Sections",settings:"Settings"};
+  document.getElementById("topTitle").textContent=titleMap[resolved]||resolved;window._curPage=resolved;applyPageTitle(resolved);
+  localStorage.setItem("dailyPlannerCurrentPage",resolved);
+  document.getElementById("sidebar").classList.remove("open");
+  if(resolved==="custom"){
+    if(window._viewCompleted!=null) renderCompletedView(window._viewCompleted);
+    else if(state.selectedBuiltin?.group!=null) renderBuiltinSubsectionPage(state.selectedBuiltin.group,state.selectedBuiltin.index);
+    else renderSelectedSubsection();
+  }
+  if(resolved==="diary") renderDiary();
+  if(resolved==="personal") renderPersonal();
+  if(resolved==="today") renderToday();
+  if(resolved==="analytics") renderHeatmap();
+}
+document.querySelectorAll(".nav button[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));
+window.go=go;
+document.getElementById("acadForm").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);state.academics.logs.push(Object.fromEntries(f));state.academics.logs.at(-1).hours=Number(state.academics.logs.at(-1).hours);save();closeModal("acadLogModal");e.target.reset();renderAll();toast("Study session saved")};
+document.getElementById("placeForm").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);state.placements.logs.push(Object.fromEntries(f));state.placements.logs.at(-1).hours=Number(state.placements.logs.at(-1).hours);state.placements.logs.at(-1).problems=Number(state.placements.logs.at(-1).problems||0);save();closeModal("placeLogModal");e.target.reset();renderAll();toast("Placement session saved")};
+document.getElementById("sscForm").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);state.ssc.logs.push(Object.fromEntries(f));let x=state.ssc.logs.at(-1);["hours","attempted","correct"].forEach(k=>x[k]=Number(x[k]||0));save();closeModal("sscLogModal");e.target.reset();renderAll();toast("SSC session saved")};
+window.importJSON=(input)=>{const file=input.files?.[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.profile||!x.habits)throw new Error();state=x;state.daily??={};state.selfChecks??=[];state.recurring??=[];state.customSections??=[]; state.customGroups??=[]; state.builtinSubsections??={life:[],study:[],track:[]};save();renderAll();toast("Backup imported")}catch(e){toast("Invalid planner backup")}};r.readAsText(file)}; 
+window.exportJSON=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="Daily_Task_Planner_Backup.json";a.click();URL.revokeObjectURL(a.href);toast("Backup exported")};
+window.clearPlannerData=()=>{
+  if(!confirm('Clear planner data? Your sections, subsections, habits, questions, subjects and topics stay. Everything in Completed (finished subsections and finished pages, with their logs) is also kept. Only your daily logs, diary and checklist history are cleared (a page in Completed keeps its own).')) return;
+  // Preserve the user's structure and configuration; clear only activity/data.
+  const hp=state.hiddenPages||[];
+  const keep={
+    profile:clone(state.profile),
+    habits:clone(state.habits),
+    selfChecks:clone(state.selfChecks),
+    priorities:{"1":"","2":"","3":""},
+    daily:(hp.includes('diary')||hp.includes('personal'))?clone(state.daily||{}):{},
+    pageMeta:clone(state.pageMeta||{}),secMeta:clone(state.secMeta||{}),deletedSecs:clone(state.deletedSecs||[]),
+    academics:{logs:hp.includes('academics')?clone(state.academics.logs||[]):[],subjects:clone(state.academics.subjects||[]),assignments:hp.includes('academics')?clone(state.academics.assignments||[]):[]},
+    placements:{logs:hp.includes('placements')?clone(state.placements.logs||[]):[],topics:clone(state.placements.topics||[]),applications:hp.includes('placements')?clone(state.placements.applications||[]):[]},
+    ssc:{logs:hp.includes('ssc')?clone(state.ssc.logs||[]):[],sections:clone(state.ssc.sections||[]),topics:clone(state.ssc.topics||[]),mocks:hp.includes('ssc')?clone(state.ssc.mocks||[]):[]},
+    settings:clone(state.settings||{}),
+    recurring:clone(state.recurring||[]),
+    customGroups:clone(state.customGroups||[]),
+    customSections:[],
+    builtinSubsections:clone(state.builtinSubsections||{life:[],study:[],track:[]}),
+    completed:clone(state.completed||[]),
+    hiddenPages:clone(state.hiddenPages||[]),
+    selectedCustomGroup:state.selectedCustomGroup??null,
+    selectedCustomSub:state.selectedCustomSub??null,
+    selectedBuiltin:state.selectedBuiltin??null
+  };
+  state=keep;
+  save();renderAll();toast('Planner data cleared — structure and Completed items kept');
+};
+// Backward-compatible alias for older saved buttons/imported HTML.
+window.resetAll=window.clearPlannerData;
+
+/* ===== v3 additions ===== */
+(function(){
+ // keep keyboard focus when a table re-renders after an edit (Tab between cells)
+ const withFocus=fn=>function(...a){setTimeout(()=>{const ae=document.activeElement,t=ae&&ae.closest&&ae.closest("table"),id=t&&t.id,idx=id?[...t.querySelectorAll("input,select")].indexOf(ae):-1;fn.apply(this,a);if(id&&idx>=0){const el=document.getElementById(id)?.querySelectorAll("input,select")[idx];if(el)el.focus()}},0)};
+ renderAcademics=withFocus(renderAcademics);renderPlacements=withFocus(renderPlacements);renderSSC=withFocus(renderSSC);renderRecurring=withFocus(renderRecurring);renderHabitManager=withFocus(renderHabitManager);renderSelfCheckManager=withFocus(renderSelfCheckManager);
+ // undo for deletes
+ let snap=null;
+ const undoToast=()=>{const t=document.getElementById("toast");clearTimeout(window._tt);t.innerHTML='Deleted · <button id="undoBtn" style="margin-left:8px;border:0;border-radius:8px;padding:3px 10px;cursor:pointer">Undo</button>';t.classList.add("show");document.getElementById("undoBtn").onclick=()=>{if(snap){state=JSON.parse(snap);snap=null;save();renderAll()}t.classList.remove("show")};window._tt=setTimeout(()=>t.classList.remove("show"),6000)};
+ ["delSubject","delAcadLog","delAssign","delPlaceTopic","delPlaceLog","delApp","delSSCTopic","delSSCLog","delMock","delRecurring","delCustomTask","deleteBuiltinTask"].forEach(n=>{const f=window[n];if(!f)return;window[n]=(...a)=>{snap=JSON.stringify(state);f(...a);undoToast()}});
+ // backups: validated import, auto-backup before import/clear, reminder
+ const _exp=window.exportJSON;window.exportJSON=()=>{_exp();localStorage.setItem("lastBackup",String(Date.now()))};
+ window.importJSON=input=>{const file=input.files?.[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);const ok=x&&x.profile&&Array.isArray(x.habits)&&x.academics&&Array.isArray(x.academics.logs)&&x.placements&&Array.isArray(x.placements.logs)&&x.ssc&&Array.isArray(x.ssc.logs);if(!ok)throw new Error("bad");if(!confirm("Import this backup? Your current data is downloaded as a backup first, then replaced."))return;exportJSON();localStorage.setItem("dailyPlannerState",JSON.stringify(x));setTimeout(()=>location.reload(),700)}catch(e){toast("Invalid planner backup file")}finally{input.value=""}};r.readAsText(file)};
+ const _clr=window.clearPlannerData;window.clearPlannerData=()=>{if(!confirm("A backup will be downloaded first, then you can clear. Continue?"))return;exportJSON();_clr()};
+ setTimeout(()=>{const lb=+localStorage.getItem("lastBackup")||0,has=state.academics.logs.length+state.ssc.logs.length+state.placements.logs.length>0;if(has&&Date.now()-lb>7*864e5)toast("Reminder: no backup in 7+ days — tap Export",5000)},1500);
+ // Esc / backdrop closes popups
+ document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal.show").forEach(m=>m.classList.remove("show"))});
+ document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
+ // new day while app is open
+ let lastDay=todayISO();setInterval(()=>{const t=todayISO();if(t!==lastDay){if(selectedDate===lastDay)selectedDate=t;lastDay=t;renderAll();toast("New day started 🌱")}},30000);
+})();
+
+/* ===== v4 additions ===== */
+(function(){
+ // keyboard: Tab to tick boxes, Enter/Space toggles
+ const mk=()=>document.querySelectorAll('.check[onclick]:not([tabindex]),td.tickcell[onclick]:not([onclick=""]):not([tabindex])').forEach(e=>{e.tabIndex=0;e.setAttribute("role","checkbox")});
+ new MutationObserver(mk).observe(document.body,{childList:true,subtree:true});mk();
+ document.addEventListener("keydown",e=>{const t=e.target;if((e.key==="Enter"||e.key===" ")&&t.matches&&t.matches('.check[onclick],td.tickcell[onclick]')&&t.getAttribute("onclick")){e.preventDefault();t.click()}});
+
+ // timer: survives refresh, auto break
+ let brk=false;
+ const focusSecs=()=>timerMode==="deep"?3000:1500,breakSecs=()=>timerMode==="deep"?600:300;
+ const persist=()=>localStorage.setItem("timerState",JSON.stringify({running:timerRunning,end:timerEnd,secs:timerSeconds,total:timerTotal,mode:timerMode,brk}));
+ const label=()=>{document.getElementById("timerMode").textContent=brk?"Break ☕":(timerMode==="deep"?"Deep Work":"Pomodoro");document.getElementById("timerHint").textContent=brk?"Rest — stretch, water, no phone.":(timerMode==="deep"?"Work for 50 minutes, then take a 10-minute break.":"Work for 25 minutes, then take a 5-minute break.")};
+ const tick=()=>{timerSeconds=leftSecs();if(timerSeconds<=0){clearInterval(timerInterval);timerRunning=false;if(!brk){const t=timerTotal;logFocus(t);brk=true;timerTotal=timerSeconds=breakSecs();toast("Focus done 🌿 Take a break — press Start",3500)}else{brk=false;timerTotal=timerSeconds=focusSecs();toast("Break over — ready to focus")}label();persist()}updateTimerUI()};
+ window.toggleTimer=()=>{if(timerRunning){clearInterval(timerInterval);timerRunning=false;timerSeconds=leftSecs();updateTimerUI();persist();return}if(timerSeconds<=0)timerSeconds=timerTotal;timerRunning=true;timerEnd=Date.now()+timerSeconds*1000;timerInterval=setInterval(tick,500);updateTimerUI();persist()};
+ window.finishFocus=()=>{if(brk){clearInterval(timerInterval);timerRunning=false;brk=false;timerTotal=timerSeconds=focusSecs();label();updateTimerUI();persist();return}const el=timerTotal-(timerRunning?leftSecs():timerSeconds);clearInterval(timerInterval);timerRunning=false;timerSeconds=timerTotal;persist();if(el<60){toast("Less than 1 minute — nothing to log");updateTimerUI();return}if(focusArea()==="none"){toast("Session stopped");updateTimerUI();return}logFocus(el);updateTimerUI()};
+ window.resetTimer=()=>{clearInterval(timerInterval);timerRunning=false;brk=false;timerTotal=timerSeconds=focusSecs();label();updateTimerUI();persist()};
+ window.switchTimerMode=()=>{clearInterval(timerInterval);timerRunning=false;brk=false;timerMode=timerMode==="deep"?"pomodoro":"deep";timerTotal=timerSeconds=focusSecs();document.getElementById("timerModeBtn").textContent=timerMode==="deep"?"25/5":"50/10";label();updateTimerUI();persist()};
+ setTimeout(()=>{try{const s=JSON.parse(localStorage.getItem("timerState"));if(!s)return;timerMode=s.mode||"deep";brk=!!s.brk;timerTotal=s.total||focusSecs();timerSeconds=s.secs;document.getElementById("timerModeBtn").textContent=timerMode==="deep"?"25/5":"50/10";if(s.running){timerEnd=s.end;timerSeconds=leftSecs();if(timerSeconds>0){timerRunning=true;timerInterval=setInterval(tick,500)}else tick()}label();updateTimerUI()}catch{}},0);
+
+ // mood tracker
+ const MOODS=[["😞","Low"],["😕","Meh"],["😐","Okay"],["🙂","Good"],["😄","Great"]];
+ function renderMood(){const el=document.getElementById("moodRow");if(!el)return;const cur=ensureDay(selectedDate).mood||0;el.innerHTML=MOODS.map((m,i)=>`<button type="button" class="btn" style="font-size:20px;padding:8px 14px;${cur===i+1?"background:var(--mint);outline:2px solid var(--green)":""}" onclick="setMood(${i+1})" aria-label="${m[1]}" title="${m[1]}">${m[0]}</button>`).join("")+(cur?`<span class="muted tiny" style="align-self:center">${MOODS[cur-1][1]} · tap again to clear</span>`:"")}
+ window.setMood=n=>{const d=ensureDay(selectedDate);d.mood=d.mood===n?0:n;save();renderMood();renderMoodStats()};
+ function renderMoodStats(){const el=document.getElementById("moodStats");if(!el)return;const days=[];for(let i=29;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);days.push(localISODate(x.getFullYear(),x.getMonth()+1,x.getDate()))}
+  const v=days.map(d=>state.daily[d]?.mood||0),lg=v.filter(a=>a>0),mean=a=>a.length?(a.reduce((x,y)=>x+y,0)/a.length).toFixed(1):null;
+  const hi=[],lo=[];days.forEach((d,i)=>{if(!v[i])return;(pct(state.habits.filter(h=>habitDone(h,d)).length,state.habits.length)>=70?hi:lo).push(v[i])});
+  const ins=mean(hi)&&mean(lo)?`On days you finished ≥70% of your routine, mood averaged ${mean(hi)}/5 vs ${mean(lo)}/5 on other days.`:"Log your mood for a few days to see how it links to your routine.";
+  el.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:2px;font-size:18px">${days.map((d,i)=>`<span title="${fmtDate(d)}${v[i]?" • "+MOODS[v[i]-1][1]:""}" style="width:24px;text-align:center;opacity:${v[i]?1:.25}">${v[i]?MOODS[v[i]-1][0]:"·"}</span>`).join("")}</div><div class="muted" style="margin-top:10px"><b>Avg ${mean(lg)||"—"}/5</b> over ${lg.length} logged day${lg.length===1?"":"s"}. ${ins}</div>`}
+ const _rd=renderDiary;renderDiary=function(){_rd();renderMood()};
+ const _ra=renderAnalytics;renderAnalytics=function(){_ra();renderMoodStats()};
+
+ // SSC mock analysis
+ const MK=["quant","reasoning","english","ga"],MKN={quant:"Quant",reasoning:"Reasoning",english:"English",ga:"General Awareness"};
+ const tot=x=>MK.reduce((a,k)=>a+Number(x[k]||0),0),net=x=>{const a=Number(x.attempted||0),w=Number(x.wrong||0);return a>0?(a-w)*2-w*.5:null};
+ function renderMockStats(){const el=document.getElementById("mockStats");if(!el)return;const m=[...state.ssc.mocks].sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  if(!m.length){el.innerHTML='<div class="empty">Add a mock in the Mock test log above to see trends.</div>';return}
+  const T=m.map(tot),last=T.at(-1),l3=T.slice(-3),prev=T.length>1?T.at(-2):null,d=m.filter(x=>Number(x.attempted)>0),tq=d.filter(x=>Number(x.time)>0);
+  const sec=MK.map(k=>[k,m.reduce((a,x)=>a+Number(x[k]||0),0)/m.length]),weak=[...sec].sort((a,b)=>a[1]-b[1])[0];
+  const acc=d.length?Math.round(100*d.reduce((a,x)=>a+x.attempted-x.wrong,0)/d.reduce((a,x)=>a+x.attempted,0))+"%":"—",nets=d.map(net),pace=tq.length?Math.round(tq.reduce((a,x)=>a+x.time,0)/tq.reduce((a,x)=>a+x.attempted,0)*60)+"s/q":"—";
+  const card=(v,l)=>`<div class="review-card"><div class="v">${v}</div><div class="l">${l}</div></div>`,bar=(a,b,c)=>`<div class="analytics-bar"><span>${a}</span><div class="bar"><i style="width:${Math.min(100,b)}%"></i></div><b>${c}</b></div>`;
+  el.innerHTML=`<div class="review-grid" style="margin-bottom:14px">${card(m.length,"Mocks taken")}${card(Math.max(...T)+"/200","Best total")}${card(last+"/200"+(prev==null?"":` <small class="tiny muted">${last>=prev?"▲":"▼"}${Math.abs(last-prev)}</small>`),"Latest total")}${card(Math.round(l3.reduce((a,b)=>a+b,0)/l3.length)+"/200","Avg of last 3")}</div>
+  <div class="review-grid" style="margin-bottom:14px">${card(nets.length?(nets.reduce((a,b)=>a+b,0)/nets.length).toFixed(1):"—","Avg net score")}${card(acc,"Accuracy")}${card(pace,"Pace")}${card(esc(MKN[weak[0]]),"Weakest section")}</div>
+  <div class="grid two"><div><b class="tiny muted">SCORE TREND (last 10)</b><div class="analytics-bars" style="margin-top:8px">${m.slice(-10).map(x=>bar(esc(fmtDate(x.date||todayISO()).slice(0,6)),tot(x)/2,tot(x))).join("")}</div></div><div><b class="tiny muted">SECTION AVERAGE (/50)</b><div class="analytics-bars" style="margin-top:8px">${sec.map(s=>bar(MKN[s[0]].replace("General Awareness","GA"),s[1]*2,s[1].toFixed(1))).join("")}</div></div></div>`}
+ function renderMockDetail(){const t=document.getElementById("mockDetailTable");if(!t)return;const a=state.ssc.mocks;t.innerHTML=a.length?'<thead><tr><th>Mock</th><th>Attempted</th><th>Wrong</th><th>Time (min)</th><th>Net score</th></tr></thead><tbody>'+a.map((x,i)=>`<tr><td>${esc(x.name)} <span class="tiny muted">${esc(x.date||"")}</span></td>`+["attempted","wrong","time"].map(k=>`<td><input class="input" type="number" min="0" value="${x[k]??""}" onchange="editMockX(${i},'${k}',this.value)"></td>`).join("")+`<td><b id="net${i}">${net(x)??"—"}</b></td></tr>`).join("")+"</tbody>":'<tbody><tr><td class="muted">Add a mock above first.</td></tr></tbody>'}
+ window.editMockX=(i,k,v)=>{state.ssc.mocks[i][k]=Number(v||0);save();const n=document.getElementById("net"+i);if(n)n.textContent=net(state.ssc.mocks[i])??"—";renderMockStats()};
+ const _rs=renderSSC;renderSSC=function(){_rs.apply(this,arguments);renderMockStats();renderMockDetail()};
+
+ // daily reminder (works while the app is open / installed & running)
+ setInterval(()=>{const r=state.settings?.reminder;if(!r||!("Notification" in window)||Notification.permission!=="granted")return;const n=new Date(),hm=String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");if(hm>=r&&localStorage.getItem("remNotified")!==todayISO()){localStorage.setItem("remNotified",todayISO());const o={body:"Tick your habits and write a line in your diary 🌱",icon:"icon.png"},sw=navigator.serviceWorker;(sw?sw.ready.then(g=>g.showNotification("MyProgressTrack",o)):Promise.reject()).catch(()=>{try{new Notification("MyProgressTrack",o)}catch{}})}},30000);
+ // service worker
+ if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+})();
+(function(){const m=location.hash.match(/[#&]sync=([^&]+)/);if(m){try{localStorage.setItem("syncKey",decodeURIComponent(m[1]));if(fbConfig())localStorage.setItem("syncOn","1");history.replaceState(null,"",location.pathname+location.search)}catch{}}})();
+window.copySetupLink=async()=>{const u=location.origin+location.pathname+"#sync="+encodeURIComponent(getSyncKey());try{await navigator.clipboard.writeText(u);toast("Setup link copied — send it only to yourself",3500)}catch{prompt("Copy this link:",u)}};
+renderAll();
+const startupPage=localStorage.getItem("dailyPlannerCurrentPage")||"today";
+go(document.getElementById("page-"+startupPage)&&!(state.hiddenPages||[]).includes(startupPage)?startupPage:"today");
+tryAutoFirebase();
+</script>
+
+<div class="modal date-picker-modal" id="datePickerModal" onclick="if(event.target===this)closeModal('datePickerModal')">
+  <div class="modal-box">
+    <div class="date-picker-head">
+      <h3 id="datePickerMonth">October 2026</h3>
+      <div class="date-picker-nav">
+        <button class="btn" type="button" onclick="changeDatePickerMonth(-1)">←</button>
+        <button class="btn" type="button" onclick="changeDatePickerMonth(1)">→</button>
+      </div>
+    </div>
+    <div class="date-picker-grid" id="datePickerGrid"></div>
+    <div class="date-picker-footer">
+      <span class="tiny muted">Select a date</span>
+      <button class="btn soft" type="button" onclick="selectDatePickerToday()">Today</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
