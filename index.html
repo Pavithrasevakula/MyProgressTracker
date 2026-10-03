@@ -54,15 +54,17 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:
 .habit-row.on .hr-status{background:var(--green);color:#fff}
 .habit-row.auto .hr-status{background:var(--sage);color:var(--green2)}
 .habit-row.auto{cursor:default}
-.self-list{display:grid;gap:10px}
-.self-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
-.self-card-q{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
-.self-card-q span{font-size:14px;line-height:1.45;word-break:break-word}
-.icon-btn{border:0;background:transparent;color:var(--muted);font-size:15px;padding:2px 4px;flex-shrink:0;border-radius:7px}
-.icon-btn:hover{background:var(--mint);color:var(--green2)}
-.self-card-row{display:flex;gap:8px;align-items:center}
-.self-card-row .select{flex:1;min-width:0}
-.self-card-row .btn{flex-shrink:0}
+.self-list{display:grid}
+.self-row.off .hr-status{background:#f3dede;color:var(--danger)}
+.icon-btn{border:0;background:transparent;color:var(--muted);font-size:16px;padding:4px 8px;flex-shrink:0;border-radius:7px;line-height:1}
+.icon-btn:hover{background:#fff;color:var(--green2)}
+.row-menu{position:relative;flex-shrink:0}
+.row-menu-pop{display:none;position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.12);min-width:170px;z-index:10;overflow:hidden}
+.row-menu-pop.show{display:block}
+.row-menu-pop button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 14px;font-size:13px;color:var(--ink);cursor:pointer}
+.row-menu-pop button:hover{background:var(--mint)}
+.row-menu-pop button.danger{color:var(--danger)}
+.row-menu-pop button.danger:hover{background:#fae8e8}
 
 /* ===== V2 planner enhancements ===== */
 .mission-banner{background:linear-gradient(135deg,#edf6f0,#f7f4ec);border:1px solid #d8e6dd;border-radius:22px;padding:20px;display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:center}
@@ -957,20 +959,38 @@ function renderSelfCheckManager(){
  </tr>`).join("")+`</tbody>`;
  const listEl=document.getElementById("selfListMobile");
  if(listEl){
+   const LBL={"":"No answer",Y:"Yes",N:"No"};
    listEl.innerHTML=`<div class="tiny muted" style="padding:0 2px 10px">Answer for ${esc(fmtDate(selectedDate))}</div>`+
-   state.selfChecks.map((q,i)=>`<div class="self-card">
-     <div class="self-card-q"><span>${esc(q)}</span><button type="button" class="icon-btn" title="Edit question" onclick="promptEditSelfCheck(${i})">✎</button></div>
-     <div class="self-card-row">
-       <select class="select" onchange="setSelf(${i},this.value)">
-         <option value="">— No answer —</option>
-         <option value="Y" ${d.self[i]==="Y"?"selected":""}>Yes</option>
-         <option value="N" ${d.self[i]==="N"?"selected":""}>No</option>
-       </select>
-       <button class="btn danger" onclick="deleteSelfCheck(${i})">Delete</button>
-     </div>
-   </div>`).join("");
+   state.selfChecks.map((q,i)=>{
+     const ans=d.self[i]||"";
+     return `<div class="habit-row self-row ${ans==="Y"?"on":""} ${ans==="N"?"off":""}" onclick="cycleSelf(${i})">
+       <div class="hr-name"><b>${esc(q)}</b></div>
+       <div class="hr-status">${LBL[ans]}</div>
+       <div class="row-menu">
+         <button type="button" class="icon-btn" title="Manage question" onclick="event.stopPropagation();toggleRowMenu(event,${i})">⋮</button>
+         <div class="row-menu-pop" id="selfMenu${i}">
+           <button type="button" onclick="event.stopPropagation();closeRowMenus();promptEditSelfCheck(${i})">✎ Edit question</button>
+           <button type="button" class="danger" onclick="event.stopPropagation();closeRowMenus();deleteSelfCheck(${i})">🗑 Delete question</button>
+         </div>
+       </div>
+     </div>`;
+   }).join("");
  }
 }
+window.cycleSelf=(i)=>{
+ const d=ensureDay(selectedDate);
+ const cur=d.self[i]||"";
+ const next=cur===""?"Y":cur==="Y"?"N":"";
+ setSelf(i,next);
+};
+window.closeRowMenus=()=>{document.querySelectorAll(".row-menu-pop.show").forEach(m=>m.classList.remove("show"))};
+window.toggleRowMenu=(e,i)=>{
+ const el=document.getElementById("selfMenu"+i);
+ const open=el&&el.classList.contains("show");
+ closeRowMenus();
+ if(el&&!open)el.classList.add("show");
+};
+document.addEventListener("click",closeRowMenus);
 window.addSelfCheck=()=>{
  state.selfChecks.push("New self-check question");
  save();renderAll();toast("Self-check question added");
