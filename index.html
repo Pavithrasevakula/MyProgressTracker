@@ -42,6 +42,24 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:
 .sidebar .nav::-webkit-scrollbar{width:6px}.sidebar .nav::-webkit-scrollbar-thumb{background:#d5e1da;border-radius:99px}.sidebar .nav::-webkit-scrollbar-track{background:transparent}
 @media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}.sidebar{width:220px}}
 @media(max-width:720px){.sidebar{position:fixed;left:-270px;transition:.25s;width:250px;overflow:hidden}.sidebar.open{left:0}.mobile-menu{display:block}.content{padding:16px}.topbar{padding:0 15px}.cards{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.topbar h1{font-size:16px}}
+.mobile-only{display:none}
+@media(max-width:720px){.desktop-only{display:none}.mobile-only{display:block}}
+.habit-list{display:grid}
+.habit-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
+.habit-row:last-child{border-bottom:0}
+.habit-row.on{background:var(--mint)}
+.habit-row .hr-name{min-width:0;flex:1}
+.habit-row .hr-name b{display:block;font-size:14px;word-break:break-word}
+.habit-row .hr-status{flex-shrink:0;font-size:12px;font-weight:700;color:var(--muted);padding:5px 10px;border-radius:99px;background:#f1f5f2}
+.habit-row.on .hr-status{background:var(--green);color:#fff}
+.habit-row.auto .hr-status{background:var(--sage);color:var(--green2)}
+.habit-row.auto{cursor:default}
+.self-list{display:grid;gap:10px}
+.self-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
+.self-card .input{margin-bottom:10px}
+.self-card-row{display:flex;gap:8px;align-items:center}
+.self-card-row .select{flex:1;min-width:0}
+.self-card-row .btn{flex-shrink:0}
 
 /* ===== V2 planner enhancements ===== */
 .mission-banner{background:linear-gradient(135deg,#edf6f0,#f7f4ec);border:1px solid #d8e6dd;border-radius:22px;padding:20px;display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:center}
@@ -77,6 +95,18 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:
 .builtin-subnav button{background:transparent!important;border-radius:8px!important}
 .builtin-subnav button:hover{background:#f2f7f4!important}
 @media(max-width:720px){.date-picker-btn span{display:inline}.hero{margin-bottom:16px}.content{overflow-x:hidden}.table-wrap{max-width:100vw}}
+@media(max-width:720px){
+  .table-wrap{overflow:visible;max-height:none}
+  .table-wrap table,.table-wrap tbody,.table-wrap tr,.table-wrap td{display:block;width:100%}
+  .table-wrap thead{display:none}
+  .table-wrap tr{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px;background:#fff}
+  .table-wrap tr:last-child{margin-bottom:0}
+  .table-wrap td{border-bottom:0;padding:7px 0;display:flex;align-items:center;gap:10px}
+  .table-wrap td[data-label]::before{content:attr(data-label);flex:0 0 38%;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .table-wrap td:not([data-label]){justify-content:center;padding-top:10px}
+  .table-wrap td>*{flex:1;min-width:0}
+  .table-wrap td:not([data-label])>.btn{flex:0 0 auto}
+}
 
 /* Inline date picker */
 .date-picker-modal .modal-box{width:min(360px,calc(100vw - 28px));padding:18px}
@@ -245,7 +275,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
     <div class="panel panel-pad diary-entry-card diary-wide"><label><strong>Tomorrow's promise</strong><span>One clear thing I will do differently tomorrow.</span></label><textarea id="diaryTomorrow" class="textarea diary-text" placeholder="One clear promise to yourself for tomorrow..."></textarea></div>
   </div>
 
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><div><h3>✓ Daily self-check</h3><p class="tiny muted">These questions are part of your diary check-in. Edit them whenever your priorities change.</p></div><div><span class="badge" id="selfCount" style="margin-right:6px">Questions</span><button class="btn soft" onclick="addSelfCheck()">＋ Question</button></div></div><div class="diary-score-row"><div><span class="muted tiny">Today's check-in</span><strong id="diarySelfScore">0 / 5</strong></div><div class="progress" style="flex:1"><i id="diarySelfScoreBar"></i></div></div><div class="table-wrap"><table id="selfTable"></table></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><div><h3>✓ Daily self-check</h3><p class="tiny muted">These questions are part of your diary check-in. Edit them whenever your priorities change.</p></div><div><span class="badge" id="selfCount" style="margin-right:6px">Questions</span><button class="btn soft" onclick="addSelfCheck()">＋ Question</button></div></div><div class="diary-score-row"><div><span class="muted tiny">Today's check-in</span><strong id="diarySelfScore">0 / 5</strong></div><div class="progress" style="flex:1"><i id="diarySelfScoreBar"></i></div></div><div class="table-wrap desktop-only"><table id="selfTable"></table></div><div class="self-list mobile-only" id="selfListMobile"></div></div></div>
 </section>
 
 <section class="page" id="page-personal">
@@ -256,7 +286,8 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
     <div class="card blue"><div class="stat"><div><div class="label">Month completion</div><div class="num" id="monthScore">0%</div></div><div class="iconbox">◷</div></div><div class="progress"><i id="monthScoreBar"></i></div></div>
   </div>
   <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Today's Top 3 priorities</h3><span class="badge lav">Daily</span></div><div class="top3"><div class="top3-row"><span>1</span><input class="input priority" data-p="1" placeholder="Most important task"></div><div class="top3-row"><span>2</span><input class="input priority" data-p="2" placeholder="Second priority"></div><div class="top3-row"><span>3</span><input class="input priority" data-p="3" placeholder="Third priority"></div></div></div></div>
-  <div class="panel section calendar"><table id="habitTable"></table></div>
+  <div class="panel section calendar desktop-only"><table id="habitTable"></table></div>
+  <div class="panel section habit-list mobile-only" id="habitListMobile"></div>
   <p class="tiny muted" style="margin-top:10px">Add, edit or remove habits in <a href="#" onclick="go('settings');openSet('set-routine');return false" style="color:var(--green2)">Settings → Daily routine setup</a>.</p>
 </section>
 
@@ -523,6 +554,16 @@ function renderPersonal(){
  let body="<tbody>"+state.habits.map(h=>`<tr><td class="task-name"><b>${esc(h.name)}</b>${h.auto?'<br><span class="badge">Auto from log</span>':""}</td><td>${esc(h.target)}${h.auto?' h/day':''}</td>${dates.map(dt=>{let on=habitDone(h,dt),manual=!h.auto;return `<td class="tickcell" title="${manual?'Click to toggle':'Calculated from study logs'}" onclick="${manual?`toggleHabit('${h.id}','${dt}')`:''}"><div class="check tick ${on?'on':''} ${h.auto?'auto':''}">${on?'✓':''}</div></td>`}).join("")}</tr>`).join("")+"</tbody>";
  document.getElementById("habitTable").innerHTML=head+body;
  {const w=document.querySelector("#page-personal .calendar");if(w)w.scrollLeft=w.scrollWidth}
+ const listEl=document.getElementById("habitListMobile");
+ if(listEl){
+   listEl.innerHTML=state.habits.length?state.habits.map(h=>{
+     const on=habitDone(h,selectedDate),manual=!h.auto;
+     return `<div class="habit-row ${on?'on':''} ${h.auto?'auto':''}" ${manual?`onclick="toggleHabit('${h.id}','${selectedDate}')"`:''}>
+       <div class="hr-name"><b>${esc(h.name)}</b>${h.auto?'<span class="badge" style="margin-top:4px">Auto from log</span>':`<span class="tiny muted">Target: ${esc(h.target)}</span>`}</div>
+       <div class="hr-status">${h.auto?(on?'Done':'Pending'):(on?'✓ Done':'Mark done')}</div>
+     </div>`;
+   }).join(""):'<div class="empty">No habits yet. Add some in Settings → Daily routine setup.</div>';
+ }
 }
 window.toggleHabit=(id,date)=>{const d=ensureDay(date);d.habits[id]=!d.habits[id];save();renderAll()};
 window.setSelf=(i,v)=>{ensureDay(selectedDate).self[i]=v;save();renderAll()};
@@ -911,6 +952,21 @@ function renderSelfCheckManager(){
    </select></td>
    <td><button class="btn danger" onclick="deleteSelfCheck(${i})">Delete</button></td>
  </tr>`).join("")+`</tbody>`;
+ const listEl=document.getElementById("selfListMobile");
+ if(listEl){
+   listEl.innerHTML=`<div class="tiny muted" style="padding:0 2px 10px">Answer for ${esc(fmtDate(selectedDate))}</div>`+
+   state.selfChecks.map((q,i)=>`<div class="self-card">
+     <input class="input" value="${esc(q)}" onchange="editSelfCheck(${i},this.value)">
+     <div class="self-card-row">
+       <select class="select" onchange="setSelf(${i},this.value)">
+         <option value="">— No answer —</option>
+         <option value="Y" ${d.self[i]==="Y"?"selected":""}>Yes</option>
+         <option value="N" ${d.self[i]==="N"?"selected":""}>No</option>
+       </select>
+       <button class="btn danger" onclick="deleteSelfCheck(${i})">Delete</button>
+     </div>
+   </div>`).join("");
+ }
 }
 window.addSelfCheck=()=>{
  state.selfChecks.push("New self-check question");
@@ -1193,7 +1249,30 @@ function renderHeatDetail(iso){
 }
 window.heatPick=iso=>{window._heatSel=iso;document.querySelectorAll('.gh-cell.sel').forEach(e=>e.classList.remove('sel'));const b=document.querySelector(`.gh-cell[data-iso="${iso}"]`);if(b)b.classList.add('sel');renderHeatDetail(iso)};
 window.heatOpen=iso=>{selectedDate=iso;go('personal');renderPersonal();renderDiary()};
-function renderAll(){ensureSectionSubsections();renderNav();renderBuiltinSubsections();renderSectionSettings();renderDashboard();renderPersonal();renderDiary();renderAcademics();renderPlacements();renderSSC();renderCustom();renderRecurring();renderTargetSettings();renderHabitManager();renderSelfCheckManager();renderToday();renderMilestones();renderAnalytics();renderHeatmap();document.getElementById("liveDate").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+function renderAll(){ensureSectionSubsections();renderNav();renderBuiltinSubsections();renderSectionSettings();renderDashboard();renderPersonal();renderDiary();renderAcademics();renderPlacements();renderSSC();renderCustom();renderRecurring();renderTargetSettings();renderHabitManager();renderSelfCheckManager();renderToday();renderMilestones();renderAnalytics();renderHeatmap();document.getElementById("liveDate").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});applyResponsiveTables()}
+// Makes every .table-wrap table collapse into labeled stacked cards on narrow screens,
+// by copying each column's header text onto a data-label attribute on its cells.
+function applyResponsiveTables(){
+ document.querySelectorAll(".table-wrap table").forEach(t=>{
+   const heads=[...t.querySelectorAll("thead th")].map(th=>th.textContent.trim());
+   if(!heads.length)return;
+   t.querySelectorAll("tbody tr").forEach(tr=>{
+     [...tr.children].forEach((td,i)=>{if(heads[i])td.setAttribute("data-label",heads[i])});
+   });
+ });
+}
+// Catches tables rendered outside the main renderAll() pass (e.g. subsection detail
+// pages, completed-tasks view) so the mobile card layout always applies, not just
+// right after renderAll() runs.
+(function watchTables(){
+  let pending=false;
+  const mo=new MutationObserver(()=>{
+    if(pending)return;
+    pending=true;
+    requestAnimationFrame(()=>{pending=false;applyResponsiveTables()});
+  });
+  mo.observe(document.body,{childList:true,subtree:true});
+})();
 function go(page){
   const target=document.getElementById("page-"+page);
   if(!target) page="today";
