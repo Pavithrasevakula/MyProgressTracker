@@ -967,8 +967,8 @@ function renderSelfCheckManager(){
        <div class="hr-name"><b>${esc(q)}</b></div>
        <div class="hr-status">${LBL[ans]}</div>
        <div class="row-menu">
-         <button type="button" class="icon-btn" title="Manage question" onclick="event.stopPropagation();toggleRowMenu(event,${i})">⋮</button>
-         <div class="row-menu-pop" id="selfMenu${i}">
+         <button type="button" class="icon-btn" title="Manage question" onclick="event.stopPropagation();toggleRowMenu(this)">⋮</button>
+         <div class="row-menu-pop">
            <button type="button" onclick="event.stopPropagation();closeRowMenus();promptEditSelfCheck(${i})">✎ Edit question</button>
            <button type="button" class="danger" onclick="event.stopPropagation();closeRowMenus();deleteSelfCheck(${i})">🗑 Delete question</button>
          </div>
@@ -983,14 +983,15 @@ window.cycleSelf=(i)=>{
  const next=cur===""?"Y":cur==="Y"?"N":"";
  setSelf(i,next);
 };
-window.closeRowMenus=()=>{document.querySelectorAll(".row-menu-pop.show").forEach(m=>m.classList.remove("show"))};
-window.toggleRowMenu=(e,i)=>{
- const el=document.getElementById("selfMenu"+i);
- const open=el&&el.classList.contains("show");
+window.closeRowMenus=(except)=>{document.querySelectorAll(".row-menu-pop.show").forEach(m=>{if(m!==except)m.classList.remove("show")})};
+window.toggleRowMenu=(btn)=>{
+ const pop=btn.closest(".row-menu")?.querySelector(".row-menu-pop");
+ if(!pop)return;
+ const open=pop.classList.contains("show");
  closeRowMenus();
- if(el&&!open)el.classList.add("show");
+ if(!open)pop.classList.add("show");
 };
-document.addEventListener("click",closeRowMenus);
+document.addEventListener("click",()=>closeRowMenus());
 window.addSelfCheck=()=>{
  state.selfChecks.push("New self-check question");
  save();renderAll();toast("Self-check question added");
@@ -1287,8 +1288,31 @@ function applyResponsiveTables(){
    if(!heads.length)return;
    t.querySelectorAll("tbody tr").forEach(tr=>{
      [...tr.children].forEach((td,i)=>{if(heads[i])td.setAttribute("data-label",heads[i])});
+     collapseActionCell(tr);
    });
  });
+}
+// Turns a trailing action cell that contains only a single Delete button into a
+// compact "⋮" menu (same pattern as the self-check rows), so action buttons stop
+// taking a full-width row of their own in the mobile card layout.
+function collapseActionCell(tr){
+ const last=tr.lastElementChild;
+ if(!last||last.dataset.menuified)return;
+ const onlyBtn=last.children.length===1&&last.firstElementChild?.tagName==="BUTTON";
+ if(!onlyBtn)return;
+ const btn=last.firstElementChild;
+ last.dataset.menuified="1";
+ const label=btn.textContent.trim()||"Delete";
+ const clone=btn.cloneNode(true);
+ clone.className="danger";
+ clone.textContent="🗑 "+label;
+ last.classList.add("has-row-menu");
+ last.insertAdjacentHTML("beforeend",`<div class="row-menu mobile-only">
+   <button type="button" class="icon-btn" title="Manage row" onclick="event.stopPropagation();toggleRowMenu(this)">⋮</button>
+   <div class="row-menu-pop"></div>
+ </div>`);
+ last.querySelector(".row-menu-pop").appendChild(clone);
+ btn.classList.add("desktop-only");
 }
 // Catches tables rendered outside the main renderAll() pass (e.g. subsection detail
 // pages, completed-tasks view) so the mobile card layout always applies, not just
