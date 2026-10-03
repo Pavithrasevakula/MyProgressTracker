@@ -56,7 +56,10 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:
 .habit-row.auto{cursor:default}
 .self-list{display:grid;gap:10px}
 .self-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
-.self-card .input{margin-bottom:10px}
+.self-card-q{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.self-card-q span{font-size:14px;line-height:1.45;word-break:break-word}
+.icon-btn{border:0;background:transparent;color:var(--muted);font-size:15px;padding:2px 4px;flex-shrink:0;border-radius:7px}
+.icon-btn:hover{background:var(--mint);color:var(--green2)}
 .self-card-row{display:flex;gap:8px;align-items:center}
 .self-card-row .select{flex:1;min-width:0}
 .self-card-row .btn{flex-shrink:0}
@@ -956,7 +959,7 @@ function renderSelfCheckManager(){
  if(listEl){
    listEl.innerHTML=`<div class="tiny muted" style="padding:0 2px 10px">Answer for ${esc(fmtDate(selectedDate))}</div>`+
    state.selfChecks.map((q,i)=>`<div class="self-card">
-     <input class="input" value="${esc(q)}" onchange="editSelfCheck(${i},this.value)">
+     <div class="self-card-q"><span>${esc(q)}</span><button type="button" class="icon-btn" title="Edit question" onclick="promptEditSelfCheck(${i})">✎</button></div>
      <div class="self-card-row">
        <select class="select" onchange="setSelf(${i},this.value)">
          <option value="">— No answer —</option>
@@ -981,6 +984,12 @@ window.editSelfCheck=(i,v)=>{
  if(!state.selfChecks[i])return;
  state.selfChecks[i]=v;
  save();renderAll();
+};
+window.promptEditSelfCheck=(i)=>{
+ const cur=state.selfChecks[i];
+ if(cur===undefined)return;
+ const v=prompt("Edit self-check question:",cur);
+ if(v!==null&&v.trim())editSelfCheck(i,v.trim());
 };
 window.deleteSelfCheck=(i)=>{
  if(state.selfChecks.length<=1){toast("Keep at least one self-check question");return}
