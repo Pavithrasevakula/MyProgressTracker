@@ -195,6 +195,21 @@ html[data-theme="dark"]{--bg:#17211c;--surface:#202d26;--surface2:#293930;--ink:
 @media(max-width:1000px){.sidebar{width:232px}.topbar{padding:0 22px}.content{padding:26px 22px 40px}}
 @media(max-width:720px){.sidebar{width:270px}.topbar{padding:0 14px}.content{padding:22px 14px 34px}.hero h2{font-size:25px}.hero{gap:14px}.top-actions #exportBtn,.command-trigger{display:none}.top-actions .btn{padding:8px 11px}.cards{gap:10px}.card{padding:14px}.panel-pad{padding:15px}}
 @media(max-width:420px){.content{padding:18px 11px 28px}.hero h2{font-size:23px}.topbar h1{font-size:16px}.mission-banner{padding:15px}.mission-metric b{font-size:22px}}
+
+/* Calm workspace theme and focused Today view */
+:root{--bg:#f7f4ee;--surface:#fffdf9;--surface2:#f0ece4;--ink:#25262b;--muted:#74716b;--line:#e5dfd5;--green:#b8664f;--green2:#8f4438;--mint:#f4dfd5;--sage:#f1e8df;--shadow:0 10px 28px rgba(61,48,36,.07)}
+body{background:var(--bg);color:var(--ink)}
+.sidebar,.sidebar-bottom{background:#fbfaf7}.nav{gap:4px}.nav button{padding:10px 12px;border-radius:9px;color:#68645e}.nav button.active,.nav button:hover{background:var(--mint);color:var(--green2)}
+.topbar{background:rgba(255,253,249,.92);border-bottom-color:var(--line)}.content{max-width:1250px;padding:34px 42px 56px}.btn{background:var(--surface);border-radius:9px}.btn.primary{background:var(--green2)}.btn.soft{background:var(--mint);color:var(--green2)}
+.card,.panel{background:var(--surface);border-color:var(--line);box-shadow:var(--shadow)}.mission-banner{background:linear-gradient(135deg,#f5e2d8,#f3eee5);border-color:#e7cec1}.progress>i{background:var(--green)}
+#page-today .hero{margin-bottom:28px}#page-today .hero h2{font-size:34px}#page-today .hero p{font-size:14px}
+#page-today #dashboardCards,#page-today #todayAlertsSection,#page-today #todayChecklistPanel{display:none}
+#page-today .mission-banner{max-width:420px;padding:15px;margin-bottom:24px}.mission-metrics{gap:22px}.mission-metric b{font-size:25px}
+#page-today .grid.two:first-of-type{grid-template-columns:1fr;max-width:760px}
+#page-today .grid.two:first-of-type .panel:nth-child(2){display:none}
+#page-today .section:has(#todayPlan){max-width:760px;margin-top:16px}
+#page-today .section:has(#todayPlan) .section-head h3{font-size:17px}
+@media(max-width:720px){.content{padding:24px 16px 38px}#page-today .hero h2{font-size:29px}#page-today .mission-banner{max-width:none}.topbar{padding:0 16px}}
 </style>
 </head>
 <body>
@@ -273,13 +288,13 @@ html[data-theme="dark"]{--bg:#17211c;--surface:#202d26;--surface2:#293930;--ink:
 
   <div class="grid cards section" id="dashboardCards"></div>
 
-  <div class="grid two section">
+  <div class="grid two section" id="todayTopSection">
     <div class="panel panel-pad">
       <div class="section-head"><h3> Today's Top 3</h3><span class="tiny muted">Type to edit</span></div>
       <div id="todayTop3"></div>
     </div>
     <div class="panel panel-pad">
-      <div class="section-head"><h3>⏱ Focus Session</h3><span class="badge">Deep work</span></div>
+      <div class="section-head"><h3>Focus Session</h3><span class="badge">Deep work</span></div>
       <div class="focus-box">
         <div class="timer-ring" id="timerRing"><div class="timer-text" id="timerText">50:00</div></div>
         <div>
@@ -292,7 +307,7 @@ html[data-theme="dark"]{--bg:#17211c;--surface:#202d26;--surface2:#293930;--ink:
     </div>
   </div>
 
-  <div class="grid two section">
+  <div class="grid two section" id="todayAlertsSection">
     <div class="panel panel-pad">
       <div class="section-head"><h3> Deadline Radar</h3><button class="btn" onclick="go('academics')">Open →</button></div>
       <div class="alert-list" id="deadlineRadar"></div>
@@ -303,7 +318,7 @@ html[data-theme="dark"]{--bg:#17211c;--surface:#202d26;--surface2:#293930;--ink:
     </div>
   </div>
 
-  <div class="panel panel-pad section">
+  <div class="panel panel-pad section" id="todayChecklistPanel">
     <div class="section-head"><h3> Today's Checklist</h3><button class="btn" onclick="go('personal')">Full checklist →</button></div>
     <div id="todayChecklist"></div>
   </div>
