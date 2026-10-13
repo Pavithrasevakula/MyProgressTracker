@@ -202,14 +202,14 @@ function ensureCustomGroups(){
     state.customSections=[];
     save();
   }
-  state.customGroups.forEach((g,gi)=>{g.id??='g'+Date.now()+gi;g.name??='Section';g.subsections??=[];g.subsections.forEach((sub,si)=>{sub.id??='s'+Date.now()+gi+'_'+si;sub.name??='Subsection';sub.tasks??=[]})});
+  state.customGroups.forEach((g,gi)=>{g.id??='g'+Date.now()+gi;g.name??='Section';g.subsections??=[];g.subsections.forEach((sub,si)=>{sub.id??='s'+Date.now()+gi+'_'+si;sub.name??='Subsection';sub.tasks??=[];sub.tasks.forEach(t=>{t.priority=["high","medium","low"].includes(t.priority)?t.priority:"medium"})})});
   if(state.selectedCustomGroup==null && state.customGroups.length) state.selectedCustomGroup=0;
   if(state.selectedCustomSub==null && state.customGroups.length && state.customGroups[0].subsections.length) state.selectedCustomSub=0;
 }
 
 function ensureSectionSubsections(){state.secMeta??={};state.deletedSecs??=[];state.pageMeta??={};state.completed??=[];state.hiddenPages??=[];
   state.builtinSubsections??={life:[],study:[],track:[]};
-  ['plan','diary','life','study','track'].forEach(k=>{if(!Array.isArray(state.builtinSubsections[k]))state.builtinSubsections[k]=[];});
+  ['plan','diary','life','study','track'].forEach(k=>{if(!Array.isArray(state.builtinSubsections[k]))state.builtinSubsections[k]=[];state.builtinSubsections[k].forEach(sub=>{sub.tasks??=[];sub.tasks.forEach(t=>{t.priority=["high","medium","low"].includes(t.priority)?t.priority:"medium"})})});
   state.builtinSubsections.study??=[];
   applySec();
 }
@@ -244,11 +244,11 @@ function renderBuiltinSubsectionPage(key,i){
   const destinations=[];
   Object.entries(state.builtinSubsections).forEach(([g,arr])=>arr.forEach((x,j)=>destinations.push({value:`builtin:${g}:${j}`,label:`${labels[g]} → ${x.name}`})));
   (state.customGroups||[]).forEach((g,gi)=>g.subsections.forEach((x,j)=>destinations.push({value:`custom:${gi}:${j}`,label:`${g.name} → ${x.name}`})));
-  root.innerHTML=`<div class="panel panel-pad"><div class="section-head"><div><b>${esc(labels[key])}</b><div class="tiny muted">Subsection</div></div><div><button class="btn" onclick="addTaskToBuiltin('${key}',${i})">＋ Task</button></div></div><div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr><td><div class="check ${t.done?'on':''}" onclick="toggleBuiltinTask('${key}',${i},${ti})">${t.done?'':''}</div></td><td><input class="input" value="${esc(t.name||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'name',this.value)"></td><td><input class="input" value="${esc(t.note||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'note',this.value)"></td><td><select class="select" onchange="moveBuiltinTask('${key}',${i},${ti},this.value)"><option value="">Keep here</option>${destinations.filter(d=>d.value!==`builtin:${key}:${i}`).map(d=>`<option value="${esc(d.value)}">${esc(d.label)}</option>`).join('')}</select></td><td><button class="btn danger" onclick="deleteBuiltinTask('${key}',${i},${ti})">Delete</button></td></tr>`).join('')}</tbody></table></div></div>`;
+  root.innerHTML=`<div class="panel panel-pad"><div class="section-head"><div><b>${esc(labels[key])}</b><div class="tiny muted">Subsection</div></div><div><button class="btn" onclick="addTaskToBuiltin('${key}',${i})">＋ Task</button></div></div><div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Priority</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr><td><div class="check ${t.done?'on':''}" onclick="toggleBuiltinTask('${key}',${i},${ti})">${t.done?'':''}</div></td><td><input class="input" value="${esc(t.name||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'name',this.value)"></td><td><select class="select priority-select priority-${t.priority}" aria-label="Priority for ${esc(t.name||'task')}" onchange="editBuiltinTask('${key}',${i},${ti},'priority',this.value)">${["high","medium","low"].map(v=>`<option value="${v}" ${t.priority===v?"selected":""}>${v[0].toUpperCase()+v.slice(1)}</option>`).join("")}</select></td><td><input class="input" value="${esc(t.note||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'note',this.value)"></td><td><select class="select" onchange="moveBuiltinTask('${key}',${i},${ti},this.value)"><option value="">Keep here</option>${destinations.filter(d=>d.value!==`builtin:${key}:${i}`).map(d=>`<option value="${esc(d.value)}">${esc(d.label)}</option>`).join('')}</select></td><td><button class="btn danger" onclick="deleteBuiltinTask('${key}',${i},${ti})">Delete</button></td></tr>`).join('')}</tbody></table></div></div>`;
 }
 window.renameBuiltinSubsection=(key,i)=>{const s=state.builtinSubsections?.[key]?.[i];if(!s)return;const n=prompt('Rename subsection:',s.name);if(n?.trim()){s.name=n.trim();save();renderBuiltinSubsections();renderBuiltinSubsectionPage(key,i);}};
 window.deleteBuiltinSubsection=(key,i)=>{const s=state.builtinSubsections?.[key]?.[i];if(!s)return;if(!confirm(`Delete "${s.name}" and its tasks?`))return;state.builtinSubsections[key].splice(i,1);state.selectedBuiltin=null;save();renderBuiltinSubsections();renderCustom();go('custom');};
-window.addTaskToBuiltin=(key,i)=>{state.builtinSubsections[key][i].tasks.push({id:'t'+Date.now(),name:'New task',note:'',done:false});save();renderBuiltinSubsectionPage(key,i);};
+window.addTaskToBuiltin=(key,i)=>{state.builtinSubsections[key][i].tasks.push({id:'t'+Date.now(),name:'New task',note:'',done:false,priority:'medium'});save();renderBuiltinSubsectionPage(key,i);};
 window.toggleBuiltinTask=(key,i,t)=>{state.builtinSubsections[key][i].tasks[t].done=!state.builtinSubsections[key][i].tasks[t].done;save();renderBuiltinSubsectionPage(key,i);};
 window.editBuiltinTask=(key,i,t,k,v)=>{state.builtinSubsections[key][i].tasks[t][k]=v;save();};
 window.deleteBuiltinTask=(key,i,t)=>{state.builtinSubsections[key][i].tasks.splice(t,1);save();renderBuiltinSubsectionPage(key,i);};
@@ -278,9 +278,10 @@ function renderSelectedSubsection(){
   document.getElementById('customPageSubtitle').textContent=(g.name||'Section')+'  •  '+sub.tasks.length+' task'+(sub.tasks.length===1?'':'s');
   root.innerHTML=`<div class="panel panel-pad">
     <div class="section-head"><div><b>${esc(g.name)}</b><div class="tiny muted">Subsection</div></div><div><button class="btn" onclick="addCustomTask(${gi},${si})">＋ Task</button></div></div>
-    <div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr>
+    <div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Priority</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr>
       <td><div class="check ${t.done?'on':''}" onclick="toggleCustom(${gi},${si},${ti})">${t.done?'':''}</div></td>
       <td><input class="input" value="${esc(t.name||'')}" onchange="editCustom(${gi},${si},${ti},'name',this.value)"></td>
+      <td><select class="select priority-select priority-${t.priority}" aria-label="Priority for ${esc(t.name||'task')}" onchange="editCustom(${gi},${si},${ti},'priority',this.value)">${["high","medium","low"].map(v=>`<option value="${v}" ${t.priority===v?"selected":""}>${v[0].toUpperCase()+v.slice(1)}</option>`).join("")}</select></td>
       <td><input class="input" value="${esc(t.note||'')}" onchange="editCustom(${gi},${si},${ti},'note',this.value)"></td>
       <td><select class="select" onchange="moveCustomTask(${gi},${si},${ti},this.value)"><option value="">Keep here</option>${[...Object.entries(state.builtinSubsections||{}).flatMap(([bk,arr])=>arr.map((ds,dsi)=>`<option value="builtin:${bk}:${dsi}">${esc(BLAB[bk])} → ${esc(ds.name)}</option>`)),...groups.flatMap((dg,dgi)=>dg.subsections.map((ds,dsi)=>(dgi===gi&&dsi===si)?'':`<option value="custom:${dgi}:${dsi}">${esc(dg.name)} → ${esc(ds.name)}</option>`))].join('')}</select></td>
       <td><button class="btn danger" onclick="delCustomTask(${gi},${si},${ti})">Delete</button></td>
@@ -331,7 +332,7 @@ window.renameSubsection=(gi,si)=>{const sub=state.customGroups?.[gi]?.subsection
 window.renameSubsectionInline=(gi,si,v)=>{const sub=state.customGroups?.[gi]?.subsections?.[si];if(!sub)return;sub.name=(v||'').trim()||'Subsection';save();renderCustomNav();if(Number(state.selectedCustomGroup)===gi&&Number(state.selectedCustomSub)===si)renderSelectedSubsection();};
 window.deleteSectionGroup=(gi)=>{if(!state.customGroups?.[gi])return;if(!confirm('Delete this section and all its subsections?'))return;state.customGroups.splice(gi,1);state.selectedCustomGroup=Math.max(0,Math.min(gi,state.customGroups.length-1));state.selectedCustomSub=0;save();renderCustom();if(state.customGroups.length)openSubsection(state.selectedCustomGroup,0);else go('dashboard');};
 window.deleteSubsection=(gi,si)=>{const g=state.customGroups?.[gi];if(!g)return;if(!confirm('Delete this subsection and its tasks?'))return;g.subsections.splice(si,1);if(state.selectedCustomGroup===gi)state.selectedCustomSub=Math.max(0,Math.min(si,g.subsections.length-1));save();renderCustom();if(g.subsections.length)openSubsection(gi,state.selectedCustomSub);else go('custom');};
-window.addCustomTask=(gi,si)=>{const sub=state.customGroups?.[gi]?.subsections?.[si];if(!sub)return;sub.tasks.push({name:'New task',note:'',done:false});save();renderSelectedSubsection();};
+window.addCustomTask=(gi,si)=>{const sub=state.customGroups?.[gi]?.subsections?.[si];if(!sub)return;sub.tasks.push({name:'New task',note:'',done:false,priority:'medium'});save();renderSelectedSubsection();};
 window.delCustomTask=(gi,si,ti)=>{state.customGroups[gi].subsections[si].tasks.splice(ti,1);save();renderSelectedSubsection();};
 window.toggleCustom=(gi,si,ti)=>{const t=state.customGroups[gi].subsections[si].tasks[ti];t.done=!t.done;save();renderSelectedSubsection();};
 window.editCustom=(gi,si,ti,k,v)=>{state.customGroups[gi].subsections[si].tasks[ti][k]=v;save();renderSelectedSubsection();};

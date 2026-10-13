@@ -237,6 +237,25 @@ html[data-theme="dark"]{--bg:#f5f6fa;--surface:#ffffff;--surface2:#eef0f6;--ink:
   .settings-card-grid .set-body{padding:0 14px 14px}
 }
 
+/* Settings and priority planning */
+.settings-card-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+.settings-card-grid details.set-acc{background:rgba(255,255,255,.86);box-shadow:0 8px 24px rgba(42,48,73,.05)}
+.settings-card-grid details.set-acc>summary{min-height:88px;align-content:center}
+.settings-card-grid details.set-acc[open]{grid-column:span 2}
+.settings-card-grid details#set-priorities[open]{grid-column:span 1}
+.priority-guide{display:grid;gap:8px}
+.priority-guide>div{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);font-size:12px}
+.priority-guide b{font-weight:600;color:var(--muted)}
+.settings-card-grid .set-body{font-size:13px}
+@media(max-width:900px){
+  .settings-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .settings-card-grid details.set-acc[open]{grid-column:span 2}
+}
+@media(max-width:760px){
+  .settings-card-grid{grid-template-columns:1fr}
+  .settings-card-grid details.set-acc[open],.settings-card-grid details#set-priorities[open]{grid-column:span 1}
+}
+
 /* Refined visual system */
 body{background:linear-gradient(135deg,#f5f6fa 0%,#f8f9fc 52%,#eef1f8 100%);background-attachment:fixed}
 .sidebar{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);box-shadow:8px 0 28px rgba(42,48,73,.04)}

@@ -90,7 +90,7 @@
 
   <div class="grid two section" id="todayTopSection">
     <div class="panel panel-pad">
-      <div class="section-head"><h3> Today's Top 3</h3><span class="tiny muted">Type to edit</span></div>
+      <div class="section-head"><h3>Today's priorities</h3><span class="tiny muted">Choose up to three outcomes</span></div>
       <div id="todayTop3"></div>
     </div>
     <div class="panel panel-pad">
@@ -124,7 +124,7 @@
   </div>
 
   <div class="panel panel-pad section">
-    <div class="section-head"><div><h3>Today's plan</h3><span class="tiny muted">Tasks created from your priorities and quick planning</span></div><button class="btn soft" onclick="openDayPlan()">Adjust plan</button></div>
+    <div class="section-head"><div><h3>Priority plan</h3><span class="tiny muted">A realistic plan built from your most important work</span></div><button class="btn soft" onclick="openDayPlan()">Adjust plan</button></div>
     <div id="todayPlan"></div>
   </div>
 
@@ -240,14 +240,14 @@
 </section>
 
 <section class="page" id="page-settings">
-  <div class="hero"><div><h2>Settings</h2><p>Keep your workspace calm, personal, and in sync.</p></div></div>
+  <div class="hero"><div><h2>Workspace settings</h2><p>Shape your planner once, then get back to making progress.</p></div></div>
   <div class="set-stack settings-card-grid">
-    <details class="set-acc" id="set-sections"><summary> Advanced navigation<span class="set-sub">manage sections and pages</span></summary><div class="set-body">
+    <details class="set-acc" id="set-sections"><summary>Workspace layout<span class="set-sub">Organize sections and pages</span></summary><div class="set-body">
       <div class="sec-bar" style="margin-top:0"><p class="tiny muted" style="margin:0;flex:1 1 240px">Open a section to rename or move its pages, and to add, rename or delete subsections. Press “Move to Completed” when something is finished — nothing moves by itself.</p><button class="btn primary" onclick="sAddSec()">＋ New Section</button></div>
       <div id="sectionSettingsManager" style="margin-top:12px"></div>
     </div></details>
-    <details class="set-acc" id="set-done"><summary> Completed <span class="badge" id="doneCount">0</span><span class="set-sub">finished pages &amp; subsections</span></summary><div class="set-body"><div id="completedManager"></div></div></details>
-    <details class="set-acc" id="set-targets"><summary> Daily targets<span class="set-sub">hours per day</span></summary><div class="set-body">
+    <details class="set-acc" id="set-done"><summary>Archived items <span class="badge" id="doneCount">0</span><span class="set-sub">Finished pages and subsections</span></summary><div class="set-body"><div id="completedManager"></div></div></details>
+    <details class="set-acc" id="set-targets"><summary>Daily goals<span class="set-sub">Study hours and reminders</span></summary><div class="set-body">
       <p class="muted" style="margin-top:0">Changing these updates Today, Daily Routine and Analytics automatically.</p>
       <div class="targets-grid">
         <label> Academics (h)<input class="input target-setting" id="targetAcademics" type="number" min="0" step="0.25"></label>
@@ -259,7 +259,7 @@
       </div>
       <div style="text-align:right;margin-top:12px"><button class="btn primary" onclick="saveTargets()">Save targets</button></div>
     </div></details>
-    <details class="set-acc" id="set-routine"><summary> Daily routine setup<span class="set-sub">habits &amp; recurring tasks</span></summary><div class="set-body">
+    <details class="set-acc" id="set-routine"><summary>Routines and recurring tasks<span class="set-sub">Habits you want to repeat</span></summary><div class="set-body">
       <div class="section-head"><h3 style="font-size:14px">Habits &amp; tasks</h3><button class="btn soft" onclick="addHabit()">＋ Habit / Task</button></div>
       <p class="tiny muted">Study habits are tracked automatically from your logs; manual habits can be ticked directly.</p>
       <div class="table-wrap"><table id="habitManageTable"></table></div>
@@ -267,7 +267,12 @@
       <p class="tiny muted">Repeating tasks in one place. Switch them off without deleting.</p>
       <div class="table-wrap"><table id="recurringTable"></table></div>
     </div></details>
-    <details class="set-acc" id="set-data"><summary> Account & Data<span class="set-sub">account info, backup, export</span></summary><div class="set-body">
+    <details class="set-acc" id="set-priorities"><summary>Priority planning<span class="set-sub">Make important work visible</span></summary><div class="set-body">
+      <p class="muted" style="margin-top:0">Every planned task has a priority. Use High for work that moves today forward, Medium for important progress, and Low for work that can wait.</p>
+      <div class="priority-guide"><div><span class="priority-badge high">High</span><b> Must move today</b></div><div><span class="priority-badge medium">Medium</span><b> Important progress</b></div><div><span class="priority-badge low">Low</span><b> Flexible work</b></div></div>
+      <div style="text-align:right;margin-top:14px"><button class="btn primary" onclick="go('today');openDayPlan()">Open priority planner</button></div>
+    </div></details>
+    <details class="set-acc" id="set-data"><summary>Account and data<span class="set-sub">Sync, backup, and recovery</span></summary><div class="set-body">
       <h3 style="font-size:14px;margin:0 0 4px">Your Account</h3><p class="muted" style="margin-top:0">Your data is automatically synced to the cloud and available on all devices.</p>
       <button class="btn primary" onclick="openModal('syncModal')">View Account Info</button>
       
