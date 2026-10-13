@@ -247,6 +247,27 @@ html[data-theme="dark"]{--bg:#f5f6fa;--surface:#ffffff;--surface2:#eef0f6;--ink:
   .settings-card-grid details.set-acc>summary{min-height:64px;padding:13px 14px}
   .settings-card-grid .set-body{padding:0 14px 14px}
 }
+
+/* Refined visual system */
+body{background:linear-gradient(135deg,#f5f6fa 0%,#f8f9fc 52%,#eef1f8 100%);background-attachment:fixed}
+.sidebar{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);box-shadow:8px 0 28px rgba(42,48,73,.04)}
+.brand{padding-bottom:18px}.brand b{letter-spacing:-.02em}
+.nav button{transition:background .2s ease,color .2s ease,transform .2s ease}.nav button:hover{transform:translateX(2px)}
+.topbar{box-shadow:0 1px 0 rgba(225,228,236,.65),0 8px 24px rgba(42,48,73,.04)}
+.content{animation:contentIn .35s ease both}
+.hero h2{letter-spacing:-.045em}.hero p{max-width:560px}
+.mission-banner{box-shadow:0 14px 34px rgba(79,93,147,.1);position:relative;overflow:hidden}
+.mission-banner:after{content:"";position:absolute;width:170px;height:170px;right:-70px;top:-95px;border-radius:50%;background:rgba(100,114,168,.1)}
+.card,.panel{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.card:hover,.panel:hover{border-color:#cfd5e8;box-shadow:0 16px 38px rgba(41,47,67,.1)}
+.panel-pad{padding:16px}.section{margin-top:14px}
+.btn{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.btn:hover{transform:translateY(-1px)}
+.profile-trigger{transition:background .2s ease,border-color .2s ease}
+.diary-intro{background:linear-gradient(135deg,#fff,#f2f4fb);border-color:#dfe3ef;box-shadow:0 12px 30px rgba(41,47,67,.06)}
+.diary-greeting{color:var(--green2)}
+.diary-entry-card{box-shadow:0 8px 22px rgba(41,47,67,.05)}
+@keyframes contentIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -270,7 +291,6 @@ html[data-theme="dark"]{--bg:#f5f6fa;--surface:#ffffff;--surface2:#eef0f6;--ink:
   <div class="nav">
     <div id="navBuiltin" style="display:contents"></div>
     <div id="customNavItems" hidden></div>
-    <button data-page="settings">Settings</button>
   </div>
   <div class="sidebar-bottom">
     <div class="sync-pill" id="syncStatus" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#edf6f0,#e8f1eb);border-color:#c8ddd0">
@@ -816,12 +836,29 @@ async function loadCloudData() {
       const cloudData = docSnap.data();
       
       if (cloudData.state) {
+        const completedLocally = window.state.profile?.onboardingComplete === true;
+        const cloudHasCompletion = cloudData.state.profile?.onboardingComplete === true;
         // Merge cloud data with current state
         Object.assign(window.state, cloudData.state);
+        window.state.profile ??= {};
+        const hasPlannerActivity = Object.keys(window.state.daily || {}).length > 0
+          || (window.state.tasks || []).length > 0
+          || (window.state.goals || []).length > 0
+          || (window.state.academics?.logs || []).length > 0
+          || (window.state.placements?.logs || []).length > 0
+          || (window.state.ssc?.logs || []).length > 0;
+        if (completedLocally || window.state.profile.onboardingComplete === true || hasPlannerActivity) {
+          window.state.profile.onboardingComplete = true;
+        } else {
+          window.state.profile.onboardingComplete = false;
+        }
         
         // Save to localStorage
         localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
         localStorage.setItem('lastCloudSync', cloudData.updatedAt || new Date().toISOString());
+        if (window.state.profile.onboardingComplete === true && !cloudHasCompletion) {
+          await saveToCloud();
+        }
         
         console.log(' Data loaded from cloud');
         
