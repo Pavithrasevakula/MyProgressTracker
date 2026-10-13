@@ -16,6 +16,7 @@ const db = getFirestore(window.firebaseApp);
 window.currentUser = null;
 window.userDocRef = null;
 window.syncUnsubscribe = null;
+window.localChangesPending = false;
 
 console.log(' Auth manager initialized');
 
@@ -178,6 +179,7 @@ async function saveToCloud() {
     }, { merge: true });
     
     localStorage.setItem('lastCloudSync', timestamp);
+    window.localChangesPending = false;
     updateSyncStatus('● Cloud synced');
     
     console.log(' Data saved to cloud');
@@ -210,6 +212,13 @@ function setupRealtimeSync() {
       
       // Only update if cloud data is newer
       if (cloudTime > localTime && cloudData.state) {
+        if (window.localChangesPending) {
+          const useCloudVersion = confirm('This workspace changed on another device.\n\nChoose OK to use the cloud version, or Cancel to keep this device and upload your changes.');
+          if (!useCloudVersion) {
+            saveToCloud();
+            return;
+          }
+        }
         console.log(' Syncing data from another device...');
         
         Object.assign(window.state, cloudData.state);
@@ -287,6 +296,7 @@ window.saveLocal = function() {
     }
   }
   
+  window.localChangesPending = true;
   // Debounced cloud save (wait 1 second after last change)
   clearTimeout(cloudSaveTimer);
   cloudSaveTimer = setTimeout(saveToCloud, 1000);

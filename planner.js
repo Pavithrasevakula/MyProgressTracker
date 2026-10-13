@@ -3,13 +3,15 @@ const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;
 const dateLabel=value=>value?new Date(`${value}T12:00:00`).toLocaleDateString(undefined,{month:"short",day:"numeric"}):"No deadline";
 const uid=prefix=>`${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
 const priorityRank={high:0,medium:1,low:2};
+const CURRENT_SCHEMA_VERSION=2;
 const DEFAULT_HABITS=[{id:"plan",name:"Plan the day",target:"5 minutes"},{id:"review",name:"Review what I learned",target:"10 minutes"},{id:"breaks",name:"Take proper breaks",target:"During study"}];
-const SEED={version:2,profile:{name:"",onboardingComplete:true},subjects:[],tasks:[],habits:DEFAULT_HABITS,daily:{},timeLogs:[],settings:{cloudSync:true,weeklyTarget:12}};
+const SEED={version:2,profile:{name:"",onboardingComplete:true},subjects:[],tasks:[],habits:DEFAULT_HABITS,daily:{},timeLogs:[],settings:{cloudSync:true,weeklyTarget:12,remindersEnabled:false,reminderTime:"18:00"}};
 
 function loadLocal(){try{const raw=localStorage.getItem("dailyPlannerState");return raw?JSON.parse(raw):structuredClone(SEED)}catch(error){console.error("Could not load local planner state",error);return structuredClone(SEED)}}
 let state=window.state=loadLocal();
 function migrateState(){
-  const needsLegacyMigration=state.migrationVersion!==2;
+  const storedVersion=Number(state.migrationVersion||0);
+  const needsLegacyMigration=storedVersion<2;
   state.profile??={};state.profile.onboardingComplete=true;state.profile.name??="";
   state.settings={...SEED.settings,...(state.settings||{}),cloudSync:true};
   state.daily??={};state.timeLogs=Array.isArray(state.timeLogs)?state.timeLogs:[];
@@ -23,15 +25,15 @@ function migrateState(){
   const subjectIdByName=name=>{const match=state.subjects.find(s=>s.name.toLowerCase()===String(name||"").toLowerCase());return match?.id||""};
   const oldTasks=Array.isArray(state.tasks)?state.tasks:[];const assignments=Array.isArray(academics.assignments)?academics.assignments:[];
   const placementTasks=needsLegacyMigration?[...(placements.topics||[]).map(topic=>({id:uid("task"),title:topic.name||"Career topic",subjectId:subjectIdByName("Career & placements"),due:topic.targetDate||"",priority:"medium",status:topic.status==="Done"?"done":"open",minutes:45,notes:topic.notes||""})),...(placements.applications||[]).map(application=>({id:uid("task"),title:application.company||application.name||"Placement application",subjectId:subjectIdByName("Career & placements"),due:application.deadline||"",priority:"high",status:"open",minutes:30,notes:application.notes||""}))]:[];
-  state.tasks=[...oldTasks.map(t=>({...t,id:t.id||uid("task"),title:t.title||t.name||"Untitled task",subjectId:t.subjectId||subjectIdByName(t.subject),due:t.due||t.date||"",priority:["high","medium","low"].includes(String(t.priority||"").toLowerCase())?String(t.priority).toLowerCase():"medium",status:t.status==="done"||t.done?"done":"open",minutes:Number(t.minutes||30),notes:t.notes||t.note||""})),...(needsLegacyMigration?assignments.map(a=>({id:uid("task"),title:a.title||"Assignment",subjectId:subjectIdByName(a.subject),due:a.due||"",priority:String(a.priority||"medium").toLowerCase(),status:a.status==="Done"?"done":"open",minutes:45,notes:""})):[]),...placementTasks];
+  state.tasks=[...oldTasks.map(t=>({...t,id:t.id||uid("task"),title:t.title||t.name||"Untitled task",subjectId:t.subjectId||subjectIdByName(t.subject),due:t.due||t.date||"",priority:["high","medium","low"].includes(String(t.priority||"").toLowerCase())?String(t.priority).toLowerCase():"medium",status:t.status==="done"||t.done?"done":"open",minutes:Number(t.minutes||30),notes:t.notes||t.note||"",recurrence:t.recurrence||"none",subtasks:Array.isArray(t.subtasks)?t.subtasks.map(item=>typeof item==="string"?{id:uid("subtask"),title:item,done:false}:item):[]})),...(needsLegacyMigration?assignments.map(a=>({id:uid("task"),title:a.title||"Assignment",subjectId:subjectIdByName(a.subject),due:a.due||"",priority:String(a.priority||"medium").toLowerCase(),status:a.status==="Done"?"done":"open",minutes:45,notes:"",recurrence:"none",subtasks:[]})):[]),...placementTasks];
   const oldHabits=Array.isArray(state.habits)?state.habits:[];state.habits=(oldHabits.length?oldHabits:DEFAULT_HABITS).filter(h=>h.source!=="ssc"&&!/ssc|cgl/i.test(String(h.name||""))).map(h=>({id:h.id||uid("habit"),name:h.name||"Habit",target:h.target||"Daily",done:h.done||{}}));
-  delete state.ssc;delete state.placements;delete state.academics;delete state.customGroups;delete state.customSections;delete state.builtinSubsections;delete state.secMeta;delete state.pageMeta;delete state.deletedSecs;delete state.hiddenPages;delete state.completed;state.migrationVersion=2;
+  delete state.ssc;delete state.placements;delete state.academics;delete state.customGroups;delete state.customSections;delete state.builtinSubsections;delete state.secMeta;delete state.pageMeta;delete state.deletedSecs;delete state.hiddenPages;delete state.completed;state.migrationVersion=CURRENT_SCHEMA_VERSION;
 }
 window.renderTasks=renderTasks;
 migrateState();
 function saveLocal(){try{localStorage.setItem("dailyPlannerState",JSON.stringify(state))}catch(error){console.error("Could not save local planner state",error)}}
 window.saveLocal=saveLocal;
-function save(){saveLocal();window.saveLocal()}
+function save(){window.saveLocal()}
 function toast(message){const el=document.getElementById("toast");if(!el)return;el.textContent=message;el.classList.add("show");clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>el.classList.remove("show"),2600)}
 window.toast=toast;
 function openModal(id){const el=document.getElementById(id);if(el)el.classList.add("show")}
@@ -51,10 +53,16 @@ window.toggleProfileMenu=()=>{const el=document.getElementById("profileDropdown"
 window.closeProfileMenu=()=>{const el=document.getElementById("profileDropdown");if(el)el.hidden=true};
 document.addEventListener("click",event=>{if(!event.target.closest("#profileMenu"))window.closeProfileMenu()});
 function renderTasks(){
-  const root=document.getElementById("taskList"),filter=window._taskFilter||"all",subject=document.getElementById("taskSubjectFilter")?.value||"";
-  const items=state.tasks.filter(t=>(filter==="today"?t.due===todayISO():filter==="upcoming"?dueSoon(t):filter==="done"?t.status==="done":true)&&(!subject||t.subjectId===subject)).sort((a,b)=>(a.status==="done")-(b.status==="done")||priorityRank[a.priority]-priorityRank[b.priority]||String(a.due).localeCompare(String(b.due)));
-  if(root)root.innerHTML=items.length?items.map(task=>`<div class="task-row ${task.status==="done"?"completed":""}"><button class="check ${task.status==="done"?"done":""}" onclick="toggleTask('${task.id}')" aria-label="Toggle ${esc(task.title)}">${task.status==="done"?"✓":""}</button><div class="item-main"><strong>${esc(task.title)}</strong><small>${esc(subjectName(task.subjectId))} · ${dateLabel(task.due)} · ${task.minutes} min</small></div><span class="tag ${task.priority}">${task.priority}</span><div class="task-actions"><button class="icon-button" onclick="editTask('${task.id}')" aria-label="Edit task">✎</button><button class="icon-button" onclick="deleteTask('${task.id}')" aria-label="Delete task">×</button></div></div>`).join(""):`<div class="empty">No tasks match this view. Add one small next step to get started.</div>`;
+  const root=document.getElementById("taskList"),calendar=document.getElementById("taskCalendar"),filter=window._taskFilter||"all",subject=document.getElementById("taskSubjectFilter")?.value||"";
+  const matches=t=>(filter==="today"?t.due===todayISO():filter==="upcoming"?dueSoon(t):filter==="overdue"?t.status!=="done"&&t.due&&t.due<todayISO():filter==="done"?t.status==="done":true)&&(!subject||t.subjectId===subject);
+  const items=state.tasks.filter(matches).sort((a,b)=>(a.status==="done")-(b.status==="done")||priorityRank[a.priority]-priorityRank[b.priority]||String(a.due).localeCompare(String(b.due)));
+  if(window._taskView==="calendar"){root.hidden=true;calendar.hidden=false;renderTaskCalendar();return}root.hidden=false;calendar.hidden=true;
+  if(root)root.innerHTML=items.length?items.map(task=>taskListRow(task)).join(""):`<div class="empty">No tasks match this view. Add one small next step to get started.</div>`;
 }
+function taskListRow(task){const overdue=task.status!=="done"&&task.due&&task.due<todayISO();const checklist=task.subtasks?.length?`<div class="subtask-preview">${task.subtasks.map(item=>`<button class="subtask-line ${item.done?"done":""}" onclick="toggleSubtask('${task.id}','${item.id}')"><span class="check ${item.done?"done":""}">${item.done?"✓":""}</span>${esc(item.title)}</button>`).join("")}</div>`:"";return `<div class="task-row ${task.status==="done"?"completed":""} ${overdue?"overdue":""}"><button class="check ${task.status==="done"?"done":""}" onclick="toggleTask('${task.id}')" aria-label="Toggle ${esc(task.title)}">${task.status==="done"?"✓":""}</button><div class="item-main"><strong>${esc(task.title)}</strong><small>${esc(subjectName(task.subjectId))} · ${dateLabel(task.due)} · ${task.minutes} min${task.recurrence&&task.recurrence!=="none"?" · repeats "+task.recurrence:""}</small>${checklist}</div>${overdue?'<span class="tag overdue-tag">Overdue</span>':""}<span class="tag ${task.priority}">${task.priority}</span><div class="task-actions">${overdue?`<button class="text-button" onclick="carryOverTask('${task.id}')">Today</button><button class="text-button" onclick="editTask('${task.id}')">Reschedule</button>`:""}<button class="icon-button" onclick="editTask('${task.id}')" aria-label="Edit task">✎</button><button class="icon-button" onclick="deleteTask('${task.id}')" aria-label="Delete task">×</button></div></div>`}
+window.setTaskView=view=>{window._taskView=view;document.getElementById("listViewButton")?.classList.toggle("active",view==="list");document.getElementById("calendarViewButton")?.classList.toggle("active",view==="calendar");renderTasks()};
+function renderTaskCalendar(){const root=document.getElementById("taskCalendar");if(!root)return;const base=new Date(window._calendarMonth||new Date());base.setDate(1);const year=base.getFullYear(),month=base.getMonth(),days=new Date(year,month+1,0).getDate(),start=new Date(year,month,1).getDay();let html=`<div class="calendar-heading"><button class="icon-button" onclick="shiftTaskMonth(-1)">‹</button><strong>${base.toLocaleDateString(undefined,{month:"long",year:"numeric"})}</strong><button class="icon-button" onclick="shiftTaskMonth(1)">›</button></div><div class="calendar-grid">${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>`<b>${d}</b>`).join("")}`;for(let i=0;i<start;i++)html+="<span></span>";for(let day=1;day<=days;day++){const date=`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`,tasks=state.tasks.filter(t=>t.due===date);html+=`<div class="calendar-day ${date===todayISO()?"today":""}"><b>${day}</b>${tasks.slice(0,3).map(t=>`<button class="calendar-task ${t.status==="done"?"done":""}" onclick="editTask('${t.id}')">${esc(t.title)}</button>`).join("")}</div>`}root.innerHTML=html+"</div>"}
+window.shiftTaskMonth=offset=>{const date=new Date(window._calendarMonth||new Date());date.setMonth(date.getMonth()+offset);window._calendarMonth=date;renderTaskCalendar()};
 window.setTaskFilter=(filter,button)=>{window._taskFilter=filter;document.querySelectorAll("#taskFilters button").forEach(b=>b.classList.remove("active"));button?.classList.add("active");renderTasks()};
 function populateSubjectSelects(){const options=state.subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");["taskSubject","taskSubjectFilter"].forEach(id=>{const el=document.getElementById(id);if(!el)return;const current=el.value;el.innerHTML=(id==="taskSubjectFilter"?'<option value="">All subjects</option>':"<option value=''>General / no subject</option>")+options;el.value=current})}
 function renderToday(){
@@ -76,11 +84,14 @@ function loadJournal(){const date=document.getElementById("journalDate")?.value|
 window.loadJournal=loadJournal;
 function renderJournalHistory(){const root=document.getElementById("journalHistory"),entries=Object.entries(state.daily).filter(([,d])=>d.journal&&(d.journal.wins||d.journal.learn||d.journal.next)).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,8);root.innerHTML=entries.length?entries.map(([date,d])=>`<article class="journal-entry"><time>${dateLabel(date)}</time><p>${esc(d.journal.wins||d.journal.learn||d.journal.next)}</p></article>`).join(""):'<div class="empty">Your saved reflections will appear here.</div>'}
 window.saveJournal=()=>{const date=document.getElementById("journalDate").value||todayISO();state.daily[date]??={};state.daily[date].journal={wins:document.getElementById("journalWins").value,learn:document.getElementById("journalLearn").value,next:document.getElementById("journalNext").value};save();renderJournalHistory();toast("Journal entry saved")};
-window.toggleTask=id=>{const task=state.tasks.find(t=>t.id===id);if(!task)return;task.status=task.status==="done"?"open":"done";task.completedAt=task.status==="done"?new Date().toISOString():"";save();renderAll()};
+function nextDue(date,recurrence){const d=new Date(`${date||todayISO()}T12:00:00`);if(recurrence==="daily")d.setDate(d.getDate()+1);else if(recurrence==="weekly")d.setDate(d.getDate()+7);else if(recurrence==="monthly")d.setMonth(d.getMonth()+1);return d.toISOString().slice(0,10)}
+window.toggleTask=id=>{const task=state.tasks.find(t=>t.id===id);if(!task)return;if(task.status==="done"){task.status="open";task.completedAt=""}else{task.status="done";task.completedAt=new Date().toISOString();if(task.recurrence&&task.recurrence!=="none"&&!state.tasks.some(t=>t.parentId===task.id&&t.due===nextDue(task.due,task.recurrence))){state.tasks.push({...task,id:uid("task"),parentId:task.id,due:nextDue(task.due,task.recurrence),status:"open",completedAt:"",subtasks:(task.subtasks||[]).map(item=>({...item,id:uid("subtask"),done:false}))})}}save();renderAll()};
+window.toggleSubtask=(taskId,subtaskId)=>{const task=state.tasks.find(t=>t.id===taskId),item=task?.subtasks?.find(x=>x.id===subtaskId);if(!item)return;item.done=!item.done;save();renderAll()};
+window.carryOverTask=id=>{const task=state.tasks.find(t=>t.id===id);if(!task)return;task.due=todayISO();save();renderAll();toast("Task carried over to today")};
 window.deleteTask=id=>{if(!confirm("Delete this task?"))return;state.tasks=state.tasks.filter(t=>t.id!==id);save();renderAll();toast("Task deleted")};
 window.editTask=id=>{const task=state.tasks.find(t=>t.id===id);if(!task)return;openTaskModal(task)};
-window.openTaskModal=task=>{populateSubjectSelects();document.getElementById("taskForm").reset();document.getElementById("taskId").value=task?.id||"";document.getElementById("taskModalTitle").textContent=task?"Edit task":"Add a task";document.getElementById("taskTitle").value=task?.title||"";document.getElementById("taskSubject").value=task?.subjectId||"";document.getElementById("taskDue").value=task?.due||todayISO();document.getElementById("taskPriority").value=task?.priority||"medium";document.getElementById("taskMinutes").value=task?.minutes||30;document.getElementById("taskNotes").value=task?.notes||"";openModal("taskModal")};
-window.saveTask=event=>{event.preventDefault();const id=document.getElementById("taskId").value;const data={title:document.getElementById("taskTitle").value.trim(),subjectId:document.getElementById("taskSubject").value,due:document.getElementById("taskDue").value,priority:document.getElementById("taskPriority").value,minutes:Number(document.getElementById("taskMinutes").value)||30,notes:document.getElementById("taskNotes").value,status:"open"};if(id){const task=state.tasks.find(t=>t.id===id);Object.assign(task,data)}else state.tasks.push({id:uid("task"),...data});save();closeModal("taskModal");renderAll();toast(id?"Task updated":"Task added")};
+window.openTaskModal=task=>{populateSubjectSelects();document.getElementById("taskForm").reset();document.getElementById("taskId").value=task?.id||"";document.getElementById("taskModalTitle").textContent=task?"Edit task":"Add a task";document.getElementById("taskTitle").value=task?.title||"";document.getElementById("taskSubject").value=task?.subjectId||"";document.getElementById("taskDue").value=task?.due||todayISO();document.getElementById("taskPriority").value=task?.priority||"medium";document.getElementById("taskMinutes").value=task?.minutes||30;document.getElementById("taskRecurrence").value=task?.recurrence||"none";document.getElementById("taskSubtasks").value=(task?.subtasks||[]).map(item=>item.title).join("\n");document.getElementById("taskNotes").value=task?.notes||"";openModal("taskModal")};
+window.saveTask=event=>{event.preventDefault();const id=document.getElementById("taskId").value,old=id&&state.tasks.find(t=>t.id===id),subtasks=document.getElementById("taskSubtasks").value.split("\n").map(title=>title.trim()).filter(Boolean).map((title,index)=>({id:old?.subtasks?.[index]?.id||uid("subtask"),title,done:old?.subtasks?.[index]?.title===title?old.subtasks[index].done:false}));const data={title:document.getElementById("taskTitle").value.trim(),subjectId:document.getElementById("taskSubject").value,due:document.getElementById("taskDue").value,priority:document.getElementById("taskPriority").value,minutes:Number(document.getElementById("taskMinutes").value)||30,recurrence:document.getElementById("taskRecurrence").value,subtasks,notes:document.getElementById("taskNotes").value,status:old?.status||"open",completedAt:old?.completedAt||""};if(id){Object.assign(old,data)}else state.tasks.push({id:uid("task"),...data});save();closeModal("taskModal");renderAll();toast(id?"Task updated":"Task added")};
 window.openSubjectModal=subject=>{document.getElementById("subjectId").value=subject?.id||"";document.getElementById("subjectName").value=subject?.name||"";document.getElementById("subjectColor").value=subject?.color||"indigo";document.getElementById("subjectModalTitle").textContent=subject?"Edit subject":"Add a subject";document.getElementById("subjectSubmitButton").textContent=subject?"Save changes":"Add subject";openModal("subjectModal")};
 window.editSelectedSubject=()=>{const subject=state.subjects.find(x=>x.id===state.selectedSubject);if(subject)openSubjectModal(subject)};
 window.editSubject=id=>{const subject=state.subjects.find(x=>x.id===id);if(subject)openSubjectModal(subject)};
@@ -91,8 +102,69 @@ window.addHabit=()=>{const name=prompt("Habit name:");if(!name?.trim())return;st
 function renderSettings(){document.getElementById("weeklyTarget").value=state.settings.weeklyTarget||12;document.getElementById("profileNameInput").value=state.profile.name||"";const root=document.getElementById("habitSettings");root.innerHTML=state.habits.map(h=>`<div class="habit-setting"><input class="field" value="${esc(h.name)}" onchange="renameHabit('${h.id}',this.value)"><button class="icon-button" onclick="removeHabit('${h.id}')">×</button></div>`).join("")}
 window.renameHabit=(id,name)=>{const h=state.habits.find(x=>x.id===id);if(h){h.name=name.trim()||h.name;save();renderToday()}};window.removeHabit=id=>{state.habits=state.habits.filter(h=>h.id!==id);save();renderAll()};window.saveSettings=()=>{state.settings.weeklyTarget=Number(document.getElementById("weeklyTarget").value)||0;save();toast("Settings saved")};window.saveProfile=()=>{state.profile.name=document.getElementById("profileNameInput").value.trim();save();renderAll();toast("Profile updated")};
 window.exportJSON=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="myprogresstrack-backup.json";a.click();URL.revokeObjectURL(a.href)};
-window.importJSON=input=>{const file=input.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=event=>{try{const imported=JSON.parse(event.target.result);if(!imported||typeof imported!=="object"||!Array.isArray(imported.tasks)||!Array.isArray(imported.subjects))throw new Error("Invalid planner backup");if(!confirm("Restore this backup? Your current local workspace will be replaced."))return;state=window.state=imported;state.migrationVersion=undefined;migrateState();save();renderAll();toast("Backup restored")}catch(error){console.error("Could not restore backup",error);toast("That backup file is not valid")}};reader.readAsText(file);input.value=""};
+function isValidBackup(value){if(!value||typeof value!=="object"||Array.isArray(value)||!Array.isArray(value.tasks)||!Array.isArray(value.subjects)||!Array.isArray(value.habits)||typeof value.daily!=="object"||Array.isArray(value.daily)||typeof value.settings!=="object"||Array.isArray(value.settings))return false;return value.tasks.every(task=>task&&typeof task==="object"&&typeof task.title==="string"&&(!task.status||["open","done"].includes(task.status))&&(!task.priority||priorityRank[task.priority]!==undefined)&&(!task.subtasks||Array.isArray(task.subtasks)))&&value.subjects.every(subject=>subject&&typeof subject==="object"&&typeof subject.name==="string")};
+window.importJSON=input=>{const file=input.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=event=>{try{const imported=JSON.parse(event.target.result);if(!isValidBackup(imported))throw new Error("Invalid planner backup");if(!confirm("Restore this backup? Your current local workspace will be replaced."))return;state=window.state=imported;migrateState();save();renderAll();toast("Backup restored")}catch(error){console.error("Could not restore backup",error);toast("That backup file is not valid")}};reader.readAsText(file);input.value=""};
 function renderAll(){if(!document.getElementById("page-today"))return;migrateState();const page=window._page||"today";populateSubjectSelects();renderToday();renderTasks();renderSubjects();renderProgress();renderJournalHistory();renderSettings();setPageTitle(page);if(!document.getElementById("journalDate").value){document.getElementById("journalDate").value=todayISO();loadJournal()}const now=new Date();document.getElementById("liveDate").textContent=now.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});saveLocal()}
 window.renderAll=renderAll;window.openOnboarding=()=>{state.profile.onboardingComplete=true;save()};
 window.addEventListener("load",()=>{renderAll();document.getElementById("appLoading").hidden=true});
+
+// Focus timer and reminder opt-in are additive so older backups keep working.
+const focusTimer={mode:"focus",seconds:25*60,running:false};
+let focusTimerInterval;
+function timerLabel(){return `${String(Math.floor(focusTimer.seconds/60)).padStart(2,"0")}:${String(focusTimer.seconds%60).padStart(2,"0")}`}
+function renderTimer(){
+  const display=document.getElementById("timerDisplay");if(!display)return;
+  display.textContent=timerLabel();
+  const mode=document.getElementById("timerModeLabel"),toggle=document.getElementById("timerToggle");
+  if(mode)mode.textContent=focusTimer.mode==="focus"?"Pomodoro timer":"Break time";
+  if(toggle)toggle.textContent=focusTimer.running?"Pause":(focusTimer.mode==="focus"?"Start":"Resume");
+  const select=document.getElementById("timerTask");
+  if(select){const current=select.value;select.innerHTML='<option value="">Focus without a task</option>'+openTasks().map(t=>`<option value="${t.id}">${esc(t.title)}</option>`).join("");select.value=current}
+}
+function finishFocusSprint(){
+  if(focusTimer.mode==="focus"){
+    const select=document.getElementById("timerTask"),minutes=25;
+    state.timeLogs.push({id:uid("log"),date:todayISO(),minutes,source:"pomodoro",taskId:select?.value||""});
+    save();toast("Focus sprint complete. Take a short break.");
+    focusTimer.mode="break";focusTimer.seconds=5*60;
+  }else{focusTimer.mode="focus";focusTimer.seconds=25*60;toast("Break complete. Ready for another sprint?")}
+}
+function tickTimer(){
+  if(!focusTimer.running)return;
+  focusTimer.seconds-=1;
+  if(focusTimer.seconds<=0){focusTimer.running=false;finishFocusSprint()}
+  renderTimer();renderProgress();renderToday();
+}
+window.toggleTimer=()=>{focusTimer.running=!focusTimer.running;if(focusTimer.running&&!focusTimerInterval)focusTimerInterval=setInterval(tickTimer,1000);renderTimer()};
+window.resetTimer=()=>{focusTimer.running=false;focusTimer.mode="focus";focusTimer.seconds=25*60;renderTimer()};
+function renderWeeklyInsight(){
+  const root=document.getElementById("weeklyInsight");if(!root)return;
+  const weekStart=new Date();weekStart.setHours(0,0,0,0);weekStart.setDate(weekStart.getDate()-6);
+  const minutes=state.timeLogs.filter(x=>new Date(`${x.date}T12:00:00`)>=weekStart).reduce((a,x)=>a+Number(x.minutes||0),0);
+  const target=Math.round(Number(state.settings.weeklyTarget||0)*60),overdue=openTasks().filter(t=>t.due&&t.due<todayISO()),next=openTasks().sort((a,b)=>priorityRank[a.priority]-priorityRank[b.priority]||String(a.due).localeCompare(String(b.due)))[0];
+  root.textContent=overdue.length?`Clear "${overdue[0].title}" first — it is overdue.`:next?`${minutes}${target?` of ${target}`:""} minutes logged this week. Next: ${next.title}.`:minutes?`Nice momentum: ${minutes} focused minutes this week. Add a task for your next session.`:"Start with one 25-minute sprint today; consistency beats catching up.";
+}
+function renderReminderSettings(){
+  const enabled=document.getElementById("remindersEnabled"),time=document.getElementById("reminderTime"),status=document.getElementById("reminderStatus");
+  if(enabled)enabled.checked=Boolean(state.settings.remindersEnabled);
+  if(time)time.value=state.settings.reminderTime||"18:00";
+  if(status)status.textContent=state.settings.remindersEnabled?`Reminder set for ${state.settings.reminderTime||"18:00"}.`:"Off until you opt in.";
+}
+window.toggleReminders=async enabled=>{
+  if(enabled&&!("Notification" in window)){toast("Browser notifications are not supported here.");renderReminderSettings();return}
+  if(enabled&&Notification.permission!=="granted"){const permission=await Notification.requestPermission();if(permission!=="granted"){toast("Notifications remain off until permission is granted.");renderReminderSettings();return}}
+  state.settings.remindersEnabled=enabled;save();renderReminderSettings();toast(enabled?"Browser reminders enabled":"Browser reminders disabled");
+};
+window.saveReminderTime=value=>{state.settings.reminderTime=value||"18:00";save();renderReminderSettings()};
+function checkReminder(){
+  if(!state.settings.remindersEnabled||!("Notification" in window)||Notification.permission!=="granted")return;
+  const now=new Date(),time=state.settings.reminderTime||"18:00",at=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  if(at!==time||localStorage.getItem("studyReminderDate")===todayISO())return;
+  const checkedIn=state.timeLogs.some(x=>x.date===todayISO())||state.habits.some(h=>h.done?.[todayISO()]);
+  if(!checkedIn){new Notification("A small study check-in?",{body:"Take one focused step in MyProgressTrack."});localStorage.setItem("studyReminderDate",todayISO())}
+}
+const originalRenderAll=renderAll;
+renderAll=function(){originalRenderAll();renderTimer();renderWeeklyInsight();renderReminderSettings()};
+window.renderAll=renderAll;
+setInterval(checkReminder,60000);
 renderAll();

@@ -8,8 +8,10 @@ MyProgressTrack is a Google-authenticated student workspace for planning study t
 - **Tasks & deadlines** — create tasks with subjects, due dates, priority, notes, estimated time, and completion state.
 - **Subjects** — organize academic work by subject and see subject-level progress.
 - **Progress** — review completion, study minutes, routine check-ins, and recent activity.
+- **Focus sprints** — run a lightweight 25-minute Pomodoro with automatic study-time logging and breaks.
+- **Weekly review insights** — get an actionable next step based on overdue work and recent focus time.
 - **Journal** — save short daily reflections and next steps.
-- **Settings** — manage habits, weekly study targets, profile details, backup, and sync.
+- **Settings** — manage habits, weekly study targets, optional browser reminders, profile details, backup, and sync.
 - **Google sign-in and automatic cloud sync** — data is stored in Firestore under the signed-in account and synchronized across devices.
 - **Offline-first PWA** — local changes remain available offline and sync when the connection returns.
 
