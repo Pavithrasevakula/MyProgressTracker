@@ -107,6 +107,14 @@ async function loadCloudData() {
       const cloudData = docSnap.data();
       
       if (cloudData.state) {
+        const localChangeAt = localStorage.getItem('plannerLocalChangeAt') || '';
+        const cloudTime = cloudData.updatedAt || '';
+        if (localChangeAt && (!cloudTime || localChangeAt > cloudTime)) {
+          window.localChangesPending = true;
+          await saveToCloud();
+          updateSyncStatus('● Local changes synced');
+          return;
+        }
         const completedLocally = window.state.profile?.onboardingComplete === true;
         const cloudHasCompletion = cloudData.state.profile?.onboardingComplete === true;
         // Merge cloud data with current state
@@ -179,6 +187,7 @@ async function saveToCloud() {
     }, { merge: true });
     
     localStorage.setItem('lastCloudSync', timestamp);
+    localStorage.removeItem('plannerLocalChangeAt');
     window.localChangesPending = false;
     updateSyncStatus('● Cloud synced');
     
@@ -297,6 +306,7 @@ window.saveLocal = function() {
   }
   
   window.localChangesPending = true;
+  localStorage.setItem('plannerLocalChangeAt', new Date().toISOString());
   // Debounced cloud save (wait 1 second after last change)
   clearTimeout(cloudSaveTimer);
   cloudSaveTimer = setTimeout(saveToCloud, 1000);
