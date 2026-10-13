@@ -120,7 +120,14 @@ async function loadCloudData() {
         const completedLocally = window.state.profile?.onboardingComplete === true;
         const cloudHasCompletion = cloudData.state.profile?.onboardingComplete === true;
         // Merge cloud data with current state
+        const localDeletedSubjectIds = Array.isArray(window.state.deletedSubjectIds) ? window.state.deletedSubjectIds : [];
+        const localSettings = window.state.settings || {};
         Object.assign(window.state, cloudData.state);
+        window.state.deletedSubjectIds = [...new Set([...(Array.isArray(window.state.deletedSubjectIds) ? window.state.deletedSubjectIds : []), ...localDeletedSubjectIds])];
+        window.state.subjects = (window.state.subjects || []).filter(subject => !window.state.deletedSubjectIds.includes(subject.id));
+        if (localChangeAt && cloudTime && localChangeAt > cloudTime) {
+          window.state.settings = {...window.state.settings, ...localSettings};
+        }
         if (localHabitsConfigured) {
           window.state.habits = localHabits;
           window.state.settings ??= {};
@@ -239,7 +246,12 @@ function setupRealtimeSync() {
         
         const localHabitsConfigured = window.state.settings?.habitsConfigured === true;
         const localHabits = Array.isArray(window.state.habits) ? window.state.habits : [];
+        const localDeletedSubjectIds = Array.isArray(window.state.deletedSubjectIds) ? window.state.deletedSubjectIds : [];
+        const localSettings = window.state.settings || {};
         Object.assign(window.state, cloudData.state);
+        window.state.deletedSubjectIds = [...new Set([...(Array.isArray(window.state.deletedSubjectIds) ? window.state.deletedSubjectIds : []), ...localDeletedSubjectIds])];
+        window.state.subjects = (window.state.subjects || []).filter(subject => !window.state.deletedSubjectIds.includes(subject.id));
+        if (window.localChangesPending) window.state.settings = {...window.state.settings, ...localSettings};
         if (localHabitsConfigured) {
           window.state.habits = localHabits;
           window.state.settings ??= {};

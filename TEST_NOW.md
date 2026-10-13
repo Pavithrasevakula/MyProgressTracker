@@ -43,6 +43,10 @@
 - [ ] Backup snapshots can be saved and restored.
 - [ ] Streak and focus analytics update after a habit check-in or focus sprint.
 - [ ] Push setup refuses safely when no public VAPID key is configured.
+- [ ] A deleted subject stays deleted after refresh, sign-in, and cloud sync.
+- [ ] Enabling reminders stays enabled after refresh until manually disabled.
+- [ ] Theme selection remains after refresh and follows the selected light, dark, or system mode.
+- [ ] Settings cards remain readable and aligned on desktop, tablet, and mobile widths.
 
 ## Responsive UI
 

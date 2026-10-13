@@ -13,6 +13,8 @@
     settings.reminderDays ??= [1, 2, 3, 4, 5];
     settings.pushEnabled ??= false;
     settings.calendarConnected ??= false;
+    settings.theme ??= "light";
+    applyTheme(settings.theme);
     window.renderAdvancedFeatures = render;
     render();
     if ("serviceWorker" in navigator) {
@@ -47,6 +49,7 @@
     const streak = calculateStreak();
     const analytics = calculateAnalytics();
     root.innerHTML = `
+      <label for="themeMode">Appearance<select class="field" id="themeMode" onchange="setTheme(this.value)"><option value="light" ${s.theme === "light" ? "selected" : ""}>Light theme</option><option value="dark" ${s.theme === "dark" ? "selected" : ""}>Dark theme</option><option value="system" ${s.theme === "system" ? "selected" : ""}>Use system theme</option></select></label>
       <label class="setting-check"><input type="checkbox" ${s.smartReminders ? "checked" : ""} onchange="toggleSmartReminders(this.checked)"> Smart reminders</label>
       <label class="setting-check"><input type="checkbox" ${s.skipReminderAfterCheckIn ? "checked" : ""} onchange="toggleReminderSkip(this.checked)"> Skip after a check-in</label>
       <label for="reminderDays">Reminder days<select class="field" id="reminderDays" multiple onchange="saveReminderDays(this)">${[["1","Mon"],["2","Tue"],["3","Wed"],["4","Thu"],["5","Fri"],["6","Sat"],["0","Sun"]].map(([value,label]) => `<option value="${value}" ${s.reminderDays.includes(Number(value)) ? "selected" : ""}>${label}</option>`).join("")}</select></label>
@@ -85,6 +88,16 @@
     window.state.settings.smartReminders = enabled;
     save(enabled ? "Smart reminders enabled" : "Smart reminders disabled");
   };
+  window.setTheme = theme => {
+    window.state.settings.theme = theme;
+    applyTheme(theme);
+    save("Theme preference saved");
+  };
+  function applyTheme(theme) {
+    const dark = theme === "dark" || (theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#101522" : "#f7f8fc");
+  }
   window.toggleReminderSkip = enabled => {
     window.state.settings.skipReminderAfterCheckIn = enabled;
     save("Reminder rule saved");
