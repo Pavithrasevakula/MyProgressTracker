@@ -6,6 +6,9 @@
 <meta name="theme-color" content="#edf5f0">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>MyProgressTrack</title>
 <style>
@@ -268,6 +271,33 @@ body{background:linear-gradient(135deg,#f5f6fa 0%,#f8f9fc 52%,#eef1f8 100%);back
 .diary-entry-card{box-shadow:0 8px 22px rgba(41,47,67,.05)}
 @keyframes contentIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Final typography and responsive component polish */
+body{font-family:"Manrope",Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.008em}
+h1,h2,h3,h4,b,strong,.btn,.nav button{font-weight:700;letter-spacing:-.02em}
+.content{max-width:1320px;padding:24px 32px 40px}
+.topbar{height:68px;padding:0 32px}
+.topbar h1{font-size:18px}.topbar .date{font-size:11px}
+.hero h2{font-size:30px;font-weight:800}.hero p{font-size:13px}
+.panel,.card{border-radius:16px}
+.section-head h3{font-size:15px}.tiny{font-size:11px}
+.btn{font-weight:600;padding:9px 13px}
+.input,.select,.textarea{font-size:13px}
+.calendar{overflow-x:auto}.calendar table{min-width:760px}
+.calendar .tickcell{height:46px}.calendar .check{margin:auto}
+.calendar .task-name{min-width:210px}
+.calendar th{font-size:10px}
+.sync-pill{background:var(--surface)!important;border-color:var(--line)!important}
+@media(max-width:720px){
+  .content{padding:18px 14px 30px}
+  .topbar{height:62px;padding:0 14px}
+  .hero{align-items:flex-start;flex-direction:column;gap:10px}
+  .hero h2{font-size:26px}
+  .hero>div:last-child{width:100%}
+  .calendar{margin-left:-2px;margin-right:-2px}
+  .calendar table{min-width:690px}
+  #page-personal .hero>div:last-child{flex-direction:row;align-items:center;width:100%}
+}
 </style>
 </head>
 <body>
@@ -295,7 +325,7 @@ body{background:linear-gradient(135deg,#f5f6fa 0%,#f8f9fc 52%,#eef1f8 100%);back
   <div class="sidebar-bottom">
     <div class="sync-pill" id="syncStatus" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#edf6f0,#e8f1eb);border-color:#c8ddd0">
       <span style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(109,155,131,.5);animation:pulse 2s infinite"></span>
-      <span id="syncLabel" style="font-weight:600;color:var(--green2)">Synced to cloud</span>
+      <span id="syncLabel" style="font-weight:600;color:var(--green2)">Cloud sync on</span>
     </div>
   </div>
 <style>
@@ -428,8 +458,7 @@ body{background:linear-gradient(135deg,#f5f6fa 0%,#f8f9fc 52%,#eef1f8 100%);back
     <div class="card blue"><div class="stat"><div><div class="label">Month completion</div><div class="num" id="monthScore">0%</div></div><div class="iconbox">◷</div></div><div class="progress"><i id="monthScoreBar"></i></div></div>
   </div>
   <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Today's Top 3 priorities</h3><span class="badge lav">Daily</span></div><div class="top3"><div class="top3-row"><span>1</span><input class="input priority" data-p="1" placeholder="Most important task"></div><div class="top3-row"><span>2</span><input class="input priority" data-p="2" placeholder="Second priority"></div><div class="top3-row"><span>3</span><input class="input priority" data-p="3" placeholder="Third priority"></div></div></div></div>
-  <div class="panel section calendar desktop-only"><table id="habitTable"></table></div>
-  <div class="panel section habit-list mobile-only" id="habitListMobile"></div>
+  <div class="panel section calendar"><table id="habitTable"></table></div>
   <p class="tiny muted" style="margin-top:10px">Add, edit or remove habits in <a href="#" onclick="go('settings');openSet('set-routine');return false" style="color:var(--green2)">Settings → Daily routine setup</a>.</p>
 </section>
 
@@ -1184,7 +1213,7 @@ function renderDashboard(){
 }
 function renderPersonal(){
  const d=ensureDay(selectedDate), score=dayScore(selectedDate), md=monthDays(), total=md.reduce((a,x)=>a+dayScore(x),0), max=md.length*state.habits.length;
- document.querySelector("#selectedDateBtn span").textContent=fmtDate(selectedDate);
+  document.querySelector("#selectedDateBtn span").textContent=fmtDate(selectedDate);
  document.getElementById("todayScore").textContent=pct(score,state.habits.length)+"%";document.getElementById("todayScoreBar").style.width=pct(score,state.habits.length)+"%";
  document.getElementById("monthScore").textContent=pct(total,max)+"%";document.getElementById("monthScoreBar").style.width=pct(total,max)+"%";
  document.querySelectorAll(".priority").forEach(i=>{i.value=d.priorities[i.dataset.p]||"";i.oninput=()=>{d.priorities[i.dataset.p]=i.value;save();}});
@@ -1192,16 +1221,6 @@ function renderPersonal(){
  let body="<tbody>"+state.habits.map(h=>`<tr><td class="task-name"><b>${esc(h.name)}</b>${h.auto?'<br><span class="badge">Auto from log</span>':""}</td><td>${esc(h.target)}${h.auto?' h/day':''}</td>${dates.map(dt=>{let on=habitDone(h,dt),manual=!h.auto;return `<td class="tickcell" title="${manual?'Click to toggle':'Calculated from study logs'}" onclick="${manual?`toggleHabit('${h.id}','${dt}')`:''}"><div class="check tick ${on?'on':''} ${h.auto?'auto':''}">${on?'':''}</div></td>`}).join("")}</tr>`).join("")+"</tbody>";
  document.getElementById("habitTable").innerHTML=head+body;
  {const w=document.querySelector("#page-personal .calendar");if(w)w.scrollLeft=w.scrollWidth}
- const listEl=document.getElementById("habitListMobile");
- if(listEl){
-   listEl.innerHTML=state.habits.length?state.habits.map(h=>{
-     const on=habitDone(h,selectedDate),manual=!h.auto;
-     return `<div class="habit-row ${on?'on':''} ${h.auto?'auto':''}" ${manual?`onclick="toggleHabit('${h.id}','${selectedDate}')"`:''}>
-       <div class="hr-name"><b>${esc(h.name)}</b>${h.auto?'<span class="badge" style="margin-top:4px">Auto from log</span>':`<span class="tiny muted">Target: ${esc(h.target)}</span>`}</div>
-       <div class="hr-status">${h.auto?(on?'Done':'Pending'):(on?' Done':'Mark done')}</div>
-     </div>`;
-   }).join(""):'<div class="empty">No habits yet. Add some in Settings → Daily routine setup.</div>';
- }
 }
 window.toggleHabit=(id,date)=>{const d=ensureDay(date);d.habits[id]=!d.habits[id];save();renderAll()};
 window.setSelf=(i,v)=>{ensureDay(selectedDate).self[i]=v;save();renderAll()};
