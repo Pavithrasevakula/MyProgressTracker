@@ -235,23 +235,14 @@ function setupRealtimeSync() {
       
       // Only update if cloud data is newer
       if (cloudTime > localTime && cloudData.state) {
-        if (window.localChangesPending) {
-          const useCloudVersion = confirm('This workspace changed on another device.\n\nChoose OK to use the cloud version, or Cancel to keep this device and upload your changes.');
-          if (!useCloudVersion) {
-            saveToCloud();
-            return;
-          }
-        }
         console.log(' Syncing data from another device...');
         
         const localHabitsConfigured = window.state.settings?.habitsConfigured === true;
         const localHabits = Array.isArray(window.state.habits) ? window.state.habits : [];
         const localDeletedSubjectIds = Array.isArray(window.state.deletedSubjectIds) ? window.state.deletedSubjectIds : [];
-        const localSettings = window.state.settings || {};
         Object.assign(window.state, cloudData.state);
         window.state.deletedSubjectIds = [...new Set([...(Array.isArray(window.state.deletedSubjectIds) ? window.state.deletedSubjectIds : []), ...localDeletedSubjectIds])];
         window.state.subjects = (window.state.subjects || []).filter(subject => !window.state.deletedSubjectIds.includes(subject.id));
-        if (window.localChangesPending) window.state.settings = {...window.state.settings, ...localSettings};
         if (localHabitsConfigured) {
           window.state.habits = localHabits;
           window.state.settings ??= {};
@@ -259,6 +250,8 @@ function setupRealtimeSync() {
         }
         localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
         localStorage.setItem('lastCloudSync', cloudTime);
+        localStorage.removeItem('plannerLocalChangeAt');
+        window.localChangesPending = false;
         
         // Re-render UI
         if (typeof window.renderAll === 'function') {

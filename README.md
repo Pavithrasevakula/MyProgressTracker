@@ -15,6 +15,7 @@ MyProgressTrack is a Google-authenticated student workspace for planning study t
 - **Google sign-in and automatic cloud sync** — data is stored in Firestore under the signed-in account and synchronized across devices.
 - **Offline-first PWA** — local changes remain available offline and sync when the connection returns.
 - **Persistent preferences** — deleted subjects remain deleted, reminder preferences survive refresh and sync, and the interface supports light, dark, and system themes.
+- **Account-wide live sync** — newer changes from any signed-in device are applied automatically without a conflict confirmation prompt.
 
 ## Advanced feature setup
 

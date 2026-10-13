@@ -47,6 +47,8 @@
 - [ ] Enabling reminders stays enabled after refresh until manually disabled.
 - [ ] Theme selection remains after refresh and follows the selected light, dark, or system mode.
 - [ ] Settings cards remain readable and aligned on desktop, tablet, and mobile widths.
+- [ ] A newer change from another signed-in device syncs automatically without a confirmation dialog.
+- [ ] Settings use a compact two-column layout on desktop and stack cleanly on mobile.
 
 ## Responsive UI
 
