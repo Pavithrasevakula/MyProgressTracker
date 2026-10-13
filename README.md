@@ -75,14 +75,25 @@ Requirements:
 
 ```
 MyProgressTracker/
-├── index.html              # Main app
-├── auth.html               # Google sign-in page
+├── index.html              # App markup and page templates
+├── styles.css              # Shared planner styles and responsive layout
+├── app-shell.js            # Shared shell and modal enhancements
+├── firebase-auth.js        # Google authentication and Firestore sync
+├── planner.js              # Planner state, rendering, and interactions
+├── auth.html               # Google sign-in markup
+├── auth.css                # Sign-in page styles
+├── auth.js                 # Sign-in and Firebase account creation
 ├── firebase-config.js      # Firebase configuration
 ├── icon.png                # App icon
 ├── manifest.webmanifest    # PWA manifest
 ├── sw.js                   # Service worker
 └── *.md                    # Documentation
 ```
+
+The app keeps its HTML templates separate from styling and behavior so each area
+can be changed and tested without editing one very large file. Firebase setup
+and planner logic remain separate modules, while the service worker caches all
+of the app-shell assets for offline use.
 
 ## Features
 
