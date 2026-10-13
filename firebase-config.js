@@ -1,6 +1,6 @@
 // Paste YOUR four values from Firebase -> Project settings -> Your apps.
 // These are public-by-design web identifiers (safe to commit). Your Firestore
-// rules protect the data. Do NOT put your sync key here.
+// rules protect the data. These are public Firebase web identifiers.
 window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyAqzIEM_iTGAwDk-BjG-4LcLzQxGdRyfKs",
   authDomain: "myprogresstracker-1708a.firebaseapp.com",

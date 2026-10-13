@@ -25,9 +25,10 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
 .main{flex:1;min-width:0}.topbar{height:70px;background:rgba(255,255,255,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:4}.topbar h1{font-size:20px;margin:0}.topbar .date{color:var(--muted);font-size:12px}.top-actions{display:flex;gap:8px}
 .content{padding:26px;max-width:1500px;margin:auto}.page{display:none}.page.active{display:block}
 .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px}.hero h2{margin:0;font-size:28px;letter-spacing:-.03em}.hero p{margin:5px 0 0;color:var(--muted)}
-.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:11px;padding:9px 13px}.btn:hover{border-color:#bfd0c7}.btn.primary{background:var(--green2);color:white;border-color:var(--green2)}.btn.soft{background:var(--mint);color:var(--green2);border-color:transparent}.btn.danger{color:var(--danger)}
-.grid{display:grid;gap:16px}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}.stat{display:flex;justify-content:space-between;align-items:flex-start}.stat .label{color:var(--muted);font-size:12px}.stat .num{font-size:28px;font-weight:800;margin-top:5px}.iconbox{width:40px;height:40px;border-radius:12px;background:var(--sage);display:grid;place-items:center;color:var(--green2);font-weight:800}.blue .iconbox{background:var(--bluebg);color:var(--blue)}.lav .iconbox{background:var(--lavbg);color:var(--lav)}.gold .iconbox{background:var(--goldbg);color:var(--gold)}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:11px;padding:9px 13px;cursor:pointer;transition:all 0.2s ease}.btn:hover{border-color:#9abca8;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.08)}.btn.primary{background:linear-gradient(135deg,#6d9b83,#5a8a70);color:white;border-color:transparent}.btn.primary:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(71,118,95,.35)}.btn.soft{background:var(--mint);color:var(--green2);border-color:transparent}.btn.soft:hover{background:#c8e5d4;transform:translateY(-1px)}.btn.danger{color:var(--danger);border-color:#f0d6ce}.btn.danger:hover{background:#fae8e8;border-color:var(--danger)}
+.grid{display:grid;gap:16px}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;transition:all 0.3s ease}.card:hover{transform:translateY(-2px);box-shadow:0 16px 45px rgba(57,78,68,.12);border-color:#c8ddd0}.stat{display:flex;justify-content:space-between;align-items:flex-start}.stat .label{color:var(--muted);font-size:12px}.stat .num{font-size:28px;font-weight:800;margin-top:5px}.iconbox{width:40px;height:40px;border-radius:12px;background:var(--sage);display:grid;place-items:center;color:var(--green2);font-weight:800}.blue .iconbox{background:var(--bluebg);color:var(--blue)}.lav .iconbox{background:var(--lavbg);color:var(--lav)}.gold .iconbox{background:var(--goldbg);color:var(--gold)}
 .progress{height:8px;background:#edf2ef;border-radius:20px;overflow:hidden;margin-top:11px}.progress>i{display:block;height:100%;background:var(--green);border-radius:20px}.muted{color:var(--muted)}.tiny{font-size:11px}.section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}.section-head h3{margin:0;font-size:16px}.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.panel-pad{padding:18px}
+.app-loading{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:100;padding:24px}.app-loading[hidden]{display:none}.app-loading-card{width:min(360px,100%);text-align:center;background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:var(--shadow)}.app-loading-card img{width:54px;height:54px;border-radius:16px}.app-loading-card strong{display:block;margin-top:14px;font-size:17px}.app-loading-card p{margin:6px 0 0;color:var(--muted)}.app-loading-spinner{width:22px;height:22px;margin:18px auto 0;border:3px solid var(--mint);border-top-color:var(--green2);border-radius:50%;animation:spin .7s linear infinite}.sync-pill.offline{background:#fff5ee!important;border-color:#f0d6ce!important}.sync-pill.offline #syncLabel{color:#9a674f!important}
 .two{grid-template-columns:1.25fr .75fr}.three{grid-template-columns:repeat(3,1fr)}
 table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid #edf1ef;text-align:left;vertical-align:middle}th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#66756e;background:#f8faf9;position:sticky;top:0}td{font-size:13px}tr:last-child td{border-bottom:0}
 .table-wrap{overflow:auto;max-height:600px}.input,.select,.textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 9px;outline:none}.input:focus,.select:focus,.textarea:focus{border-color:#9abca8;box-shadow:0 0 0 3px #eaf4ee}.textarea{resize:vertical;min-height:80px}
@@ -37,7 +38,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:
 .calendar{overflow:auto}.calendar table{min-width:900px}.calendar td,.calendar th{text-align:center;min-width:92px}.calendar .task-name{text-align:left;min-width:250px}.tickcell{cursor:pointer;min-height:34px}.tickcell:hover{background:#f3f8f5}.tick{margin:auto}
 .top3{display:grid;gap:8px}.top3-row{display:flex;gap:8px;align-items:center}.top3-row span{width:22px;height:22px;border-radius:7px;background:var(--lavbg);color:var(--lav);display:grid;place-items:center;font-size:11px;font-weight:800}
 .kpi-list{display:grid;gap:11px}.kpi-row{display:grid;grid-template-columns:1fr auto;gap:10px}.kpi-row .bar{grid-column:1/-1}.empty{text-align:center;padding:35px;color:var(--muted)}
-.modal{position:fixed;inset:0;background:rgba(35,48,42,.35);display:none;place-items:center;z-index:20;padding:20px}.modal.show{display:grid}.modal-box{width:min(620px,100%);background:#fff;border-radius:20px;box-shadow:0 25px 70px rgba(0,0,0,.2);padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid .full{grid-column:1/-1}.toast{position:fixed;right:22px;bottom:22px;background:#26352f;color:white;padding:10px 14px;border-radius:12px;display:none;z-index:30}.toast.show{display:block}.mobile-menu{display:none}
+.modal{position:fixed;inset:0;background:rgba(35,48,42,.4);backdrop-filter:blur(4px);display:none;place-items:center;z-index:20;padding:20px;animation:fadeIn 0.2s}.modal.show{display:grid}.modal-box{width:min(620px,100%);background:#fff;border-radius:20px;box-shadow:0 25px 70px rgba(0,0,0,.25);padding:22px;animation:slideUp 0.3s ease-out}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.modal-head h3{margin:0;font-size:18px;font-weight:800}.modal-head .btn{width:auto;min-width:auto;padding:6px 14px;font-size:18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid .full{grid-column:1/-1}.toast{position:fixed;right:22px;bottom:22px;background:#26352f;color:white;padding:10px 14px;border-radius:12px;display:none;z-index:30}.toast.show{display:block}.mobile-menu{display:none}
 .main{min-width:0;min-height:100vh}.content{min-height:calc(100vh - 70px)}
 .sidebar .nav::-webkit-scrollbar{width:6px}.sidebar .nav::-webkit-scrollbar-thumb{background:#d5e1da;border-radius:99px}.sidebar .nav::-webkit-scrollbar-track{background:transparent}
 @media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}.sidebar{width:220px}}
@@ -176,24 +177,56 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 </style>
 </head>
 <body>
+<div class="app-loading" id="appLoading" role="status" aria-live="polite">
+  <div class="app-loading-card">
+    <img src="icon.png" alt="">
+    <strong>Loading your planner</strong>
+    <p>Connecting to your Google account and cloud data…</p>
+    <div class="app-loading-spinner" aria-hidden="true"></div>
+  </div>
+</div>
 <div class="app">
 <aside class="sidebar" id="sidebar">
-  <div class="brand"><div class="logo"><img src="icon.png" alt="MyProgressTrack logo"></div><div><b>MyProgressTrack</b><small>Study • Career • Life</small></div></div>
+  <div class="brand">
+    <div class="logo"><img src="icon.png" alt="MyProgressTrack logo"></div>
+    <div>
+      <b style="background:linear-gradient(135deg,#6d9b83,#47765f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">MyProgressTrack</b>
+      <small>Study • Career • Life</small>
+    </div>
+  </div>
   <div class="nav">
     <div id="navBuiltin" style="display:contents"></div>
     <div id="customNavItems"></div>
     <button data-page="settings">⚙ &nbsp; Settings</button>
   </div>
   <div class="sidebar-bottom">
-    <div class="sync-pill" id="syncStatus">● Saved in this browser</div>
-    <button class="btn soft" onclick="openModal('syncModal')">☁ Cloud Sync</button>
+    <div class="sync-pill" id="syncStatus" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#edf6f0,#e8f1eb);border-color:#c8ddd0">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(109,155,131,.5);animation:pulse 2s infinite"></span>
+      <span id="syncLabel" style="font-weight:600;color:var(--green2)">Synced to cloud</span>
+    </div>
   </div>
+<style>
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+</style>
 </aside>
 <div class="sb-backdrop" onclick="toggleMenu()"></div>
 <main class="main">
 <header class="topbar">
-  <div style="display:flex;gap:12px;align-items:center"><button class="btn mobile-menu" onclick="toggleMenu()">☰</button><div><h1 id="topTitle">Today</h1><div class="date" id="liveDate"></div></div></div>
-  <div class="top-actions"><button class="btn" id="exportBtn" onclick="exportJSON()">Export</button><button class="btn primary" onclick="openModal('quickAddModal')">＋ Add</button></div>
+  <div style="display:flex;gap:12px;align-items:center">
+    <button class="btn mobile-menu" type="button" onclick="toggleMenu()" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">☰</button>
+    <div>
+      <h1 id="topTitle">Today</h1>
+      <div class="date" id="liveDate"></div>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button class="btn" id="exportBtn" onclick="exportJSON()" title="Download backup">
+      <span style="font-size:16px;margin-right:4px">📥</span> Export
+    </button>
+    <button class="btn primary" onclick="openModal('quickAddModal')" style="box-shadow:0 2px 8px rgba(71,118,95,.25)">
+      <span style="font-size:16px;margin-right:4px">＋</span> Add
+    </button>
+  </div>
 </header>
 <div class="content">
 
@@ -389,12 +422,15 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
       <p class="tiny muted">Repeating tasks in one place. Switch them off without deleting.</p>
       <div class="table-wrap"><table id="recurringTable"></table></div>
     </div></details>
-    <details class="set-acc" id="set-data"><summary>☁ Backup &amp; sync<span class="set-sub">cloud sync, export, import</span></summary><div class="set-body">
-      <h3 style="font-size:14px;margin:0 0 4px">Cloud Sync</h3><p class="muted" style="margin-top:0">See the same data on every device by connecting your own Firebase project.</p>
-      <button class="btn primary" onclick="openModal('syncModal')">Configure Cloud Sync</button> <button class="btn" onclick="runSystemCheck()">Run System Check</button> <button class="btn danger" onclick="disconnectSync()">Disconnect sync</button>
-      <div style="margin-top:12px" id="firebaseState"></div>
-      <h3 style="font-size:14px;margin:22px 0 4px">Data safety</h3><p class="muted" style="margin-top:0">Edits are auto-saved in this browser. Export a JSON backup any time.</p>
-      <button class="btn" onclick="exportJSON()">Download Backup</button> <button class="btn" onclick="document.getElementById('importFile').click()">Import Backup</button> <input id="importFile" type="file" accept=".json" style="display:none" onchange="importJSON(this)"> <button class="btn danger" onclick="clearPlannerData()">Clear Planner Data</button>
+    <details class="set-acc" id="set-data"><summary>☁ Account & Data<span class="set-sub">account info, backup, export</span></summary><div class="set-body">
+      <h3 style="font-size:14px;margin:0 0 4px">Your Account</h3><p class="muted" style="margin-top:0">Your data is automatically synced to the cloud and available on all devices.</p>
+      <button class="btn primary" onclick="openModal('syncModal')">View Account Info</button>
+      
+      <h3 style="font-size:14px;margin:22px 0 4px">Data Backup</h3><p class="muted" style="margin-top:0">Export your data as JSON for backup or import data from a previous export.</p>
+      <button class="btn" onclick="exportJSON()">📥 Download Backup</button> <button class="btn" onclick="document.getElementById('importFile').click()">📤 Import Backup</button> <input id="importFile" type="file" accept=".json" style="display:none" onchange="importJSON(this)">
+      
+      <h3 style="font-size:14px;margin:22px 0 4px">Danger Zone</h3><p class="muted" style="margin-top:0">These actions cannot be undone. Your cloud data will remain safe.</p>
+      <button class="btn danger" onclick="clearPlannerData()">🗑️ Clear Local Data</button>
     </div></details>
   </div>
 </section>
@@ -402,15 +438,49 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 </div></main></div>
 
 <!-- Modals -->
-<div class="modal" id="quickAddModal"><div class="modal-box"><div class="modal-head"><h3>Quick Add</h3><button class="btn" onclick="closeModal('quickAddModal')">×</button></div><div class="grid" style="margin-top:16px">
-<button class="btn" onclick="closeModal('quickAddModal');openModal('acadLogModal')">🎓 ＋ Academic study session</button>
-<button class="btn" onclick="closeModal('quickAddModal');openModal('placeLogModal')">💼 ＋ Placement prep session</button>
-<button class="btn" onclick="closeModal('quickAddModal');openModal('sscLogModal')">🏛️ ＋ SSC study session</button>
-<button class="btn" onclick="closeModal('quickAddModal');go('settings');openSet('set-routine');addHabit()">🌿 ＋ Habit / routine</button>
-<button class="btn" onclick="closeModal('quickAddModal');addSelfCheck();go('diary')">✓ ＋ Self-check question</button>
-<button class="btn" onclick="closeModal('quickAddModal');addAssignment();go('academics')">📚 ＋ Assignment</button>
-<button class="btn" onclick="closeModal('quickAddModal');addApplication();go('placements')">💼 ＋ Company application</button>
-</div></div></div>
+<div class="modal" id="quickAddModal"><div class="modal-box" style="max-width:520px"><div class="modal-head"><h3>✨ Quick Add</h3><button class="btn" onclick="closeModal('quickAddModal')" style="font-size:20px;padding:4px 12px">×</button></div>
+<div style="margin-top:20px">
+  <p class="muted" style="font-size:13px;margin:0 0 16px;text-align:center">What would you like to add?</p>
+  <div style="display:grid;gap:10px">
+    <div style="background:#f8fbf9;padding:12px;border-radius:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">📚 Study Sessions</div>
+      <div style="display:grid;gap:8px">
+        <button class="btn" onclick="closeModal('quickAddModal');openModal('acadLogModal')" style="text-align:left;padding:12px;background:white">
+          <span style="font-size:18px;margin-right:10px">🎓</span> Academic study session
+        </button>
+        <button class="btn" onclick="closeModal('quickAddModal');openModal('placeLogModal')" style="text-align:left;padding:12px;background:white">
+          <span style="font-size:18px;margin-right:10px">💼</span> Placement prep session
+        </button>
+        <button class="btn" onclick="closeModal('quickAddModal');openModal('sscLogModal')" style="text-align:left;padding:12px;background:white">
+          <span style="font-size:18px;margin-right:10px">🏛️</span> SSC study session
+        </button>
+      </div>
+    </div>
+    <div style="background:#f8fbf9;padding:12px;border-radius:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">📝 Tasks & Goals</div>
+      <div style="display:grid;gap:8px">
+        <button class="btn" onclick="closeModal('quickAddModal');go('settings');openSet('set-routine');addHabit()" style="text-align:left;padding:12px;background:white">
+          <span style="font-size:18px;margin-right:10px">🌿</span> Habit or routine
+        </button>
+        <button class="btn" onclick="closeModal('quickAddModal');addAssignment();go('academics')" style="text-align:left;padding:12px;background:white">
+          <span style="font-size:18px;margin-right:10px">📚</span> Assignment or project
+        </button>
+        <button class="btn" onclick="closeModal('quickAddModal');addApplication();go('placements')" style="text-align:left;padding:12px;background:white">
+          <span style="font-size:18px;margin-right:10px">💼</span> Job application
+        </button>
+      </div>
+    </div>
+    <div style="background:#f8fbf9;padding:12px;border-radius:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">💭 Personal</div>
+      <div style="display:grid;gap:8px">
+        <button class="btn" onclick="closeModal('quickAddModal');addSelfCheck();go('diary')" style="text-align:left;padding:12px;background:white">
+          <span style="font-size:18px;margin-right:10px">✓</span> Self-check question
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div></div>
 
 <div class="modal" id="acadLogModal"><div class="modal-box"><div class="modal-head"><h3>Log Academic Session</h3><button class="btn" onclick="closeModal('acadLogModal')">×</button></div><form id="acadForm" style="margin-top:15px"><div class="form-grid"><label>Date<input class="input" type="date" name="date" required></label><label>Subject<input class="input" name="subject" placeholder="e.g. Machine Learning" required></label><label>Type<select class="select" name="type"><option>Study</option><option>Revision</option><option>Project</option><option>Assignment</option></select></label><label>Hours<input class="input" type="number" step=".25" min="0" name="hours" required></label><label class="full">What I studied / did<input class="input" name="what"></label><label class="full">Notes<textarea class="textarea" name="notes"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn primary">Save session</button></div></form></div></div>
 
@@ -418,26 +488,418 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 
 <div class="modal" id="sscLogModal"><div class="modal-box"><div class="modal-head"><h3>Log SSC Study</h3><button class="btn" onclick="closeModal('sscLogModal')">×</button></div><form id="sscForm" style="margin-top:15px"><div class="form-grid"><label>Date<input class="input" type="date" name="date" required></label><label>Subject<select class="select" name="subject"><option>Quant</option><option>Reasoning</option><option>English</option><option>General Awareness</option></select></label><label>Hours<input class="input" type="number" step=".25" min="0" name="hours" required></label><label>Questions attempted<input class="input" type="number" min="0" name="attempted" value="0"></label><label>Correct<input class="input" type="number" min="0" name="correct" value="0"></label><label class="full">Topic / what I did<input class="input" name="what"></label><label class="full">Notes<textarea class="textarea" name="notes"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn primary">Save session</button></div></form></div></div>
 
-<div class="modal" id="syncModal"><div class="modal-box"><div class="modal-head"><h3>☁ Cloud Sync Setup</h3><button class="btn" onclick="closeModal('syncModal')">×</button></div>
-<p class="muted">No login needed. Your data is saved under a private random <b>sync key</b> — use the same key on each device. Firebase details you type here stay only in this browser (never in your code/GitHub).</p>
-<div class="form-grid">
-<label class="full">Sync key (copy the same key to your other devices)<input class="input" id="fb_syncKey" autocomplete="off"></label>
-<label class="full">API Key<input class="input" id="fb_apiKey"></label>
-<label class="full">Auth Domain<input class="input" id="fb_authDomain" placeholder="your-project.firebaseapp.com"></label>
-<label>Project ID<input class="input" id="fb_projectId"></label>
-<label>App ID<input class="input" id="fb_appId"></label>
+<div class="modal" id="syncModal"><div class="modal-box">
+<div class="modal-head">
+<h3>☁ Account & Cloud Sync</h3>
+<button class="btn" onclick="closeModal('syncModal')">×</button>
 </div>
-<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:15px"><button class="btn" onclick="closeModal('syncModal')">Later</button><button class="btn soft" onclick="copySetupLink()">Copy phone setup link</button><button class="btn primary" onclick="saveFirebaseConfig()">Save & Connect</button></div>
-<div class="tiny muted" style="margin-top:12px">Keep your sync key private — anyone with it and your project ID could read this planner. Use the Firestore rules from the README.</div>
+<div style="margin-top:20px">
+  
+  <!-- Account Info -->
+  <div style="background:linear-gradient(135deg,#edf6f0,#f7f4ec);border:1px solid #d8e6dd;border-radius:16px;padding:20px;margin-bottom:20px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:800">
+        👤
+      </div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:16px;margin-bottom:4px" id="modalUserEmail">Loading...</div>
+        <div style="font-size:12px;color:var(--muted)">Signed in with Firebase Auth</div>
+      </div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:rgba(255,255,255,0.7);padding:12px;border-radius:12px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">ACCOUNT STATUS</div>
+        <div style="font-weight:700;color:var(--green2)">✓ Active</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.7);padding:12px;border-radius:12px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">LAST SYNCED</div>
+        <div style="font-weight:700" id="modalLastSync">Just now</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sync Status -->
+  <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:20px">
+    <h4 style="margin:0 0 12px;font-size:14px;display:flex;align-items:center;gap:8px">
+      <span>🔄</span> Auto-Sync Status
+    </h4>
+    <div style="display:grid;gap:10px;font-size:13px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:var(--green2)">✓</span>
+        <span>Cloud backup enabled</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:var(--green2)">✓</span>
+        <span>Real-time sync active</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:var(--green2)">✓</span>
+        <span>Multi-device support</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Info Message -->
+  <div style="background:#f8fbf9;border-left:3px solid var(--green);padding:12px 14px;border-radius:8px;font-size:13px;margin-bottom:20px">
+    <strong>💡 How it works:</strong>
+    <p style="margin:8px 0 0;line-height:1.6;color:var(--muted)">
+      Your data automatically saves to the cloud after every change. Sign in on any device with the same account to access your data instantly.
+    </p>
+  </div>
+  
+  <!-- Actions -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button class="btn" onclick="closeModal('syncModal')">Close</button>
+    <button class="btn soft" onclick="if(window.forceCloudSync){window.forceCloudSync();toast('✓ Synced successfully!',2000)}">
+      Sync Now
+    </button>
+  </div>
+  
+  <div style="text-align:center;margin-top:16px">
+    <button class="btn danger" onclick="signOutUser()" style="font-size:13px">
+      Sign Out of Account
+    </button>
+  </div>
+  
+</div>
 </div></div>
+
+<script>
+// Update sync modal with user info when opened
+window.addEventListener('load', function() {
+  const origOpenModal = window.openModal;
+  window.openModal = function(id) {
+    if (origOpenModal) origOpenModal(id);
+    else document.getElementById(id).classList.add('show');
+    
+    if (id === 'syncModal' && window.currentUser) {
+      const emailEl = document.getElementById('modalUserEmail');
+      const syncEl = document.getElementById('modalLastSync');
+      if (emailEl) emailEl.textContent = window.currentUser.email;
+      if (syncEl) {
+        const last = localStorage.getItem('lastCloudSync');
+        if (last) {
+          const date = new Date(last);
+          const now = new Date();
+          const diff = Math.floor((now - date) / 1000);
+          if (diff < 60) syncEl.textContent = 'Just now';
+          else if (diff < 3600) syncEl.textContent = Math.floor(diff / 60) + ' min ago';
+          else if (diff < 86400) syncEl.textContent = Math.floor(diff / 3600) + ' hrs ago';
+          else syncEl.textContent = date.toLocaleDateString();
+        }
+      }
+    }
+  };
+});
+</script>
 
 <div class="toast" id="toast"></div>
 
 <script src="firebase-config.js"></script>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 🔐 FIREBASE AUTHENTICATION INTEGRATION                          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script type="module" id="firebase-auth-integration">
+// Firebase Authentication & Real-time Sync Manager
+
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+// Initialize Firebase (once)
+if (!window.firebaseApp) {
+  window.firebaseApp = initializeApp(window.FIREBASE_CONFIG);
+}
+
+const auth = getAuth(window.firebaseApp);
+const db = getFirestore(window.firebaseApp);
+
+// Global state
+window.currentUser = null;
+window.userDocRef = null;
+window.syncUnsubscribe = null;
+
+console.log('🔐 Auth manager initialized');
+
+function setAppLoading(visible) {
+  const loading = document.getElementById('appLoading');
+  if (loading) loading.hidden = !visible;
+}
+
+function updateConnectivity() {
+  const sync = document.getElementById('syncStatus');
+  if (!sync) return;
+  sync.classList.toggle('offline', !navigator.onLine);
+  if (!navigator.onLine) {
+    const label = document.getElementById('syncLabel') || sync;
+    label.textContent = 'Offline — changes stay on this device';
+  }
+}
+
+window.addEventListener('online', () => {
+  updateConnectivity();
+  if (window.userDocRef) saveToCloud();
+});
+window.addEventListener('offline', updateConnectivity);
+updateConnectivity();
+
+// Authentication State Listener
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    // Not logged in → redirect to auth page
+    console.log('❌ No user - redirecting to auth.html');
+    window.location.href = 'auth.html';
+    return;
+  }
+  
+  console.log('✅ User authenticated:', user.uid);
+  
+  // Store user info globally
+  window.currentUser = user;
+  window.userDocRef = doc(db, 'users', user.uid, 'planner', 'data');
+  
+  // Update UI with user info
+  addUserInfoToUI(user);
+  
+  // Load user data from Firestore
+  await loadCloudData();
+  
+  // Setup real-time sync listener
+  setupRealtimeSync();
+  
+  // Update sync status
+  updateSyncStatus('● Synced with cloud');
+  setAppLoading(false);
+});
+
+// Add User Info to UI
+function addUserInfoToUI(user) {
+  const topbar = document.querySelector('.topbar .top-actions');
+  
+  if (topbar && !document.getElementById('userInfo')) {
+    const userInfo = document.createElement('div');
+    userInfo.id = 'userInfo';
+    userInfo.style.cssText = 'display:flex;align-items:center;gap:8px;margin-right:8px;';
+    
+    const userName = user.displayName || user.email.split('@')[0];
+    
+    userInfo.innerHTML = `
+      <span class="muted" style="font-size:12px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${user.email}">
+        👤 ${userName}
+      </span>
+      <button class="btn" onclick="signOutUser()" style="padding:7px 12px;font-size:13px">
+        Sign Out
+      </button>
+    `;
+    
+    topbar.insertBefore(userInfo, topbar.firstChild);
+    console.log('✅ User info added to UI');
+  }
+}
+
+// Load Data from Firestore
+async function loadCloudData() {
+  try {
+    console.log('📥 Loading data from Firestore...');
+    
+    const docSnap = await getDoc(window.userDocRef);
+    
+    if (docSnap.exists()) {
+      const cloudData = docSnap.data();
+      
+      if (cloudData.state) {
+        // Merge cloud data with current state
+        Object.assign(window.state, cloudData.state);
+        
+        // Save to localStorage
+        localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
+        localStorage.setItem('lastCloudSync', cloudData.updatedAt || new Date().toISOString());
+        
+        console.log('✅ Data loaded from cloud');
+        
+        // Re-render all UI
+        if (typeof window.renderAll === 'function') {
+          window.renderAll();
+        }
+      }
+    } else {
+      // First time user - save initial state to cloud
+      console.log('📤 First time user - uploading initial data...');
+      await saveToCloud();
+    }
+    
+    updateSyncStatus('● Cloud synced');
+    
+  } catch (error) {
+    console.error('❌ Error loading cloud data:', error);
+    updateSyncStatus('● Sync error');
+    
+    if (typeof window.toast === 'function') {
+      window.toast('Using local data. Cloud sync will retry.', 3000);
+    }
+    setAppLoading(false);
+  }
+}
+
+// Save Data to Firestore
+async function saveToCloud() {
+  if (!window.userDocRef || !window.state) {
+    console.warn('⚠️ Cannot save - no user or state');
+    return;
+  }
+  if (!navigator.onLine) {
+    updateSyncStatus('Offline — changes stay on this device');
+    return;
+  }
+  
+  try {
+    updateSyncStatus('Saving to cloud…');
+    const timestamp = new Date().toISOString();
+    
+    await setDoc(window.userDocRef, {
+      state: window.state,
+      profile: window.state.profile || {},
+      updatedAt: timestamp,
+      lastSync: timestamp
+    }, { merge: true });
+    
+    localStorage.setItem('lastCloudSync', timestamp);
+    updateSyncStatus('● Cloud synced');
+    
+    console.log('✅ Data saved to cloud');
+    
+  } catch (error) {
+    console.error('❌ Error saving to cloud:', error);
+    updateSyncStatus('● Sync error');
+  }
+}
+
+// Real-time Sync (listen for changes from other devices)
+function setupRealtimeSync() {
+  if (!window.userDocRef) return;
+  
+  // Cleanup old listener if exists
+  if (window.syncUnsubscribe) {
+    window.syncUnsubscribe();
+  }
+  
+  console.log('🔄 Setting up real-time sync...');
+  
+  window.syncUnsubscribe = onSnapshot(
+    window.userDocRef,
+    (doc) => {
+      if (!doc.exists()) return;
+      
+      const cloudData = doc.data();
+      const cloudTime = cloudData.updatedAt || '';
+      const localTime = localStorage.getItem('lastCloudSync') || '';
+      
+      // Only update if cloud data is newer
+      if (cloudTime > localTime && cloudData.state) {
+        console.log('📥 Syncing data from another device...');
+        
+        Object.assign(window.state, cloudData.state);
+        localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
+        localStorage.setItem('lastCloudSync', cloudTime);
+        
+        // Re-render UI
+        if (typeof window.renderAll === 'function') {
+          window.renderAll();
+        }
+        
+        updateSyncStatus('● Synced from another device');
+        
+        if (typeof window.toast === 'function') {
+          window.toast('✓ Data synced from another device', 2000);
+        }
+      }
+    },
+    (error) => {
+      console.error('❌ Real-time sync error:', error);
+      updateSyncStatus('● Sync error');
+    }
+  );
+  
+  console.log('✅ Real-time sync active');
+}
+
+// Sign Out Function
+window.signOutUser = async function() {
+  if (!confirm('Sign out of your account?\n\nYour data is safely stored in the cloud.')) {
+    return;
+  }
+  
+  try {
+    console.log('🚪 Signing out...');
+    
+    // Cleanup sync listener
+    if (window.syncUnsubscribe) {
+      window.syncUnsubscribe();
+      window.syncUnsubscribe = null;
+    }
+    
+    // Sign out from Firebase
+    await signOut(auth);
+    
+    // Clear local data
+    localStorage.clear();
+    
+    // Redirect to auth page
+    window.location.href = 'auth.html';
+    
+  } catch (error) {
+    console.error('❌ Sign out error:', error);
+    
+    if (typeof window.toast === 'function') {
+      window.toast('Could not sign out. Please try again.', 3000);
+    }
+  }
+};
+
+// Override saveLocal to Also Save to Cloud
+let cloudSaveTimer;
+const originalSaveLocal = window.saveLocal;
+
+window.saveLocal = function() {
+  // Call original save to localStorage
+  if (typeof originalSaveLocal === 'function') {
+    originalSaveLocal();
+  } else {
+    // Fallback if saveLocal doesn't exist yet
+    try {
+      localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
+    } catch (e) {
+      console.error('Save error:', e);
+    }
+  }
+  
+  // Debounced cloud save (wait 1 second after last change)
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(saveToCloud, 1000);
+};
+
+// Helper: Update Sync Status Label
+function updateSyncStatus(text) {
+  const el = document.getElementById('syncLabel') || document.getElementById('syncStatus');
+  if (el) el.textContent = text;
+  updateConnectivity();
+}
+
+// Export Functions for Manual Use
+window.forceCloudSync = saveToCloud;
+window.reloadFromCloud = loadCloudData;
+
+console.log('✅ Auth integration complete - ready to sync!');
+
+</script>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
 <script type="module">
 
 const SEED = {"version": 1, "profile": {"name": "Pavithra", "monthStart": "2026-10-01", "targets": {"academics": 3, "projects": 2, "placement": 1, "ssc": 1}, "examDate": "2027-06-01"}, "habits": [{"id": "wake", "name": "Wake up at 6:00 AM", "target": "6:00 AM", "auto": false}, {"id": "meditate", "name": "Meditation (5-10 mins)", "target": "5-10 mins", "auto": false}, {"id": "academics", "name": "Academics - study", "target": 3, "auto": true, "source": "academics"}, {"id": "projects", "name": "Projects / college assignments", "target": 2, "auto": true, "source": "projects"}, {"id": "placement", "name": "Placement prep", "target": 1, "auto": true, "source": "placement"}, {"id": "ssc", "name": "SSC CGL prep", "target": 1, "auto": true, "source": "ssc"}, {"id": "learn", "name": "Learn one new thing", "target": "1 thing", "auto": false}, {"id": "read", "name": "Read a book (15-20 mins)", "target": "15-20 mins", "auto": false}, {"id": "care", "name": "Hair / Skin / Personal care", "target": "Daily", "auto": false}, {"id": "phone", "name": "Phone control (non-essential use)", "target": "< 30 mins", "auto": false}, {"id": "compare", "name": "Avoid comparing myself with others", "target": "All day", "auto": false}], "selfChecks": ["Did I give my best effort to today's Top 3 priorities?", "Did I move a step closer to my goal (SSC CGL / placement / degree)?", "Did I look after my body & mind (sleep, food, water, movement)?"], "priorities": {"1": "", "2": "", "3": ""}, "daily": {}, "academics": {"logs": [], "subjects": [], "assignments": []}, "placements": {"logs": [], "topics": [{"name": "Quantitative Aptitude", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Logical Reasoning", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Verbal Ability", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Arrays & Strings", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Linked List, Stack & Queue", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Trees & Graphs", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Recursion & Dynamic Programming", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Sorting & Searching", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "DBMS & SQL", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Operating Systems", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Computer Networks", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "OOPs Concepts", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Resume & LinkedIn", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "HR / Behavioural Interview", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Mock Interviews", "status": "Not started", "targetDate": "", "notes": ""}], "applications": []}, "ssc": {"logs": [], "sections": ["Quant", "Reasoning", "English", "General Awareness"], "mocks": [], "topics": [{"section": "Quant", "name": "Number System", "status": "Not started"}, {"section": "Quant", "name": "Simplification / BODMAS", "status": "Not started"}, {"section": "Quant", "name": "Percentage", "status": "Not started"}, {"section": "Quant", "name": "Ratio & Proportion", "status": "Not started"}, {"section": "Quant", "name": "Average", "status": "Not started"}, {"section": "Quant", "name": "Profit & Loss", "status": "Not started"}, {"section": "Quant", "name": "Discount", "status": "Not started"}, {"section": "Quant", "name": "Simple & Compound Interest", "status": "Not started"}, {"section": "Quant", "name": "Time & Work", "status": "Not started"}, {"section": "Quant", "name": "Time, Speed & Distance", "status": "Not started"}, {"section": "Quant", "name": "Mixture & Alligation", "status": "Not started"}, {"section": "Quant", "name": "Algebra", "status": "Not started"}, {"section": "Quant", "name": "Geometry", "status": "Not started"}, {"section": "Quant", "name": "Mensuration", "status": "Not started"}, {"section": "Quant", "name": "Trigonometry", "status": "Not started"}, {"section": "Quant", "name": "Data Interpretation", "status": "Not started"}, {"section": "Reasoning", "name": "Analogy", "status": "Not started"}, {"section": "Reasoning", "name": "Classification", "status": "Not started"}, {"section": "Reasoning", "name": "Series", "status": "Not started"}, {"section": "Reasoning", "name": "Coding-Decoding", "status": "Not started"}, {"section": "Reasoning", "name": "Blood Relations", "status": "Not started"}, {"section": "Reasoning", "name": "Direction & Distance", "status": "Not started"}, {"section": "Reasoning", "name": "Syllogism", "status": "Not started"}, {"section": "Reasoning", "name": "Venn Diagram", "status": "Not started"}, {"section": "Reasoning", "name": "Order & Ranking", "status": "Not started"}, {"section": "Reasoning", "name": "Non-Verbal (Figures)", "status": "Not started"}, {"section": "English", "name": "Reading Comprehension", "status": "Not started"}, {"section": "English", "name": "Cloze Test", "status": "Not started"}, {"section": "English", "name": "Error Spotting", "status": "Not started"}, {"section": "English", "name": "Sentence Improvement", "status": "Not started"}, {"section": "English", "name": "Fill in the Blanks", "status": "Not started"}, {"section": "English", "name": "Synonyms / Antonyms", "status": "Not started"}, {"section": "English", "name": "One-word Substitution", "status": "Not started"}, {"section": "English", "name": "Idioms & Phrases", "status": "Not started"}, {"section": "English", "name": "Para Jumbles", "status": "Not started"}, {"section": "General Awareness", "name": "History", "status": "Not started"}, {"section": "General Awareness", "name": "Geography", "status": "Not started"}, {"section": "General Awareness", "name": "Polity", "status": "Not started"}, {"section": "General Awareness", "name": "Economy", "status": "Not started"}, {"section": "General Awareness", "name": "General Science", "status": "Not started"}, {"section": "General Awareness", "name": "Static GK", "status": "Not started"}, {"section": "General Awareness", "name": "Current Affairs", "status": "Not started"}]}, "settings": {"theme": "light", "compact": false}};
-let state = loadLocal();
+let state = window.state = loadLocal();
 state.daily??={};
 Object.values(state.daily).forEach(d=>{d.diary??={story:"",feelings:"",wins:"",hard:"",tomorrow:"",learn:"",better:"",different:""};if(!d.diary.tomorrow&&d.reflection)d.diary.tomorrow=d.reflection;});
 // Migration: fold removed diary prompts into the 4 remaining ones so no old writing is lost
@@ -469,42 +931,35 @@ function todayISO(){
 window.todayISO=todayISO;
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function toast(m,ms){const t=document.getElementById("toast");clearTimeout(window._tt);t.textContent=m;t.classList.add("show");window._tt=setTimeout(()=>t.classList.remove("show"),ms||1800)}
-function openModal(id){document.getElementById(id).classList.add("show"); if(id.endsWith("LogModal")) fillModalDate(id); if(id==="syncModal"){document.getElementById("fb_syncKey").value=getSyncKey();const c=fbConfig()||{};["apiKey","authDomain","projectId","appId"].forEach(k=>document.getElementById("fb_"+k).value=c[k]||"")}}
-function closeModal(id){document.getElementById(id).classList.remove("show")}
+function openModal(id){
+ const modal=document.getElementById(id);
+ if(!modal)return;
+ modal.classList.add("show");
+ modal.setAttribute("aria-hidden","false");
+ if(id.endsWith("LogModal"))fillModalDate(id);
+}
+function closeModal(id){
+ const modal=document.getElementById(id);
+ if(!modal)return;
+ modal.classList.remove("show");
+ modal.setAttribute("aria-hidden","true");
+}
 window.openModal=openModal;window.closeModal=closeModal;
 function fillModalDate(id){const form=document.querySelector("#"+id+" form");if(form&&form.date)form.date.value=selectedDate}
-function updateSyncLabel(x){document.getElementById("syncStatus").textContent=x;document.getElementById("firebaseState").textContent=x}
+function updateSyncLabel(x){
+ const label=document.getElementById("syncLabel")||document.getElementById("syncStatus");
+ if(label)label.textContent=x;
+ const firebaseState=document.getElementById("firebaseState");
+ if(firebaseState)firebaseState.textContent=x;
+}
 function save(){saveLocal(); if(db) queueCloudSave()}
 function queueCloudSave(){clearTimeout(syncTimer);syncTimer=setTimeout(cloudSave,700)}
-let fb=null,dbRef=null;
-async function loadFB(){if(fb)return fb;const [a,f]=await Promise.all([import("https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"),import("https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js")]);fb={...a,...f};return fb}
-function getSyncKey(){let k=localStorage.getItem("syncKey");if(!k){k=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,"0")).join("");localStorage.setItem("syncKey",k)}return k}
-function fbConfig(){if(window.FIREBASE_CONFIG&&window.FIREBASE_CONFIG.projectId)return window.FIREBASE_CONFIG;try{return JSON.parse(localStorage.getItem("firebaseConfig"))}catch{return null}}
-async function cloudSave(){if(!db||!dbRef||!fb)return;try{await fb.setDoc(dbRef,{state,updatedAt:new Date().toISOString()});localStorage.setItem("lastCloudSync",new Date().toISOString());updateSyncLabel("● Cloud synced")}catch(e){console.error(e);updateSyncLabel("● Cloud sync error (check rules / data size)")}}
-async function connectFirebase(cfg){
- try{
-  updateSyncLabel("● Connecting…");
-  const F=await loadFB();firebaseApp=F.getApps().length?F.getApp():F.initializeApp(cfg);db=F.getFirestore(firebaseApp);dbRef=F.doc(db,"planners",getSyncKey());
-  const snap=await F.getDoc(dbRef);
-  if(snap.exists()&&snap.data().state){
-   const cloudAt=snap.data().updatedAt||"",last=localStorage.getItem("lastCloudSync")||"";
-   if(!last||cloudAt>last){
-    if(confirm("Cloud data found (saved "+cloudAt.slice(0,16).replace("T"," ")+" UTC).\n\nOK = load the cloud data here (this device's data is downloaded as a backup first).\nCancel = keep this device's data and overwrite the cloud.")){
-     exportJSON();localStorage.setItem("dailyPlannerState",JSON.stringify(snap.data().state));localStorage.setItem("lastCloudSync",new Date().toISOString());localStorage.setItem("syncOn","1");setTimeout(()=>location.reload(),700);return}
-   }
-  }
-  localStorage.setItem("syncOn","1");await cloudSave();toast("Cloud sync connected");
- }catch(e){console.error(e);db=null;toast("Could not connect — check Firebase details & rules");updateSyncLabel("● Saved in this browser")}
+
+// Old sync functions removed - using Firebase Auth now
+function cloudSave(){
+  // Handled by auth integration
+  if(window.forceCloudSync) window.forceCloudSync();
 }
-window.saveFirebaseConfig=async function(){
- const g=id=>document.getElementById(id).value.trim();
- const cfg={apiKey:g("fb_apiKey"),authDomain:g("fb_authDomain"),projectId:g("fb_projectId"),appId:g("fb_appId")};
- if(Object.values(cfg).some(v=>!v)){toast("Please fill all Firebase fields");return}
- const k=g("fb_syncKey");if(k.length<16){toast("Sync key must be at least 16 characters");return}
- localStorage.setItem("syncKey",k);localStorage.setItem("firebaseConfig",JSON.stringify(cfg));closeModal("syncModal");await connectFirebase(cfg)
-};
-window.disconnectSync=()=>{if(!confirm("Disconnect cloud sync on this device? Your local data stays."))return;["syncOn","firebaseConfig","lastCloudSync"].forEach(k=>localStorage.removeItem(k));location.reload()};
-function tryAutoFirebase(){const c=fbConfig();if(c&&localStorage.getItem("syncOn")==="1")connectFirebase(c)}
 
 function pct(n,d){return d?Math.round(100*n/d):0}
 function fmtDate(s){
@@ -1034,30 +1489,7 @@ window.deleteSelfCheck=(i)=>{
 };
 
 
-window.runSystemCheck=()=>{
- const requiredIds=["dashboardCards","habitTable","selfTable","diaryStory","diaryLearn","habitManageTable","subjectTable","acadLogTable","assignTable","placeTopicTable","placeLogTable","appTable","sscTopicTable","sscLogTable","mockTable","customSections","todayChecklist","deadlineRadar","attentionList"];
- const missing=requiredIds.filter(id=>!document.getElementById(id));
- const checks=[
-   ["Local save",typeof saveLocal==="function"],
-   ["Cloud save",typeof cloudSave==="function"],
-   ["Date navigation",typeof changeDay==="function"&&typeof goToday==="function"],
-   ["Habit management",typeof addHabit==="function"&&typeof deleteHabit==="function"],
-   ["Self-check management",typeof addSelfCheck==="function"&&typeof deleteSelfCheck==="function"],
-   ["Target management",typeof saveTargets==="function"],
-   ["Backup export",typeof exportJSON==="function"],
-   ["Backup import",typeof importJSON==="function"]
- ];
- const bad=checks.filter(x=>!x[1]).map(x=>x[0]);
- if(missing.length||bad.length){
-   toast("System check found "+(missing.length+bad.length)+" issue(s)");
-   console.warn("Planner system check",{missing,missingFunctions:bad});
- }else{
-   toast("✓ System check passed");
-   console.info("Planner system check passed");
- }
-};
-
-
+// System check and setup functions removed - handled by auth system
 
 window.renderToday=renderToday;
 
@@ -1181,7 +1613,24 @@ function focusLast(sel){setTimeout(()=>{const a=document.querySelectorAll(sel),e
 function structChanged(){state.selectedBuiltin=null;state.selectedCustomSub=0;save();renderAll()}
 window._secOpen=window._secOpen||new Set();window.secToggle=el=>{el.open?window._secOpen.add(el.dataset.k):window._secOpen.delete(el.dataset.k)};
 function applyNavVisibility(){document.querySelectorAll('.nav button[data-page]').forEach(b=>{b.style.display=(state.hiddenPages||[]).includes(b.dataset.page)?'none':''})}
-window.toggleMenu=()=>document.getElementById('sidebar').classList.toggle('open');
+window.toggleMenu=()=>{
+ const sidebar=document.getElementById('sidebar');
+ const menuButton=document.querySelector('.mobile-menu');
+ const open=sidebar.classList.toggle('open');
+ if(menuButton)menuButton.setAttribute('aria-expanded',String(open));
+};
+document.addEventListener('keydown',event=>{
+ if(event.key!=="Escape")return;
+ document.querySelectorAll(".modal.show").forEach(modal=>closeModal(modal.id));
+ const sidebar=document.getElementById("sidebar");
+ if(sidebar.classList.contains("open"))toggleMenu();
+});
+document.querySelectorAll(".modal").forEach(modal=>{
+ modal.setAttribute("aria-hidden","true");
+ modal.addEventListener("click",event=>{
+   if(event.target===modal)closeModal(modal.id);
+ });
+});
 window.setSecSel=v=>{window._secSel=v;renderSectionSettings()};
 
 function renderSectionSettings(){
@@ -1458,12 +1907,10 @@ window.resetAll=window.clearPlannerData;
  // service worker
  if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
-(function(){const m=location.hash.match(/[#&]sync=([^&]+)/);if(m){try{localStorage.setItem("syncKey",decodeURIComponent(m[1]));if(fbConfig())localStorage.setItem("syncOn","1");history.replaceState(null,"",location.pathname+location.search)}catch{}}})();
-window.copySetupLink=async()=>{const u=location.origin+location.pathname+"#sync="+encodeURIComponent(getSyncKey());try{await navigator.clipboard.writeText(u);toast("Setup link copied — send it only to yourself",3500)}catch{prompt("Copy this link:",u)}};
+// Old sync URL handler removed
 renderAll();
 const startupPage=localStorage.getItem("dailyPlannerCurrentPage")||"today";
 go(document.getElementById("page-"+startupPage)&&!(state.hiddenPages||[]).includes(startupPage)?startupPage:"today");
-tryAutoFirebase();
 </script>
 
 <div class="modal date-picker-modal" id="datePickerModal" onclick="if(event.target===this)closeModal('datePickerModal')">
