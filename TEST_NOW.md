@@ -31,8 +31,18 @@
 - [ ] Calendar and list task views show the same task data.
 - [ ] Focus sprints record study minutes and update progress.
 - [ ] Browser reminders remain off unless explicitly enabled.
+- [ ] Enabling browser reminders remains enabled after a page refresh and after signing in again.
+- [ ] Disabling browser reminders remains disabled after a page refresh and after signing in again.
+- [ ] Changing the reminder time remains unchanged after a page refresh and on another signed-in device.
 - [ ] Invalid backup files are rejected without replacing current data.
 - [ ] A multi-device conflict offers a cloud/local choice.
+- [ ] Smart reminders skip days with a configured check-in.
+- [ ] Daily plan ranks open tasks by priority and deadline.
+- [ ] Recurring tasks create the next occurrence when completed.
+- [ ] Calendar export opens correctly in a calendar application.
+- [ ] Backup snapshots can be saved and restored.
+- [ ] Streak and focus analytics update after a habit check-in or focus sprint.
+- [ ] Push setup refuses safely when no public VAPID key is configured.
 
 ## Responsive UI
 

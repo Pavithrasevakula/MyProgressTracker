@@ -3,9 +3,9 @@ const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;
 const dateLabel=value=>value?new Date(`${value}T12:00:00`).toLocaleDateString(undefined,{month:"short",day:"numeric"}):"No deadline";
 const uid=prefix=>`${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
 const priorityRank={high:0,medium:1,low:2};
-const CURRENT_SCHEMA_VERSION=2;
+const CURRENT_SCHEMA_VERSION=3;
 const DEFAULT_HABITS=[{id:"plan",name:"Plan the day",target:"5 minutes"},{id:"review",name:"Review what I learned",target:"10 minutes"},{id:"breaks",name:"Take proper breaks",target:"During study"}];
-const SEED={version:2,profile:{name:"",onboardingComplete:true},subjects:[],tasks:[],habits:DEFAULT_HABITS,daily:{},timeLogs:[],settings:{cloudSync:true,weeklyTarget:12,remindersEnabled:false,reminderTime:"18:00",habitsConfigured:false}};
+const SEED={version:3,profile:{name:"",onboardingComplete:true},subjects:[],tasks:[],habits:DEFAULT_HABITS,daily:{},timeLogs:[],settings:{cloudSync:true,weeklyTarget:12,remindersEnabled:false,reminderTime:"18:00",habitsConfigured:false,smartReminders:true,skipReminderAfterCheckIn:true,reminderDays:[1,2,3,4,5],pushEnabled:false,calendarConnected:false}};
 
 function loadLocal(){try{const raw=localStorage.getItem("dailyPlannerState");return raw?JSON.parse(raw):structuredClone(SEED)}catch(error){console.error("Could not load local planner state",error);return structuredClone(SEED)}}
 let state=window.state=loadLocal();
@@ -105,7 +105,7 @@ window.renameHabit=(id,name)=>{const h=state.habits.find(x=>x.id===id);if(h){sta
 window.exportJSON=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="myprogresstrack-backup.json";a.click();URL.revokeObjectURL(a.href)};
 function isValidBackup(value){if(!value||typeof value!=="object"||Array.isArray(value)||!Array.isArray(value.tasks)||!Array.isArray(value.subjects)||!Array.isArray(value.habits)||typeof value.daily!=="object"||Array.isArray(value.daily)||typeof value.settings!=="object"||Array.isArray(value.settings))return false;return value.tasks.every(task=>task&&typeof task==="object"&&typeof task.title==="string"&&(!task.status||["open","done"].includes(task.status))&&(!task.priority||priorityRank[task.priority]!==undefined)&&(!task.subtasks||Array.isArray(task.subtasks)))&&value.subjects.every(subject=>subject&&typeof subject==="object"&&typeof subject.name==="string")};
 window.importJSON=input=>{const file=input.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=event=>{try{const imported=JSON.parse(event.target.result);if(!isValidBackup(imported))throw new Error("Invalid planner backup");if(!confirm("Restore this backup? Your current local workspace will be replaced."))return;state=window.state=imported;migrateState();save();renderAll();toast("Backup restored")}catch(error){console.error("Could not restore backup",error);toast("That backup file is not valid")}};reader.readAsText(file);input.value=""};
-function renderAll(){if(!document.getElementById("page-today"))return;migrateState();const page=window._page||"today";populateSubjectSelects();renderToday();renderTasks();renderSubjects();renderProgress();renderJournalHistory();renderSettings();setPageTitle(page);if(!document.getElementById("journalDate").value){document.getElementById("journalDate").value=todayISO();loadJournal()}const now=new Date();document.getElementById("liveDate").textContent=now.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});window.saveLocalOnly()}
+function renderAll(){if(!document.getElementById("page-today"))return;migrateState();const page=window._page||"today";populateSubjectSelects();renderToday();renderTasks();renderSubjects();renderProgress();renderJournalHistory();renderSettings();window.renderAdvancedFeatures?.();setPageTitle(page);if(!document.getElementById("journalDate").value){document.getElementById("journalDate").value=todayISO();loadJournal()}const now=new Date();document.getElementById("liveDate").textContent=now.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});window.saveLocalOnly()}
 window.renderAll=renderAll;window.openOnboarding=()=>{state.profile.onboardingComplete=true;save()};
 window.addEventListener("load",()=>{renderAll();document.getElementById("appLoading").hidden=true});
 
@@ -158,7 +158,7 @@ window.toggleReminders=async enabled=>{
 };
 window.saveReminderTime=value=>{state.settings.reminderTime=value||"18:00";save();renderReminderSettings()};
 function checkReminder(){
-  if(!state.settings.remindersEnabled||!("Notification" in window)||Notification.permission!=="granted")return;
+  if(!state.settings.remindersEnabled||state.settings.smartReminders||!("Notification" in window)||Notification.permission!=="granted")return;
   const now=new Date(),time=state.settings.reminderTime||"18:00",at=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
   if(at!==time||localStorage.getItem("studyReminderDate")===todayISO())return;
   const checkedIn=state.timeLogs.some(x=>x.date===todayISO())||state.habits.some(h=>h.done?.[todayISO()]);

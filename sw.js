@@ -1,5 +1,5 @@
-const CACHE_NAME="mpt-v13";
-const APP_SHELL=["./","index.html","manifest.webmanifest","icon.png","favicon.ico","firebase-config.js","styles.css?v=8","auth.css","app-shell.js?v=8","firebase-auth.js?v=8","planner.js?v=8","auth.js"];
+const CACHE_NAME="mpt-v15";
+const APP_SHELL=["./","index.html","manifest.webmanifest","icon.png","favicon.ico","firebase-config.js","push-config.js","styles.css?v=9","auth.css","app-shell.js?v=9","planner.js?v=9","firebase-auth.js?v=9","feature-kit.js?v=1","auth.js"];
 
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.all(APP_SHELL.map(file=>cache.add(file).catch(()=>null)))));
@@ -27,4 +27,18 @@ self.addEventListener("fetch",event=>{
     caches.open(CACHE_NAME).then(cache=>cache.put(request,copy));
     return response;
   })));
+});
+
+self.addEventListener("push",event=>{
+  let data={title:"MyProgressTrack",body:"You have a study step waiting.",url:"./index.html"};
+  try{if(event.data)data={...data,...event.data.json()}}catch(error){console.error("Could not read push payload",error)}
+  event.waitUntil(self.registration.showNotification(data.title,{body:data.body,icon:"icon.png",data:{url:data.url}}));
+});
+self.addEventListener("notificationclick",event=>{
+  event.notification.close();
+  event.waitUntil(clients.matchAll({type:"window",includeUncontrolled:true}).then(openClients=>{
+    const target=new URL(event.notification.data?.url||"./index.html",self.location.origin).href;
+    const existing=openClients.find(client=>client.url===target);
+    return existing?existing.focus():clients.openWindow(target);
+  }));
 });

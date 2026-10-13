@@ -11,9 +11,16 @@ MyProgressTrack is a Google-authenticated student workspace for planning study t
 - **Focus sprints** — run a lightweight 25-minute Pomodoro with automatic study-time logging and breaks.
 - **Weekly review insights** — get an actionable next step based on overdue work and recent focus time.
 - **Journal** — save short daily reflections and next steps.
-- **Settings** — manage habits, weekly study targets, optional browser reminders, profile details, backup, and sync.
+- **Settings** — manage habits, weekly study targets, optional browser reminders, profile details, backup, and sync. Settings are saved locally immediately and synced to the signed-in account, so they remain unchanged until you manually update them.
 - **Google sign-in and automatic cloud sync** — data is stored in Firestore under the signed-in account and synchronized across devices.
 - **Offline-first PWA** — local changes remain available offline and sync when the connection returns.
+
+## Advanced feature setup
+
+- **Smart reminders** and **backup snapshots** work locally and sync their planner settings through Firestore.
+- **Calendar export** downloads all dated tasks as an `.ics` file that can be imported into Google Calendar, Apple Calendar, or Outlook. OAuth calendar sync is intentionally not enabled until a server-side OAuth client and redirect URL are configured; client-side secrets are not safe.
+- **Background push notifications** require a Web Push provider. Put only the public VAPID key in `push-config.js`; keep the private key and the subscription delivery endpoint on a server. The browser creates and stores the subscription, but a server must send the payload.
+- **Automatic daily planning**, recurring tasks, streaks, and focus analytics are available from Settings. Recurring tasks create their next occurrence when completed.
 
 ## Run locally
 
