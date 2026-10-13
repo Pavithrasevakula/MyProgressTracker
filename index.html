@@ -174,6 +174,24 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 .pg-ic{width:26px;text-align:center;flex-shrink:0}
 .settings-sub-row .sn{min-width:0}
 @media(max-width:720px){details.set-acc>summary{padding:14px}.set-body{padding:0 14px 14px}.settings-sub-row .acts select,.settings-sub-row .acts .btn{flex:1 1 auto}}
+
+/* Professional product shell */
+:root{--bg:#f3f6f4;--surface:#fff;--ink:#1d2b25;--muted:#66756d;--line:#d9e4de;--green:#4f8b6c;--green2:#2f6d50;--mint:#e5f1e9;--shadow:0 8px 24px rgba(35,60,47,.06);--radius:14px}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.005em}
+.sidebar{width:264px;padding:24px 16px;background:#fbfcfb;border-right-color:#e1e9e4}
+.brand{padding:2px 10px 28px}.brand b{font-size:16px;letter-spacing:-.02em}.brand small{font-size:11px;margin-top:2px}
+.nav{gap:3px}.nav .section-label{padding:18px 12px 6px;font-size:10px;font-weight:800;color:#8a9891}.nav button{padding:10px 12px;border-radius:9px;font-size:13px;transition:background .16s,color .16s,transform .16s}.nav button:hover{transform:translateX(2px)}.nav button.active{box-shadow:inset 3px 0 0 var(--green2)}
+.topbar{height:72px;padding:0 34px;background:rgba(255,255,255,.92);border-bottom-color:#e1e9e4}.topbar h1{font-size:19px;letter-spacing:-.02em}.topbar .date{font-size:11px;margin-top:2px}
+.content{padding:32px 34px 48px;max-width:1600px}.hero{margin-bottom:26px}.hero h2{font-size:30px;letter-spacing:-.04em}.hero p{font-size:13px}
+.card,.panel,details.set-acc{border-color:#e0e8e3;box-shadow:var(--shadow)}.card{border-radius:15px}.card:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(35,60,47,.09)}
+.section-head h3{font-size:15px;letter-spacing:-.01em}.panel-pad{padding:20px}
+.btn{border-radius:9px;font-weight:650}.btn.primary{background:var(--green2)}.btn.soft{background:var(--mint)}
+.sync-pill{border-radius:10px;font-size:11px}.modal-box{border-radius:16px}.toast{border-radius:9px}
+.table-wrap{border-radius:10px}.table-wrap table{min-width:640px}th{font-size:10px;letter-spacing:.08em}
+.mission-banner{border-radius:16px;background:linear-gradient(135deg,#e8f3ec,#f8f7f1);border-color:#d7e5dc}
+@media(max-width:1000px){.sidebar{width:232px}.topbar{padding:0 22px}.content{padding:26px 22px 40px}}
+@media(max-width:720px){.sidebar{width:270px}.topbar{padding:0 14px}.content{padding:22px 14px 34px}.hero h2{font-size:25px}.hero{gap:14px}.top-actions #exportBtn{display:none}.top-actions .btn{padding:8px 11px}.cards{gap:10px}.card{padding:14px}.panel-pad{padding:15px}}
+@media(max-width:420px){.content{padding:18px 11px 28px}.hero h2{font-size:23px}.topbar h1{font-size:16px}.mission-banner{padding:15px}.mission-metric b{font-size:22px}}
 </style>
 </head>
 <body>
@@ -197,7 +215,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
   <div class="nav">
     <div id="navBuiltin" style="display:contents"></div>
     <div id="customNavItems"></div>
-    <button data-page="settings">⚙ &nbsp; Settings</button>
+    <button data-page="settings">Settings</button>
   </div>
   <div class="sidebar-bottom">
     <div class="sync-pill" id="syncStatus" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#edf6f0,#e8f1eb);border-color:#c8ddd0">
@@ -213,7 +231,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 <main class="main">
 <header class="topbar">
   <div style="display:flex;gap:12px;align-items:center">
-    <button class="btn mobile-menu" type="button" onclick="toggleMenu()" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">☰</button>
+    <button class="btn mobile-menu" type="button" onclick="toggleMenu()" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"></button>
     <div>
       <h1 id="topTitle">Today</h1>
       <div class="date" id="liveDate"></div>
@@ -221,7 +239,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
   </div>
   <div class="top-actions">
     <button class="btn" id="exportBtn" onclick="exportJSON()" title="Download backup">
-      <span style="font-size:16px;margin-right:4px">📥</span> Export
+      <span style="font-size:16px;margin-right:4px"></span> Export
     </button>
     <button class="btn primary" onclick="openModal('quickAddModal')" style="box-shadow:0 2px 8px rgba(71,118,95,.25)">
       <span style="font-size:16px;margin-right:4px">＋</span> Add
@@ -249,17 +267,17 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 
   <div class="grid two section">
     <div class="panel panel-pad">
-      <div class="section-head"><h3>🔥 Today's Top 3</h3><span class="tiny muted">Type to edit</span></div>
+      <div class="section-head"><h3> Today's Top 3</h3><span class="tiny muted">Type to edit</span></div>
       <div id="todayTop3"></div>
     </div>
     <div class="panel panel-pad">
-      <div class="section-head"><h3>⏱️ Focus Session</h3><span class="badge">Deep work</span></div>
+      <div class="section-head"><h3>⏱ Focus Session</h3><span class="badge">Deep work</span></div>
       <div class="focus-box">
         <div class="timer-ring" id="timerRing"><div class="timer-text" id="timerText">50:00</div></div>
         <div>
           <b id="timerMode">Deep Work</b>
           <div class="tiny muted" id="timerHint">Work for 50 minutes, then take a 10-minute break.</div>
-          <label class="tiny muted" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">Log time to <select class="select" id="focusArea" onchange="setFocusArea(this.value)" style="width:auto;min-width:150px"><option value="academics">🎓 Academics</option><option value="placement">💼 Placements</option><option value="ssc">🏛️ SSC CGL</option><option value="none">Don't log (timer only)</option></select></label>
+          <label class="tiny muted" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">Log time to <select class="select" id="focusArea" onchange="setFocusArea(this.value)" style="width:auto;min-width:150px"><option value="academics"> Academics</option><option value="placement"> Placements</option><option value="ssc"> SSC CGL</option><option value="none">Don't log (timer only)</option></select></label>
           <div class="timer-controls" style="margin-top:9px"><button class="btn primary" onclick="toggleTimer()" id="timerStart">Start</button><button class="btn" onclick="finishFocus()">Stop &amp; log</button><button class="btn" onclick="resetTimer()">Reset</button><button class="btn" onclick="switchTimerMode()" id="timerModeBtn">25/5</button></div>
         </div>
       </div>
@@ -268,17 +286,17 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 
   <div class="grid two section">
     <div class="panel panel-pad">
-      <div class="section-head"><h3>🚨 Deadline Radar</h3><button class="btn" onclick="go('academics')">Open →</button></div>
+      <div class="section-head"><h3> Deadline Radar</h3><button class="btn" onclick="go('academics')">Open →</button></div>
       <div class="alert-list" id="deadlineRadar"></div>
     </div>
     <div class="panel panel-pad">
-      <div class="section-head"><h3>⚠️ Needs Attention</h3><span class="tiny muted">Based on your actual logs</span></div>
+      <div class="section-head"><h3> Needs Attention</h3><span class="tiny muted">Based on your actual logs</span></div>
       <div class="alert-list" id="attentionList"></div>
     </div>
   </div>
 
   <div class="panel panel-pad section">
-    <div class="section-head"><h3>📋 Today's Checklist</h3><button class="btn" onclick="go('personal')">Full checklist →</button></div>
+    <div class="section-head"><h3> Today's Checklist</h3><button class="btn" onclick="go('personal')">Full checklist →</button></div>
     <div id="todayChecklist"></div>
   </div>
 
@@ -287,21 +305,21 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 
 <section class="page" id="page-diary">
   <div class="hero">
-    <div><h2>My Diary & Me Time 🤍</h2><p>A quiet space to talk to yourself honestly, without judgment or pressure.</p></div>
-    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="btn" onclick="changeDay(-1)" title="Previous day">←</button><button class="btn soft date-picker-btn" id="diaryDateBtn" onclick="openCalendarForSelectedDate()" title="Choose diary date">📅 <span></span></button><button class="btn" onclick="changeDay(1)" title="Next day">→</button><button class="btn" onclick="goToday()">Today</button></div>
+    <div><h2>My Diary & Me Time </h2><p>A quiet space to talk to yourself honestly, without judgment or pressure.</p></div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="btn" onclick="changeDay(-1)" title="Previous day">←</button><button class="btn soft date-picker-btn" id="diaryDateBtn" onclick="openCalendarForSelectedDate()" title="Choose diary date"> <span></span></button><button class="btn" onclick="changeDay(1)" title="Next day">→</button><button class="btn" onclick="goToday()">Today</button></div>
   </div>
   <div class="diary-intro card">
-    <div class="diary-greeting">Hello, Pavithra ❤️</div>
-    <p>This is a new beginning — a journey to become a <strong>better, stronger, happier, and more successful version of yourself</strong>. The version you dream of, the version you love, and most importantly, the version you are <strong>proud to be</strong>. 🌷✨</p>
+    <div class="diary-greeting">Hello, Pavithra </div>
+    <p>This is a new beginning — a journey to become a <strong>better, stronger, happier, and more successful version of yourself</strong>. The version you dream of, the version you love, and most importantly, the version you are <strong>proud to be</strong>. </p>
     <p>This diary is a space where I talk to myself honestly. I will reflect on my day — what I accomplished, what I learned, where I went wrong, what I could have done better, and what I want to change tomorrow.</p>
-    <p><strong>You are me, and I am you.</strong> So every day, I promise to come here and have an honest conversation with myself. 🤍</p>
-    <p>I believe that <strong>Consistency, Discipline, and Attitude</strong> can completely change my life. 💪 I don't need to transform overnight. Even one small task completed, one better decision, or a tiny improvement every day is enough — <strong>but I must keep going.</strong></p>
-    <p>There will be difficult days, lazy days, failures, distractions, and moments when I don't feel motivated. But this journey isn't about being perfect; it's about <strong>showing up anyway</strong>. 🌱</p>
+    <p><strong>You are me, and I am you.</strong> So every day, I promise to come here and have an honest conversation with myself. </p>
+    <p>I believe that <strong>Consistency, Discipline, and Attitude</strong> can completely change my life.  I don't need to transform overnight. Even one small task completed, one better decision, or a tiny improvement every day is enough — <strong>but I must keep going.</strong></p>
+    <p>There will be difficult days, lazy days, failures, distractions, and moments when I don't feel motivated. But this journey isn't about being perfect; it's about <strong>showing up anyway</strong>. </p>
     <p>I want to be able to say:</p>
-    <blockquote>“Pavithra, you kept the promise you made to yourself.” 🥹❤️</blockquote>
+    <blockquote>“Pavithra, you kept the promise you made to yourself.” </blockquote>
     <p>I am not competing with anyone else. <strong>My only competition is the person I was yesterday.</strong></p>
     <p class="diary-mantra"><strong>One day at a time.</strong><br><strong>One task at a time.</strong><br><strong>One improvement at a time.</strong></p>
-    <p class="diary-mantra"><strong>Keep going. Keep growing. Keep becoming the person you want to be.</strong> 🤍🌷</p>
+    <p class="diary-mantra"><strong>Keep going. Keep growing. Keep becoming the person you want to be.</strong> </p>
   </div>
 
   <div class="panel panel-pad section" id="moodPanel"><div class="section-head"><h3>How are you feeling today?</h3><span class="tiny muted">One tap</span></div><div id="moodRow" style="display:flex;gap:8px;flex-wrap:wrap"></div></div>
@@ -313,14 +331,14 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
     <div class="panel panel-pad diary-entry-card diary-wide"><label><strong>Tomorrow's promise</strong><span>One clear thing I will do differently tomorrow.</span></label><textarea id="diaryTomorrow" class="textarea diary-text" placeholder="One clear promise to yourself for tomorrow..."></textarea></div>
   </div>
 
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><div><h3>✓ Daily self-check</h3><p class="tiny muted">These questions are part of your diary check-in. Edit them whenever your priorities change.</p></div><div><span class="badge" id="selfCount" style="margin-right:6px">Questions</span><button class="btn soft" onclick="addSelfCheck()">＋ Question</button></div></div><div class="diary-score-row"><div><span class="muted tiny">Today's check-in</span><strong id="diarySelfScore">0 / 5</strong></div><div class="progress" style="flex:1"><i id="diarySelfScoreBar"></i></div></div><div class="table-wrap desktop-only"><table id="selfTable"></table></div><div class="self-list mobile-only" id="selfListMobile"></div></div></div>
+  <div class="panel section"><div class="panel-pad"><div class="section-head"><div><h3> Daily self-check</h3><p class="tiny muted">These questions are part of your diary check-in. Edit them whenever your priorities change.</p></div><div><span class="badge" id="selfCount" style="margin-right:6px">Questions</span><button class="btn soft" onclick="addSelfCheck()">＋ Question</button></div></div><div class="diary-score-row"><div><span class="muted tiny">Today's check-in</span><strong id="diarySelfScore">0 / 5</strong></div><div class="progress" style="flex:1"><i id="diarySelfScoreBar"></i></div></div><div class="table-wrap desktop-only"><table id="selfTable"></table></div><div class="self-list mobile-only" id="selfListMobile"></div></div></div>
 </section>
 
 <section class="page" id="page-personal">
-  <div class="hero"><div><h2>My Daily Checklist</h2><p>Excel-style habit tracking, but faster to update.</p></div><div style="display:flex;align-items:center;gap:6px"><button class="btn" onclick="changeDay(-1)" title="Previous day">←</button> <button class="btn soft date-picker-btn" id="selectedDateBtn" onclick="openCalendarForSelectedDate()" title="Open calendar">📅 <span></span></button> <button class="btn" onclick="changeDay(1)" title="Next day">→</button> <button class="btn" onclick="goToday()">Today</button></div></div>
+  <div class="hero"><div><h2>My Daily Checklist</h2><p>Excel-style habit tracking, but faster to update.</p></div><div style="display:flex;align-items:center;gap:6px"><button class="btn" onclick="changeDay(-1)" title="Previous day">←</button> <button class="btn soft date-picker-btn" id="selectedDateBtn" onclick="openCalendarForSelectedDate()" title="Open calendar"> <span></span></button> <button class="btn" onclick="changeDay(1)" title="Next day">→</button> <button class="btn" onclick="goToday()">Today</button></div></div>
 
   <div class="grid two">
-    <div class="card"><div class="stat"><div><div class="label">Today's score</div><div class="num" id="todayScore">0%</div></div><div class="iconbox">✓</div></div><div class="progress"><i id="todayScoreBar"></i></div></div>
+    <div class="card"><div class="stat"><div><div class="label">Today's score</div><div class="num" id="todayScore">0%</div></div><div class="iconbox"></div></div><div class="progress"><i id="todayScoreBar"></i></div></div>
     <div class="card blue"><div class="stat"><div><div class="label">Month completion</div><div class="num" id="monthScore">0%</div></div><div class="iconbox">◷</div></div><div class="progress"><i id="monthScoreBar"></i></div></div>
   </div>
   <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Today's Top 3 priorities</h3><span class="badge lav">Daily</span></div><div class="top3"><div class="top3-row"><span>1</span><input class="input priority" data-p="1" placeholder="Most important task"></div><div class="top3-row"><span>2</span><input class="input priority" data-p="2" placeholder="Second priority"></div><div class="top3-row"><span>3</span><input class="input priority" data-p="3" placeholder="Third priority"></div></div></div></div>
@@ -363,18 +381,18 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
   <div class="hero"><div><h2>Analytics</h2><p>What actually happened — activity, streaks, milestones and weekly review.</p></div></div>
   <div class="grid cards" id="analyticsCards"></div>
   <div class="panel panel-pad section">
-    <div class="section-head"><div><h3>🗓 Activity — last 12 months</h3><p class="tiny muted" style="margin:3px 0 0">Darker = more of your daily routine completed. Tap any day for details.</p></div></div>
+    <div class="section-head"><div><h3> Activity — last 12 months</h3><p class="tiny muted" style="margin:3px 0 0">Darker = more of your daily routine completed. Tap any day for details.</p></div></div>
     <div class="review-grid" id="heatStats" style="margin-bottom:14px"></div>
     <div class="gh-row"><div class="gh-days"><span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span></div><div class="gh-scroll" id="heatScroll"></div></div>
     <div class="gh-legend"><span>Less</span><i class="gh-cell l0"></i><i class="gh-cell l1"></i><i class="gh-cell l2"></i><i class="gh-cell l3"></i><i class="gh-cell l4"></i><span>More</span></div>
     <div class="heat-detail" id="heatDetail"></div>
   </div>
-  <div class="panel panel-pad section"><div class="section-head"><h3>📍 Upcoming milestones</h3><span class="tiny muted">Exams, deadlines &amp; applications</span></div><div id="goalMilestones" class="alert-list"></div></div>
+  <div class="panel panel-pad section"><div class="section-head"><h3> Upcoming milestones</h3><span class="tiny muted">Exams, deadlines &amp; applications</span></div><div id="goalMilestones" class="alert-list"></div></div>
 
-  <div class="panel panel-pad section"><div class="section-head"><h3>🙂 Mood — last 30 days</h3></div><div id="moodStats"></div></div>
+  <div class="panel panel-pad section"><div class="section-head"><h3> Mood — last 30 days</h3></div><div id="moodStats"></div></div>
 
   <div class="panel panel-pad section">
-    <div class="section-head"><h3>📈 Weekly Review</h3><span class="badge">Auto-calculated</span></div>
+    <div class="section-head"><h3> Weekly Review</h3><span class="badge">Auto-calculated</span></div>
     <div class="review-grid" id="weeklyReview"></div>
     <div style="margin-top:14px" class="muted" id="weeklyInsight"></div>
   </div>
@@ -397,24 +415,24 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 <section class="page" id="page-settings">
   <div class="hero"><div><h2>Settings</h2><p>Tap a group to open it. Rename, re-icon, reorder, move or remove any section and page — nothing is locked.</p></div></div>
   <div class="set-stack">
-    <details class="set-acc" open id="set-sections"><summary>🗂 Sections &amp; pages<span class="set-sub">rename, move, add, complete</span></summary><div class="set-body">
+    <details class="set-acc" open id="set-sections"><summary> Sections &amp; pages<span class="set-sub">rename, move, add, complete</span></summary><div class="set-body">
       <div class="sec-bar" style="margin-top:0"><p class="tiny muted" style="margin:0;flex:1 1 240px">Open a section to rename or move its pages, and to add, rename or delete subsections. Press “Move to Completed” when something is finished — nothing moves by itself.</p><button class="btn primary" onclick="sAddSec()">＋ New Section</button></div>
       <div id="sectionSettingsManager" style="margin-top:12px"></div>
     </div></details>
-    <details class="set-acc" id="set-done"><summary>✅ Completed <span class="badge" id="doneCount">0</span><span class="set-sub">finished pages &amp; subsections</span></summary><div class="set-body"><div id="completedManager"></div></div></details>
-    <details class="set-acc" id="set-targets"><summary>🎯 Daily targets<span class="set-sub">hours per day</span></summary><div class="set-body">
+    <details class="set-acc" id="set-done"><summary> Completed <span class="badge" id="doneCount">0</span><span class="set-sub">finished pages &amp; subsections</span></summary><div class="set-body"><div id="completedManager"></div></div></details>
+    <details class="set-acc" id="set-targets"><summary> Daily targets<span class="set-sub">hours per day</span></summary><div class="set-body">
       <p class="muted" style="margin-top:0">Changing these updates Today, Daily Routine and Analytics automatically.</p>
       <div class="targets-grid">
-        <label>🎓 Academics (h)<input class="input target-setting" id="targetAcademics" type="number" min="0" step="0.25"></label>
-        <label>🧩 Projects (h)<input class="input target-setting" id="targetProjects" type="number" min="0" step="0.25"></label>
-        <label>💼 Placement (h)<input class="input target-setting" id="targetPlacement" type="number" min="0" step="0.25"></label>
-        <label>🏛️ SSC CGL (h)<input class="input target-setting" id="targetSSC" type="number" min="0" step="0.25"></label>
-        <label>🏛️ SSC exam date<input class="input" id="sscExamDate" type="date"></label>
-        <label>🔔 Daily reminder<input class="input" id="reminderTime" type="time"></label>
+        <label> Academics (h)<input class="input target-setting" id="targetAcademics" type="number" min="0" step="0.25"></label>
+        <label> Projects (h)<input class="input target-setting" id="targetProjects" type="number" min="0" step="0.25"></label>
+        <label> Placement (h)<input class="input target-setting" id="targetPlacement" type="number" min="0" step="0.25"></label>
+        <label> SSC CGL (h)<input class="input target-setting" id="targetSSC" type="number" min="0" step="0.25"></label>
+        <label> SSC exam date<input class="input" id="sscExamDate" type="date"></label>
+        <label> Daily reminder<input class="input" id="reminderTime" type="time"></label>
       </div>
       <div style="text-align:right;margin-top:12px"><button class="btn primary" onclick="saveTargets()">Save targets</button></div>
     </div></details>
-    <details class="set-acc" id="set-routine"><summary>🌿 Daily routine setup<span class="set-sub">habits &amp; recurring tasks</span></summary><div class="set-body">
+    <details class="set-acc" id="set-routine"><summary> Daily routine setup<span class="set-sub">habits &amp; recurring tasks</span></summary><div class="set-body">
       <div class="section-head"><h3 style="font-size:14px">Habits &amp; tasks</h3><button class="btn soft" onclick="addHabit()">＋ Habit / Task</button></div>
       <p class="tiny muted">Study habits are tracked automatically from your logs; manual habits can be ticked directly.</p>
       <div class="table-wrap"><table id="habitManageTable"></table></div>
@@ -422,15 +440,15 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
       <p class="tiny muted">Repeating tasks in one place. Switch them off without deleting.</p>
       <div class="table-wrap"><table id="recurringTable"></table></div>
     </div></details>
-    <details class="set-acc" id="set-data"><summary>☁ Account & Data<span class="set-sub">account info, backup, export</span></summary><div class="set-body">
+    <details class="set-acc" id="set-data"><summary> Account & Data<span class="set-sub">account info, backup, export</span></summary><div class="set-body">
       <h3 style="font-size:14px;margin:0 0 4px">Your Account</h3><p class="muted" style="margin-top:0">Your data is automatically synced to the cloud and available on all devices.</p>
       <button class="btn primary" onclick="openModal('syncModal')">View Account Info</button>
       
       <h3 style="font-size:14px;margin:22px 0 4px">Data Backup</h3><p class="muted" style="margin-top:0">Export your data as JSON for backup or import data from a previous export.</p>
-      <button class="btn" onclick="exportJSON()">📥 Download Backup</button> <button class="btn" onclick="document.getElementById('importFile').click()">📤 Import Backup</button> <input id="importFile" type="file" accept=".json" style="display:none" onchange="importJSON(this)">
+      <button class="btn" onclick="exportJSON()"> Download Backup</button> <button class="btn" onclick="document.getElementById('importFile').click()"> Import Backup</button> <input id="importFile" type="file" accept=".json" style="display:none" onchange="importJSON(this)">
       
       <h3 style="font-size:14px;margin:22px 0 4px">Danger Zone</h3><p class="muted" style="margin-top:0">These actions cannot be undone. Your cloud data will remain safe.</p>
-      <button class="btn danger" onclick="clearPlannerData()">🗑️ Clear Local Data</button>
+      <button class="btn danger" onclick="clearPlannerData()"> Clear Local Data</button>
     </div></details>
   </div>
 </section>
@@ -438,43 +456,43 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 </div></main></div>
 
 <!-- Modals -->
-<div class="modal" id="quickAddModal"><div class="modal-box" style="max-width:520px"><div class="modal-head"><h3>✨ Quick Add</h3><button class="btn" onclick="closeModal('quickAddModal')" style="font-size:20px;padding:4px 12px">×</button></div>
+<div class="modal" id="quickAddModal"><div class="modal-box" style="max-width:520px"><div class="modal-head"><h3> Quick Add</h3><button class="btn" onclick="closeModal('quickAddModal')" style="font-size:20px;padding:4px 12px">×</button></div>
 <div style="margin-top:20px">
   <p class="muted" style="font-size:13px;margin:0 0 16px;text-align:center">What would you like to add?</p>
   <div style="display:grid;gap:10px">
     <div style="background:#f8fbf9;padding:12px;border-radius:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">📚 Study Sessions</div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em"> Study Sessions</div>
       <div style="display:grid;gap:8px">
         <button class="btn" onclick="closeModal('quickAddModal');openModal('acadLogModal')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px">🎓</span> Academic study session
+          <span style="font-size:18px;margin-right:10px"></span> Academic study session
         </button>
         <button class="btn" onclick="closeModal('quickAddModal');openModal('placeLogModal')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px">💼</span> Placement prep session
+          <span style="font-size:18px;margin-right:10px"></span> Placement prep session
         </button>
         <button class="btn" onclick="closeModal('quickAddModal');openModal('sscLogModal')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px">🏛️</span> SSC study session
+          <span style="font-size:18px;margin-right:10px"></span> SSC study session
         </button>
       </div>
     </div>
     <div style="background:#f8fbf9;padding:12px;border-radius:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">📝 Tasks & Goals</div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em"> Tasks & Goals</div>
       <div style="display:grid;gap:8px">
         <button class="btn" onclick="closeModal('quickAddModal');go('settings');openSet('set-routine');addHabit()" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px">🌿</span> Habit or routine
+          <span style="font-size:18px;margin-right:10px"></span> Habit or routine
         </button>
         <button class="btn" onclick="closeModal('quickAddModal');addAssignment();go('academics')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px">📚</span> Assignment or project
+          <span style="font-size:18px;margin-right:10px"></span> Assignment or project
         </button>
         <button class="btn" onclick="closeModal('quickAddModal');addApplication();go('placements')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px">💼</span> Job application
+          <span style="font-size:18px;margin-right:10px"></span> Job application
         </button>
       </div>
     </div>
     <div style="background:#f8fbf9;padding:12px;border-radius:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">💭 Personal</div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em"> Personal</div>
       <div style="display:grid;gap:8px">
         <button class="btn" onclick="closeModal('quickAddModal');addSelfCheck();go('diary')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px">✓</span> Self-check question
+          <span style="font-size:18px;margin-right:10px"></span> Self-check question
         </button>
       </div>
     </div>
@@ -490,7 +508,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
 
 <div class="modal" id="syncModal"><div class="modal-box">
 <div class="modal-head">
-<h3>☁ Account & Cloud Sync</h3>
+<h3> Account & Cloud Sync</h3>
 <button class="btn" onclick="closeModal('syncModal')">×</button>
 </div>
 <div style="margin-top:20px">
@@ -499,7 +517,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
   <div style="background:linear-gradient(135deg,#edf6f0,#f7f4ec);border:1px solid #d8e6dd;border-radius:16px;padding:20px;margin-bottom:20px">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
       <div style="width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:800">
-        👤
+        
       </div>
       <div style="flex:1">
         <div style="font-weight:700;font-size:16px;margin-bottom:4px" id="modalUserEmail">Loading...</div>
@@ -510,7 +528,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div style="background:rgba(255,255,255,0.7);padding:12px;border-radius:12px">
         <div style="font-size:11px;color:var(--muted);margin-bottom:4px">ACCOUNT STATUS</div>
-        <div style="font-weight:700;color:var(--green2)">✓ Active</div>
+        <div style="font-weight:700;color:var(--green2)"> Active</div>
       </div>
       <div style="background:rgba(255,255,255,0.7);padding:12px;border-radius:12px">
         <div style="font-size:11px;color:var(--muted);margin-bottom:4px">LAST SYNCED</div>
@@ -522,19 +540,19 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
   <!-- Sync Status -->
   <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:20px">
     <h4 style="margin:0 0 12px;font-size:14px;display:flex;align-items:center;gap:8px">
-      <span>🔄</span> Auto-Sync Status
+      <span></span> Auto-Sync Status
     </h4>
     <div style="display:grid;gap:10px;font-size:13px">
       <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:var(--green2)">✓</span>
+        <span style="color:var(--green2)"></span>
         <span>Cloud backup enabled</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:var(--green2)">✓</span>
+        <span style="color:var(--green2)"></span>
         <span>Real-time sync active</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:var(--green2)">✓</span>
+        <span style="color:var(--green2)"></span>
         <span>Multi-device support</span>
       </div>
     </div>
@@ -542,7 +560,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
   
   <!-- Info Message -->
   <div style="background:#f8fbf9;border-left:3px solid var(--green);padding:12px 14px;border-radius:8px;font-size:13px;margin-bottom:20px">
-    <strong>💡 How it works:</strong>
+    <strong> How it works:</strong>
     <p style="margin:8px 0 0;line-height:1.6;color:var(--muted)">
       Your data automatically saves to the cloud after every change. Sign in on any device with the same account to access your data instantly.
     </p>
@@ -551,7 +569,7 @@ details.sec-card{padding:0}details.sec-card>summary{display:flex;align-items:cen
   <!-- Actions -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
     <button class="btn" onclick="closeModal('syncModal')">Close</button>
-    <button class="btn soft" onclick="if(window.forceCloudSync){window.forceCloudSync();toast('✓ Synced successfully!',2000)}">
+    <button class="btn soft" onclick="if(window.forceCloudSync){window.forceCloudSync();toast(' Synced successfully!',2000)}">
       Sync Now
     </button>
   </div>
@@ -599,7 +617,7 @@ window.addEventListener('load', function() {
 <script src="firebase-config.js"></script>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- 🔐 FIREBASE AUTHENTICATION INTEGRATION                          -->
+<!--  FIREBASE AUTHENTICATION INTEGRATION                          -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <script type="module" id="firebase-auth-integration">
 // Firebase Authentication & Real-time Sync Manager
@@ -621,7 +639,7 @@ window.currentUser = null;
 window.userDocRef = null;
 window.syncUnsubscribe = null;
 
-console.log('🔐 Auth manager initialized');
+console.log(' Auth manager initialized');
 
 function setAppLoading(visible) {
   const loading = document.getElementById('appLoading');
@@ -649,12 +667,12 @@ updateConnectivity();
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     // Not logged in → redirect to auth page
-    console.log('❌ No user - redirecting to auth.html');
+    console.log(' No user - redirecting to auth.html');
     window.location.href = 'auth.html';
     return;
   }
   
-  console.log('✅ User authenticated:', user.uid);
+  console.log(' User authenticated:', user.uid);
   
   // Store user info globally
   window.currentUser = user;
@@ -687,7 +705,7 @@ function addUserInfoToUI(user) {
     
     userInfo.innerHTML = `
       <span class="muted" style="font-size:12px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${user.email}">
-        👤 ${userName}
+         ${userName}
       </span>
       <button class="btn" onclick="signOutUser()" style="padding:7px 12px;font-size:13px">
         Sign Out
@@ -695,14 +713,14 @@ function addUserInfoToUI(user) {
     `;
     
     topbar.insertBefore(userInfo, topbar.firstChild);
-    console.log('✅ User info added to UI');
+    console.log(' User info added to UI');
   }
 }
 
 // Load Data from Firestore
 async function loadCloudData() {
   try {
-    console.log('📥 Loading data from Firestore...');
+    console.log(' Loading data from Firestore...');
     
     const docSnap = await getDoc(window.userDocRef);
     
@@ -717,7 +735,7 @@ async function loadCloudData() {
         localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
         localStorage.setItem('lastCloudSync', cloudData.updatedAt || new Date().toISOString());
         
-        console.log('✅ Data loaded from cloud');
+        console.log(' Data loaded from cloud');
         
         // Re-render all UI
         if (typeof window.renderAll === 'function') {
@@ -726,14 +744,14 @@ async function loadCloudData() {
       }
     } else {
       // First time user - save initial state to cloud
-      console.log('📤 First time user - uploading initial data...');
+      console.log(' First time user - uploading initial data...');
       await saveToCloud();
     }
     
     updateSyncStatus('● Cloud synced');
     
   } catch (error) {
-    console.error('❌ Error loading cloud data:', error);
+    console.error(' Error loading cloud data:', error);
     updateSyncStatus('● Sync error');
     
     if (typeof window.toast === 'function') {
@@ -746,7 +764,7 @@ async function loadCloudData() {
 // Save Data to Firestore
 async function saveToCloud() {
   if (!window.userDocRef || !window.state) {
-    console.warn('⚠️ Cannot save - no user or state');
+    console.warn(' Cannot save - no user or state');
     return;
   }
   if (!navigator.onLine) {
@@ -768,10 +786,10 @@ async function saveToCloud() {
     localStorage.setItem('lastCloudSync', timestamp);
     updateSyncStatus('● Cloud synced');
     
-    console.log('✅ Data saved to cloud');
+    console.log(' Data saved to cloud');
     
   } catch (error) {
-    console.error('❌ Error saving to cloud:', error);
+    console.error(' Error saving to cloud:', error);
     updateSyncStatus('● Sync error');
   }
 }
@@ -785,7 +803,7 @@ function setupRealtimeSync() {
     window.syncUnsubscribe();
   }
   
-  console.log('🔄 Setting up real-time sync...');
+  console.log(' Setting up real-time sync...');
   
   window.syncUnsubscribe = onSnapshot(
     window.userDocRef,
@@ -798,7 +816,7 @@ function setupRealtimeSync() {
       
       // Only update if cloud data is newer
       if (cloudTime > localTime && cloudData.state) {
-        console.log('📥 Syncing data from another device...');
+        console.log(' Syncing data from another device...');
         
         Object.assign(window.state, cloudData.state);
         localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
@@ -812,17 +830,17 @@ function setupRealtimeSync() {
         updateSyncStatus('● Synced from another device');
         
         if (typeof window.toast === 'function') {
-          window.toast('✓ Data synced from another device', 2000);
+          window.toast(' Data synced from another device', 2000);
         }
       }
     },
     (error) => {
-      console.error('❌ Real-time sync error:', error);
+      console.error(' Real-time sync error:', error);
       updateSyncStatus('● Sync error');
     }
   );
   
-  console.log('✅ Real-time sync active');
+  console.log(' Real-time sync active');
 }
 
 // Sign Out Function
@@ -832,7 +850,7 @@ window.signOutUser = async function() {
   }
   
   try {
-    console.log('🚪 Signing out...');
+    console.log(' Signing out...');
     
     // Cleanup sync listener
     if (window.syncUnsubscribe) {
@@ -850,7 +868,7 @@ window.signOutUser = async function() {
     window.location.href = 'auth.html';
     
   } catch (error) {
-    console.error('❌ Sign out error:', error);
+    console.error(' Sign out error:', error);
     
     if (typeof window.toast === 'function') {
       window.toast('Could not sign out. Please try again.', 3000);
@@ -891,7 +909,7 @@ function updateSyncStatus(text) {
 window.forceCloudSync = saveToCloud;
 window.reloadFromCloud = loadCloudData;
 
-console.log('✅ Auth integration complete - ready to sync!');
+console.log(' Auth integration complete - ready to sync!');
 
 </script>
 <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -992,7 +1010,7 @@ function monthDays(){
 function renderDashboard(){
  const today=todayISO(), acad=state.academics.logs.filter(x=>x.date===today&&["Study","Revision"].includes(x.type)).reduce((a,x)=>a+Number(x.hours||0),0), place=state.placements.logs.filter(x=>x.date===today).reduce((a,x)=>a+Number(x.hours||0),0), ssc=state.ssc.logs.filter(x=>x.date===today).reduce((a,x)=>a+Number(x.hours||0),0), score=pct(dayScore(today),state.habits.length);
  document.getElementById("dashboardCards").innerHTML=[
-  ["Today's checklist",score+"%",score+"% completed","✓",""],
+  ["Today's checklist",score+"%",score+"% completed","",""],
   ["Academics today",acad.toFixed(1)+"h","Target "+state.profile.targets.academics+"h","▣","blue"],
   ["Placement prep",place.toFixed(1)+"h","Target "+state.profile.targets.placement+"h","⌁","lav"],
   ["SSC CGL study",ssc.toFixed(1)+"h","Target "+state.profile.targets.ssc+"h","◎","gold"]
@@ -1011,7 +1029,7 @@ function renderPersonal(){
  document.getElementById("monthScore").textContent=pct(total,max)+"%";document.getElementById("monthScoreBar").style.width=pct(total,max)+"%";
  document.querySelectorAll(".priority").forEach(i=>{i.value=d.priorities[i.dataset.p]||"";i.oninput=()=>{d.priorities[i.dataset.p]=i.value;save();}});
  const dates=monthDays();let head=`<thead><tr><th class="task-name">Habit / task</th><th>Target</th>${dates.map(x=>`<th>${new Date(x+"T00:00:00").getDate()}<br><span class="tiny">${new Date(x+"T00:00:00").toLocaleDateString("en",{weekday:"short"})}</span></th>`).join("")}</tr></thead>`;
- let body="<tbody>"+state.habits.map(h=>`<tr><td class="task-name"><b>${esc(h.name)}</b>${h.auto?'<br><span class="badge">Auto from log</span>':""}</td><td>${esc(h.target)}${h.auto?' h/day':''}</td>${dates.map(dt=>{let on=habitDone(h,dt),manual=!h.auto;return `<td class="tickcell" title="${manual?'Click to toggle':'Calculated from study logs'}" onclick="${manual?`toggleHabit('${h.id}','${dt}')`:''}"><div class="check tick ${on?'on':''} ${h.auto?'auto':''}">${on?'✓':''}</div></td>`}).join("")}</tr>`).join("")+"</tbody>";
+ let body="<tbody>"+state.habits.map(h=>`<tr><td class="task-name"><b>${esc(h.name)}</b>${h.auto?'<br><span class="badge">Auto from log</span>':""}</td><td>${esc(h.target)}${h.auto?' h/day':''}</td>${dates.map(dt=>{let on=habitDone(h,dt),manual=!h.auto;return `<td class="tickcell" title="${manual?'Click to toggle':'Calculated from study logs'}" onclick="${manual?`toggleHabit('${h.id}','${dt}')`:''}"><div class="check tick ${on?'on':''} ${h.auto?'auto':''}">${on?'':''}</div></td>`}).join("")}</tr>`).join("")+"</tbody>";
  document.getElementById("habitTable").innerHTML=head+body;
  {const w=document.querySelector("#page-personal .calendar");if(w)w.scrollLeft=w.scrollWidth}
  const listEl=document.getElementById("habitListMobile");
@@ -1020,7 +1038,7 @@ function renderPersonal(){
      const on=habitDone(h,selectedDate),manual=!h.auto;
      return `<div class="habit-row ${on?'on':''} ${h.auto?'auto':''}" ${manual?`onclick="toggleHabit('${h.id}','${selectedDate}')"`:''}>
        <div class="hr-name"><b>${esc(h.name)}</b>${h.auto?'<span class="badge" style="margin-top:4px">Auto from log</span>':`<span class="tiny muted">Target: ${esc(h.target)}</span>`}</div>
-       <div class="hr-status">${h.auto?(on?'Done':'Pending'):(on?'✓ Done':'Mark done')}</div>
+       <div class="hr-status">${h.auto?(on?'Done':'Pending'):(on?' Done':'Mark done')}</div>
      </div>`;
    }).join(""):'<div class="empty">No habits yet. Add some in Settings → Daily routine setup.</div>';
  }
@@ -1118,7 +1136,7 @@ function renderBuiltinSubsectionPage(key,i){
   const destinations=[];
   Object.entries(state.builtinSubsections).forEach(([g,arr])=>arr.forEach((x,j)=>destinations.push({value:`builtin:${g}:${j}`,label:`${labels[g]} → ${x.name}`})));
   (state.customGroups||[]).forEach((g,gi)=>g.subsections.forEach((x,j)=>destinations.push({value:`custom:${gi}:${j}`,label:`${g.name} → ${x.name}`})));
-  root.innerHTML=`<div class="panel panel-pad"><div class="section-head"><div><b>${esc(labels[key])}</b><div class="tiny muted">Subsection</div></div><div><button class="btn" onclick="addTaskToBuiltin('${key}',${i})">＋ Task</button></div></div><div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr><td><div class="check ${t.done?'on':''}" onclick="toggleBuiltinTask('${key}',${i},${ti})">${t.done?'✓':''}</div></td><td><input class="input" value="${esc(t.name||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'name',this.value)"></td><td><input class="input" value="${esc(t.note||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'note',this.value)"></td><td><select class="select" onchange="moveBuiltinTask('${key}',${i},${ti},this.value)"><option value="">Keep here</option>${destinations.filter(d=>d.value!==`builtin:${key}:${i}`).map(d=>`<option value="${esc(d.value)}">${esc(d.label)}</option>`).join('')}</select></td><td><button class="btn danger" onclick="deleteBuiltinTask('${key}',${i},${ti})">Delete</button></td></tr>`).join('')}</tbody></table></div></div>`;
+  root.innerHTML=`<div class="panel panel-pad"><div class="section-head"><div><b>${esc(labels[key])}</b><div class="tiny muted">Subsection</div></div><div><button class="btn" onclick="addTaskToBuiltin('${key}',${i})">＋ Task</button></div></div><div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr><td><div class="check ${t.done?'on':''}" onclick="toggleBuiltinTask('${key}',${i},${ti})">${t.done?'':''}</div></td><td><input class="input" value="${esc(t.name||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'name',this.value)"></td><td><input class="input" value="${esc(t.note||'')}" onchange="editBuiltinTask('${key}',${i},${ti},'note',this.value)"></td><td><select class="select" onchange="moveBuiltinTask('${key}',${i},${ti},this.value)"><option value="">Keep here</option>${destinations.filter(d=>d.value!==`builtin:${key}:${i}`).map(d=>`<option value="${esc(d.value)}">${esc(d.label)}</option>`).join('')}</select></td><td><button class="btn danger" onclick="deleteBuiltinTask('${key}',${i},${ti})">Delete</button></td></tr>`).join('')}</tbody></table></div></div>`;
 }
 window.renameBuiltinSubsection=(key,i)=>{const s=state.builtinSubsections?.[key]?.[i];if(!s)return;const n=prompt('Rename subsection:',s.name);if(n?.trim()){s.name=n.trim();save();renderBuiltinSubsections();renderBuiltinSubsectionPage(key,i);}};
 window.deleteBuiltinSubsection=(key,i)=>{const s=state.builtinSubsections?.[key]?.[i];if(!s)return;if(!confirm(`Delete "${s.name}" and its tasks?`))return;state.builtinSubsections[key].splice(i,1);state.selectedBuiltin=null;save();renderBuiltinSubsections();renderCustom();go('custom');};
@@ -1153,7 +1171,7 @@ function renderSelectedSubsection(){
   root.innerHTML=`<div class="panel panel-pad">
     <div class="section-head"><div><b>${esc(g.name)}</b><div class="tiny muted">Subsection</div></div><div><button class="btn" onclick="addCustomTask(${gi},${si})">＋ Task</button></div></div>
     <div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Target / note</th><th>Move to</th><th></th></tr></thead><tbody>${sub.tasks.map((t,ti)=>`<tr>
-      <td><div class="check ${t.done?'on':''}" onclick="toggleCustom(${gi},${si},${ti})">${t.done?'✓':''}</div></td>
+      <td><div class="check ${t.done?'on':''}" onclick="toggleCustom(${gi},${si},${ti})">${t.done?'':''}</div></td>
       <td><input class="input" value="${esc(t.name||'')}" onchange="editCustom(${gi},${si},${ti},'name',this.value)"></td>
       <td><input class="input" value="${esc(t.note||'')}" onchange="editCustom(${gi},${si},${ti},'note',this.value)"></td>
       <td><select class="select" onchange="moveCustomTask(${gi},${si},${ti},this.value)"><option value="">Keep here</option>${[...Object.entries(state.builtinSubsections||{}).flatMap(([bk,arr])=>arr.map((ds,dsi)=>`<option value="builtin:${bk}:${dsi}">${esc(BLAB[bk])} → ${esc(ds.name)}</option>`)),...groups.flatMap((dg,dgi)=>dg.subsections.map((ds,dsi)=>(dgi===gi&&dsi===si)?'':`<option value="custom:${dgi}:${dsi}">${esc(dg.name)} → ${esc(ds.name)}</option>`))].join('')}</select></td>
@@ -1261,14 +1279,14 @@ function renderToday(){
 
  document.getElementById("todayChecklist").innerHTML=state.habits.map(h=>{
    const on=habitDone(h,todayISO());
-   return `<div class="task-row"><div class="check ${on?'on':''} ${h.auto?'auto':''}" ${h.auto?'':`onclick="toggleHabit('${h.id}',todayISO());window.renderToday()"`}>${on?'✓':''}</div><div class="${on?'task-done':''}"><b>${esc(h.name)}</b><div class="tiny muted">${esc(h.target)}${h.auto?' h/day':''}</div></div><span class="badge">${on?"Done":"Open"}</span><span></span></div>`;
+   return `<div class="task-row"><div class="check ${on?'on':''} ${h.auto?'auto':''}" ${h.auto?'':`onclick="toggleHabit('${h.id}',todayISO());window.renderToday()"`}>${on?'':''}</div><div class="${on?'task-done':''}"><b>${esc(h.name)}</b><div class="tiny muted">${esc(h.target)}${h.auto?' h/day':''}</div></div><span class="badge">${on?"Done":"Open"}</span><span></span></div>`;
  }).join("");
 
  const allDead=[];
  state.academics.assignments.forEach(x=>{if(x.status!=="Done"&&x.due)allDead.push({title:x.title,date:x.due,cat:"Academic"})});
  state.placements.applications.forEach(x=>{if(x.applyBy&&x.status==="Interested")allDead.push({title:`${x.company} — application`,date:x.applyBy,cat:"Placement"})});
  allDead.sort((a,b)=>a.date.localeCompare(b.date));
- document.getElementById("deadlineRadar").innerHTML=allDead.slice(0,6).map(x=>{const dl=daysLeft(x.date);return `<div class="alert ${dl!==null&&dl<=2?'urgent':''}"><div class="left"><i class="dot"></i><div><b>${esc(x.title)}</b><div class="tiny muted">${esc(x.cat)} • ${fmtDate(x.date)}</div></div></div><span class="badge ${dl<=2?'red':''}">${dl<0?Math.abs(dl)+"d overdue":dl===0?"Today":dl+"d"}</span></div>`}).join("")||`<div class="empty">No upcoming deadlines 🎉</div>`;
+ document.getElementById("deadlineRadar").innerHTML=allDead.slice(0,6).map(x=>{const dl=daysLeft(x.date);return `<div class="alert ${dl!==null&&dl<=2?'urgent':''}"><div class="left"><i class="dot"></i><div><b>${esc(x.title)}</b><div class="tiny muted">${esc(x.cat)} • ${fmtDate(x.date)}</div></div></div><span class="badge ${dl<=2?'red':''}">${dl<0?Math.abs(dl)+"d overdue":dl===0?"Today":dl+"d"}</span></div>`}).join("")||`<div class="empty">No upcoming deadlines </div>`;
 
  const attention=[];
  const acadH=state.academics.logs.filter(x=>x.date===todayISO()&&["Study","Revision"].includes(x.type)).reduce((a,x)=>a+Number(x.hours||0),0);
@@ -1312,7 +1330,7 @@ window.toggleTimer=()=>{
  if(timerRunning){clearInterval(timerInterval);timerRunning=false;timerSeconds=leftSecs();updateTimerUI();return}
  if(timerSeconds<=0)timerSeconds=timerTotal;
  timerRunning=true;timerEnd=Date.now()+timerSeconds*1000;
- timerInterval=setInterval(()=>{timerSeconds=leftSecs();if(timerSeconds<=0){clearInterval(timerInterval);timerRunning=false;timerSeconds=timerTotal;if(!logFocus(timerTotal))toast("Focus session complete 🌿");updateTimerUI()}else updateTimerUI()},500);
+ timerInterval=setInterval(()=>{timerSeconds=leftSecs();if(timerSeconds<=0){clearInterval(timerInterval);timerRunning=false;timerSeconds=timerTotal;if(!logFocus(timerTotal))toast("Focus session complete ");updateTimerUI()}else updateTimerUI()},500);
  updateTimerUI();
 };
 window.finishFocus=()=>{
@@ -1424,8 +1442,8 @@ function renderSelfCheckManager(){
        <div class="row-menu">
          <button type="button" class="icon-btn" title="Manage question" onclick="event.stopPropagation();toggleRowMenu(this)">⋮</button>
          <div class="row-menu-pop">
-           <button type="button" onclick="event.stopPropagation();closeRowMenus();promptEditSelfCheck(${i})">✎ Edit question</button>
-           <button type="button" class="danger" onclick="event.stopPropagation();closeRowMenus();deleteSelfCheck(${i})">🗑 Delete question</button>
+           <button type="button" onclick="event.stopPropagation();closeRowMenus();promptEditSelfCheck(${i})"> Edit question</button>
+           <button type="button" class="danger" onclick="event.stopPropagation();closeRowMenus();deleteSelfCheck(${i})"> Delete question</button>
          </div>
        </div>
      </div>`;
@@ -1568,11 +1586,11 @@ function renderAnalytics(){
 }
 
 
-const SECL={plan:'📅 Plan',diary:'♡ My Diary',life:'🌱 My Life',study:'🎓 Study & Career',track:'📊 Track'};
+const SECL={plan:'Plan',diary:'My Diary',life:'My Life',study:'Study & Career',track:'Track'};
 const BLAB={plan:'Plan',diary:'My Diary',life:'My Life',study:'Study & Career',track:'Track'};
-const PAGES={today:{n:'Today',i:'🏠',s:'plan'},diary:{n:'My Diary',i:'📔',s:'diary'},personal:{n:'Daily Routine',i:'✅',s:'life'},academics:{n:'Academics',i:'🎓',s:'study'},placements:{n:'Placements',i:'💼',s:'study'},ssc:{n:'SSC CGL 2027',i:'🏛️',s:'study'},analytics:{n:'Analytics',i:'📊',s:'track'}};
+const PAGES={today:{n:'Today',i:'',s:'plan'},diary:{n:'My Diary',i:'',s:'diary'},personal:{n:'Daily Routine',i:'',s:'life'},academics:{n:'Academics',i:'',s:'study'},placements:{n:'Placements',i:'',s:'study'},ssc:{n:'SSC CGL 2027',i:'',s:'study'},analytics:{n:'Analytics',i:'',s:'track'}};
 const NAVLBL={plan:'Plan',diary:'Diary',life:'My Life',study:'Study & Career',track:'Track'};
-const SECD={plan:['📅','Plan'],diary:['♡','My Diary'],life:['🌱','My Life'],study:['🎓','Study & Career'],track:['📊','Track']};
+const SECD={plan:['','Plan'],diary:['','My Diary'],life:['','My Life'],study:['','Study & Career'],track:['','Track']};
 function applySec(){Object.keys(SECD).forEach(k=>{const m=(state.secMeta||{})[k]||{},n=m.name||SECD[k][1];SECL[k]=(m.icon||SECD[k][0])+' '+n;NAVLBL[k]=n;BLAB[k]=n})}
 function secKeys(){return Object.keys(SECD).filter(k=>!(state.deletedSecs||[]).includes(k))}
 function pageDef(id){const d=PAGES[id],m=(state.pageMeta||{})[id]||{};let sec=m.section||d.s;
@@ -1586,7 +1604,7 @@ function renderNav(){
   el.innerHTML=secKeys().map(k=>{
     const ids=pagesIn(k);
     if(!ids.length&&!(state.builtinSubsections[k]||[]).length)return '';
-    return `<div class="section-label">${esc(NAVLBL[k])}</div><div class="nav-group-children">${ids.map(id=>{const p=pageDef(id);return `<button type="button" data-page="${id}" class="${id===window._curPage?'active':''}" onclick="go('${id}')">${p.icon} &nbsp; ${esc(p.name)}</button>`}).join('')}<div id="builtin${k[0].toUpperCase()+k.slice(1)}Nav" class="builtin-subnav"></div></div>`;
+    return `<div class="section-label">${esc(NAVLBL[k])}</div><div class="nav-group-children">${ids.map(id=>{const p=pageDef(id);return `<button type="button" data-page="${id}" class="${id===window._curPage?'active':''}" onclick="go('${id}')">${esc(p.name)}</button>`}).join('')}<div id="builtin${k[0].toUpperCase()+k.slice(1)}Nav" class="builtin-subnav"></div></div>`;
   }).join('');
 }
 function applyPageTitle(id){
@@ -1608,7 +1626,7 @@ window.sDelBSec=k=>{if(secKeys().length+(state.customGroups||[]).length<=1){aler
   pg.forEach(p=>{(state.pageMeta[p]??={}).section=tgt});state.builtinSubsections[k]=[];state.deletedSecs.push(k);window._secSel='b:'+(rest[0]||'life');structChanged();toast('Section deleted')};
 window._secSel=window._secSel||'b:life';
 const subsOf=(t,i)=>t==='b'?state.builtinSubsections[i]:state.customGroups[i]?.subsections;
-function secOptions(){const o=secKeys().map(k=>({v:'b:'+k,l:SECL[k]}));(state.customGroups||[]).forEach((g,gi)=>o.push({v:'c:'+gi,l:'📁 '+g.name}));return o}
+function secOptions(){const o=secKeys().map(k=>({v:'b:'+k,l:SECL[k]}));(state.customGroups||[]).forEach((g,gi)=>o.push({v:'c:'+gi,l:' '+g.name}));return o}
 function focusLast(sel){setTimeout(()=>{const a=document.querySelectorAll(sel),e=a[a.length-1];if(e){e.focus();e.select()}},40)}
 function structChanged(){state.selectedBuiltin=null;state.selectedCustomSub=0;save();renderAll()}
 window._secOpen=window._secOpen||new Set();window.secToggle=el=>{el.open?window._secOpen.add(el.dataset.k):window._secOpen.delete(el.dataset.k)};
@@ -1636,16 +1654,16 @@ window.setSecSel=v=>{window._secSel=v;renderSectionSettings()};
 function renderSectionSettings(){
   const root=document.getElementById('sectionSettingsManager');if(!root)return;
   ensureSectionSubsections();ensureCustomGroups();
-  const all=[...secKeys().map(k=>({t:'b',i:k,name:SECL[k]})),...(state.customGroups||[]).map((g,gi)=>({t:'c',i:gi,name:'📁 '+g.name,g}))];
+  const all=[...secKeys().map(k=>({t:'b',i:k,name:SECL[k]})),...(state.customGroups||[]).map((g,gi)=>({t:'c',i:gi,name:' '+g.name,g}))];
   root.innerHTML='<div class="sec-stack">'+all.map(S=>{
     const key=S.t+'-'+S.i,subs=subsOf(S.t,S.i)||[],q=`'${S.t}',${S.t==='b'?`'${S.i}'`:S.i}`;
     const cur=secStr(S.t,S.i),pages=pagesIn(cur);
     const n=pages.length+subs.length;
     const moveSel=`<select class="select" style="width:auto;min-width:112px" onchange="pgMove(this.dataset.p,this.value)" data-p="@">`+'<option value="">Move to…</option>'+secOptions().filter(o=>o.v!==S.t+':'+S.i).map(o=>`<option value="${o.v}">${esc(o.l)}</option>`).join('')+'</select>';
     const top=S.g?`<input class="input sec-name-input" value="${esc(S.g.name)}" aria-label="Section name" onchange="sRenSec(${S.i},this.value)"><button class="btn danger" onclick="sDelSec(${S.i})">Delete section</button>`:`<input class="input" style="width:54px;text-align:center" value="${esc((state.secMeta[S.i]||{}).icon||SECD[S.i][0])}" aria-label="Section icon" onchange="sIcoBSec('${S.i}',this.value)"><input class="input sec-name-input" value="${esc(BLAB[S.i])}" aria-label="Section name" onchange="sRenBSec('${S.i}',this.value)"><button class="btn danger" onclick="sDelBSec('${S.i}')">Delete section</button>`;
-    return `<details class="sec-card" id="sec-${key}" data-k="${key}" ${window._secOpen.has(key)?'open':''} ontoggle="secToggle(this)"><summary><span class="sum-t">${S.g?'📁 '+esc(S.g.name):S.name}</span><span class="badge">${n} item${n===1?'':'s'}</span></summary><div class="sec-body"><div class="sec-bar" style="margin-top:0">${top}<button class="btn primary" onclick="sAddSub(${q})">＋ Subsection</button></div><div class="settings-sub-list">`
-    +pages.map(id=>{const p=pageDef(id);return `<div class="settings-sub-row"><input class="input" style="width:50px;text-align:center;flex:none" value="${esc(p.icon)}" aria-label="Page icon" onchange="pgIcon('${id}',this.value)"><input class="input sn" value="${esc(p.name)}" aria-label="Page name" onchange="pgRen('${id}',this.value)"><div class="acts"><button class="btn" onclick="pgOrder('${id}',-1)" title="Move up">↑</button><button class="btn" onclick="pgOrder('${id}',1)" title="Move down">↓</button><button class="btn" onclick="go('${id}')">Open</button>${moveSel.replace('@',id)}${id!=='today'?`<button class="btn soft" onclick="sHidePage('${id}')">✓ Move to Completed</button>`:''}</div></div>`}).join('')
-    +subs.map((x,j)=>`<div class="settings-sub-row"><span class="pg-ic">↳</span><input class="input sn sn-input" value="${esc(x.name)}" aria-label="Subsection name" onchange="sRenSub(${q},${j},this.value)"><div class="acts"><span class="tiny muted">${x.tasks.length} task${x.tasks.length===1?'':'s'}</span><button class="btn" onclick="sOpenSub(${q},${j})">Open</button><button class="btn soft" onclick="sCompSub(${q},${j})">✓ Move to Completed</button><button class="btn danger" onclick="sDelSub(${q},${j})">Delete</button></div></div>`).join('')
+    return `<details class="sec-card" id="sec-${key}" data-k="${key}" ${window._secOpen.has(key)?'open':''} ontoggle="secToggle(this)"><summary><span class="sum-t">${S.g?' '+esc(S.g.name):S.name}</span><span class="badge">${n} item${n===1?'':'s'}</span></summary><div class="sec-body"><div class="sec-bar" style="margin-top:0">${top}<button class="btn primary" onclick="sAddSub(${q})">＋ Subsection</button></div><div class="settings-sub-list">`
+    +pages.map(id=>{const p=pageDef(id);return `<div class="settings-sub-row"><input class="input" style="width:50px;text-align:center;flex:none" value="${esc(p.icon)}" aria-label="Page icon" onchange="pgIcon('${id}',this.value)"><input class="input sn" value="${esc(p.name)}" aria-label="Page name" onchange="pgRen('${id}',this.value)"><div class="acts"><button class="btn" onclick="pgOrder('${id}',-1)" title="Move up">↑</button><button class="btn" onclick="pgOrder('${id}',1)" title="Move down">↓</button><button class="btn" onclick="go('${id}')">Open</button>${moveSel.replace('@',id)}${id!=='today'?`<button class="btn soft" onclick="sHidePage('${id}')"> Move to Completed</button>`:''}</div></div>`}).join('')
+    +subs.map((x,j)=>`<div class="settings-sub-row"><span class="pg-ic">↳</span><input class="input sn sn-input" value="${esc(x.name)}" aria-label="Subsection name" onchange="sRenSub(${q},${j},this.value)"><div class="acts"><span class="tiny muted">${x.tasks.length} task${x.tasks.length===1?'':'s'}</span><button class="btn" onclick="sOpenSub(${q},${j})">Open</button><button class="btn soft" onclick="sCompSub(${q},${j})"> Move to Completed</button><button class="btn danger" onclick="sDelSub(${q},${j})">Delete</button></div></div>`).join('')
     +(!n?'<div class="tiny muted">Empty — tap “＋ Subsection” to add one.</div>':'')+'</div></div></details>';
   }).join('')+'</div>';
   renderCompletedManager();
@@ -1675,9 +1693,9 @@ window.sViewDone=k=>{window._viewCompleted=k;go('custom')};
 function renderCompletedView(k){
   const s=state.completed[k],root=document.getElementById('customSections');
   if(!s){window._viewCompleted=null;renderCustom();return}
-  document.getElementById('customPageTitle').textContent=s.name+' ✓';
+  document.getElementById('customPageTitle').textContent=s.name+' ';
   document.getElementById('customPageSubtitle').textContent=`Completed • from ${s.from||'—'} • ${s.tasks.length} task${s.tasks.length===1?'':'s'}`;
-  root.innerHTML=`<div class="panel panel-pad"><div class="section-head"><div><b>Read-only</b><div class="tiny muted">Restore it from Settings to edit.</div></div><button class="btn" onclick="go('settings')">← Back to Settings</button></div><div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Note</th></tr></thead><tbody>${s.tasks.map(t=>`<tr><td><div class="check ${t.done?'on':''}">${t.done?'✓':''}</div></td><td>${esc(t.name)}</td><td>${esc(t.note)}</td></tr>`).join('')||'<tr><td colspan="3" class="muted">No tasks.</td></tr>'}</tbody></table></div></div>`;
+  root.innerHTML=`<div class="panel panel-pad"><div class="section-head"><div><b>Read-only</b><div class="tiny muted">Restore it from Settings to edit.</div></div><button class="btn" onclick="go('settings')">← Back to Settings</button></div><div class="table-wrap"><table><thead><tr><th>Done</th><th>Task</th><th>Note</th></tr></thead><tbody>${s.tasks.map(t=>`<tr><td><div class="check ${t.done?'on':''}">${t.done?'':''}</div></td><td>${esc(t.name)}</td><td>${esc(t.note)}</td></tr>`).join('')||'<tr><td colspan="3" class="muted">No tasks.</td></tr>'}</tbody></table></div></div>`;
 }
 function renderCustom(){
   ensureCustomGroups();renderCustomNav();
@@ -1716,7 +1734,7 @@ function renderHeatmap(){
  let longest=0,run=0;list.forEach(x=>{run=x.active?run+1:0;longest=Math.max(longest,run)});
  let cur=0;for(let k=list.length-1;k>=0;k--){if(list[k].active)cur++;else if(k===list.length-1)continue;else break}
  const last30=list.slice(-30),avg=last30.length?Math.round(last30.reduce((a,x)=>a+x.r,0)/last30.length):0;
- document.getElementById('heatStats').innerHTML=[['🔥 '+cur+(cur===1?' day':' days'),'Current streak'],[longest+(longest===1?' day':' days'),'Longest streak'],[list.filter(x=>x.active).length+' days','Active days'],[avg+'%','Avg routine (30 days)']].map(x=>`<div class="review-card"><div class="v">${x[0]}</div><div class="l">${x[1]}</div></div>`).join('');
+ document.getElementById('heatStats').innerHTML=[[' '+cur+(cur===1?' day':' days'),'Current streak'],[longest+(longest===1?' day':' days'),'Longest streak'],[list.filter(x=>x.active).length+' days','Active days'],[avg+'%','Avg routine (30 days)']].map(x=>`<div class="review-card"><div class="v">${x[0]}</div><div class="l">${x[1]}</div></div>`).join('');
  renderHeatDetail(window._heatSel||today);
 }
 function renderHeatDetail(iso){
@@ -1724,7 +1742,7 @@ function renderHeatDetail(iso){
  const f=arr=>arr.filter(x=>x.date===iso).reduce((a,x)=>a+Number(x.hours||0),0);
  const done=state.habits.filter(h=>habitDone(h,iso)).length,n=state.habits.length;
  const dl=state.academics.assignments.filter(x=>x.due===iso&&x.status!=="Done").length+state.placements.applications.filter(x=>x.applyBy===iso).length;
- el.innerHTML=`<div class="heat-detail-top"><b>${fmtDate(iso)}</b>${iso===todayISO()?' <span class="badge">Today</span>':''}<button class="btn soft" onclick="heatOpen('${iso}')">Open this day →</button></div><div class="heat-detail-row"><span>✓ Routine ${done}/${n}</span><span>🎓 ${f(state.academics.logs).toFixed(1)}h</span><span>💼 ${f(state.placements.logs).toFixed(1)}h</span><span>🏛️ ${f(state.ssc.logs).toFixed(1)}h</span>${dl?`<span>⚠ ${dl} deadline${dl>1?'s':''}</span>`:''}</div>`;
+ el.innerHTML=`<div class="heat-detail-top"><b>${fmtDate(iso)}</b>${iso===todayISO()?' <span class="badge">Today</span>':''}<button class="btn soft" onclick="heatOpen('${iso}')">Open this day →</button></div><div class="heat-detail-row"><span> Routine ${done}/${n}</span><span> ${f(state.academics.logs).toFixed(1)}h</span><span> ${f(state.placements.logs).toFixed(1)}h</span><span> ${f(state.ssc.logs).toFixed(1)}h</span>${dl?`<span> ${dl} deadline${dl>1?'s':''}</span>`:''}</div>`;
 }
 window.heatPick=iso=>{window._heatSel=iso;document.querySelectorAll('.gh-cell.sel').forEach(e=>e.classList.remove('sel'));const b=document.querySelector(`.gh-cell[data-iso="${iso}"]`);if(b)b.classList.add('sel');renderHeatDetail(iso)};
 window.heatOpen=iso=>{selectedDate=iso;go('personal');renderPersonal();renderDiary()};
@@ -1754,7 +1772,7 @@ function collapseActionCell(tr){
  const label=btn.textContent.trim()||"Delete";
  const clone=btn.cloneNode(true);
  clone.className="danger";
- clone.textContent="🗑 "+label;
+ clone.textContent=" "+label;
  last.classList.add("has-row-menu");
  last.insertAdjacentHTML("beforeend",`<div class="row-menu mobile-only">
    <button type="button" class="icon-btn" title="Manage row" onclick="event.stopPropagation();toggleRowMenu(this)">⋮</button>
@@ -1852,7 +1870,7 @@ window.resetAll=window.clearPlannerData;
  document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal.show").forEach(m=>m.classList.remove("show"))});
  document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
  // new day while app is open
- let lastDay=todayISO();setInterval(()=>{const t=todayISO();if(t!==lastDay){if(selectedDate===lastDay)selectedDate=t;lastDay=t;renderAll();toast("New day started 🌱")}},30000);
+ let lastDay=todayISO();setInterval(()=>{const t=todayISO();if(t!==lastDay){if(selectedDate===lastDay)selectedDate=t;lastDay=t;renderAll();toast("New day started ")}},30000);
 })();
 
 /* ===== v4 additions ===== */
@@ -1866,8 +1884,8 @@ window.resetAll=window.clearPlannerData;
  let brk=false;
  const focusSecs=()=>timerMode==="deep"?3000:1500,breakSecs=()=>timerMode==="deep"?600:300;
  const persist=()=>localStorage.setItem("timerState",JSON.stringify({running:timerRunning,end:timerEnd,secs:timerSeconds,total:timerTotal,mode:timerMode,brk}));
- const label=()=>{document.getElementById("timerMode").textContent=brk?"Break ☕":(timerMode==="deep"?"Deep Work":"Pomodoro");document.getElementById("timerHint").textContent=brk?"Rest — stretch, water, no phone.":(timerMode==="deep"?"Work for 50 minutes, then take a 10-minute break.":"Work for 25 minutes, then take a 5-minute break.")};
- const tick=()=>{timerSeconds=leftSecs();if(timerSeconds<=0){clearInterval(timerInterval);timerRunning=false;if(!brk){const t=timerTotal;logFocus(t);brk=true;timerTotal=timerSeconds=breakSecs();toast("Focus done 🌿 Take a break — press Start",3500)}else{brk=false;timerTotal=timerSeconds=focusSecs();toast("Break over — ready to focus")}label();persist()}updateTimerUI()};
+ const label=()=>{document.getElementById("timerMode").textContent=brk?"Break ":(timerMode==="deep"?"Deep Work":"Pomodoro");document.getElementById("timerHint").textContent=brk?"Rest — stretch, water, no phone.":(timerMode==="deep"?"Work for 50 minutes, then take a 10-minute break.":"Work for 25 minutes, then take a 5-minute break.")};
+ const tick=()=>{timerSeconds=leftSecs();if(timerSeconds<=0){clearInterval(timerInterval);timerRunning=false;if(!brk){const t=timerTotal;logFocus(t);brk=true;timerTotal=timerSeconds=breakSecs();toast("Focus done  Take a break — press Start",3500)}else{brk=false;timerTotal=timerSeconds=focusSecs();toast("Break over — ready to focus")}label();persist()}updateTimerUI()};
  window.toggleTimer=()=>{if(timerRunning){clearInterval(timerInterval);timerRunning=false;timerSeconds=leftSecs();updateTimerUI();persist();return}if(timerSeconds<=0)timerSeconds=timerTotal;timerRunning=true;timerEnd=Date.now()+timerSeconds*1000;timerInterval=setInterval(tick,500);updateTimerUI();persist()};
  window.finishFocus=()=>{if(brk){clearInterval(timerInterval);timerRunning=false;brk=false;timerTotal=timerSeconds=focusSecs();label();updateTimerUI();persist();return}const el=timerTotal-(timerRunning?leftSecs():timerSeconds);clearInterval(timerInterval);timerRunning=false;timerSeconds=timerTotal;persist();if(el<60){toast("Less than 1 minute — nothing to log");updateTimerUI();return}if(focusArea()==="none"){toast("Session stopped");updateTimerUI();return}logFocus(el);updateTimerUI()};
  window.resetTimer=()=>{clearInterval(timerInterval);timerRunning=false;brk=false;timerTotal=timerSeconds=focusSecs();label();updateTimerUI();persist()};
@@ -1875,7 +1893,7 @@ window.resetAll=window.clearPlannerData;
  setTimeout(()=>{try{const s=JSON.parse(localStorage.getItem("timerState"));if(!s)return;timerMode=s.mode||"deep";brk=!!s.brk;timerTotal=s.total||focusSecs();timerSeconds=s.secs;document.getElementById("timerModeBtn").textContent=timerMode==="deep"?"25/5":"50/10";if(s.running){timerEnd=s.end;timerSeconds=leftSecs();if(timerSeconds>0){timerRunning=true;timerInterval=setInterval(tick,500)}else tick()}label();updateTimerUI()}catch{}},0);
 
  // mood tracker
- const MOODS=[["😞","Low"],["😕","Meh"],["😐","Okay"],["🙂","Good"],["😄","Great"]];
+ const MOODS=[["","Low"],["","Meh"],["","Okay"],["","Good"],["","Great"]];
  function renderMood(){const el=document.getElementById("moodRow");if(!el)return;const cur=ensureDay(selectedDate).mood||0;el.innerHTML=MOODS.map((m,i)=>`<button type="button" class="btn" style="font-size:20px;padding:8px 14px;${cur===i+1?"background:var(--mint);outline:2px solid var(--green)":""}" onclick="setMood(${i+1})" aria-label="${m[1]}" title="${m[1]}">${m[0]}</button>`).join("")+(cur?`<span class="muted tiny" style="align-self:center">${MOODS[cur-1][1]} · tap again to clear</span>`:"")}
  window.setMood=n=>{const d=ensureDay(selectedDate);d.mood=d.mood===n?0:n;save();renderMood();renderMoodStats()};
  function renderMoodStats(){const el=document.getElementById("moodStats");if(!el)return;const days=[];for(let i=29;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);days.push(localISODate(x.getFullYear(),x.getMonth()+1,x.getDate()))}
@@ -1903,7 +1921,7 @@ window.resetAll=window.clearPlannerData;
  const _rs=renderSSC;renderSSC=function(){_rs.apply(this,arguments);renderMockStats();renderMockDetail()};
 
  // daily reminder (works while the app is open / installed & running)
- setInterval(()=>{const r=state.settings?.reminder;if(!r||!("Notification" in window)||Notification.permission!=="granted")return;const n=new Date(),hm=String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");if(hm>=r&&localStorage.getItem("remNotified")!==todayISO()){localStorage.setItem("remNotified",todayISO());const o={body:"Tick your habits and write a line in your diary 🌱",icon:"icon.png"},sw=navigator.serviceWorker;(sw?sw.ready.then(g=>g.showNotification("MyProgressTrack",o)):Promise.reject()).catch(()=>{try{new Notification("MyProgressTrack",o)}catch{}})}},30000);
+ setInterval(()=>{const r=state.settings?.reminder;if(!r||!("Notification" in window)||Notification.permission!=="granted")return;const n=new Date(),hm=String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");if(hm>=r&&localStorage.getItem("remNotified")!==todayISO()){localStorage.setItem("remNotified",todayISO());const o={body:"Tick your habits and write a line in your diary ",icon:"icon.png"},sw=navigator.serviceWorker;(sw?sw.ready.then(g=>g.showNotification("MyProgressTrack",o)):Promise.reject()).catch(()=>{try{new Notification("MyProgressTrack",o)}catch{}})}},30000);
  // service worker
  if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
