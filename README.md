@@ -1,6 +1,6 @@
 # MyProgressTrack
 
-A focused student workspace for planning tasks, logging study sessions, building routines, and seeing steady progress.
+A comprehensive daily planner and progress tracker with Firebase authentication and cloud sync.
 
 ## 🚀 Quick Start
 
@@ -97,18 +97,17 @@ of the app-shell assets for offline use.
 
 ## Features
 
-- **Today**: A calm command center for priorities, today's tasks, and routine check-in
-- **Tasks**: Due dates, durations, areas, completion, and High/Medium/Low priorities
-- **Study**: Focused session logging, subject summaries, and recent work
-- **Routine**: Lightweight habits and weekly consistency
-- **Progress**: Completed work, study totals, weekly activity, and subject balance
-- **Diary**: Short daily reflection with wins, learning, and next steps
-- **Cloud sync**: Google account authentication, offline-first saving, and multi-device updates
-- **Responsive PWA**: Designed for desktop, tablet, and phone use
-
-The product intentionally avoids separate exam-specific dashboards. Students can use
-the same task, study, routine, and progress tools for classes, projects, placements,
-personal goals, and any future learning plan.
+- 📚 **Academics**: Study log, syllabus tracker, assignments
+- 💼 **Placements**: Prep log, topic tracker, applications
+- 🏛️ **SSC CGL**: Study log, mock tests, section progress
+- ✅ **Daily Habits**: Track routine tasks with calendar view
+- 📝 **Diary**: Personal reflection and daily journaling
+- 📊 **Analytics**: Activity heatmap, streaks, progress charts
+- ☁️ **Cloud Sync**: Automatic backup and multi-device sync
+- **Guided onboarding**: Configure focus areas and planning style after first sign-in
+- **Plan my day**: Turn priorities into realistic, time-bounded tasks
+- **Focused navigation**: A concise workspace sidebar keeps the main actions easy to find
+- **Automatic cloud sync**: Enabled by default for signed-in Google accounts, with offline-first local saving and real-time updates across devices
 
 ## 🐛 Troubleshooting
 

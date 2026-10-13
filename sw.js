@@ -1,4 +1,4 @@
-﻿const CACHE_NAME="mpt-v8";
+﻿const CACHE_NAME="mpt-v7";
 const APP_SHELL=["./","index.html","auth.html","manifest.webmanifest","icon.png","firebase-config.js","styles.css","auth.css","app-shell.js","firebase-auth.js","planner.js","auth.js"];
 
 self.addEventListener("install",event=>{
@@ -28,3 +28,4 @@ self.addEventListener("fetch",event=>{
     return response;
   })));
 });
+

@@ -110,14 +110,13 @@ async function loadCloudData() {
         const cloudHasCompletion = cloudData.state.profile?.onboardingComplete === true;
         // Merge cloud data with current state
         Object.assign(window.state, cloudData.state);
-        window.normalizePlannerState?.();
         window.state.profile ??= {};
         const hasPlannerActivity = Object.keys(window.state.daily || {}).length > 0
           || (window.state.tasks || []).length > 0
           || (window.state.goals || []).length > 0
           || (window.state.academics?.logs || []).length > 0
           || (window.state.placements?.logs || []).length > 0
-          || (window.state.studySessions || []).length > 0;
+          || (window.state.ssc?.logs || []).length > 0;
         if (completedLocally || window.state.profile.onboardingComplete === true || hasPlannerActivity) {
           window.state.profile.onboardingComplete = true;
         } else {
@@ -215,7 +214,6 @@ function setupRealtimeSync() {
         console.log(' Syncing data from another device...');
         
         Object.assign(window.state, cloudData.state);
-        window.normalizePlannerState?.();
         localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
         localStorage.setItem('lastCloudSync', cloudTime);
         
