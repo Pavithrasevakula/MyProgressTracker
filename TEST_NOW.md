@@ -24,6 +24,15 @@
 - [ ] A change on one device appears on the other.
 - [ ] Offline edits remain available locally and sync after reconnecting.
 - [ ] Download Backup creates a JSON file.
+- [ ] Deleting the last daily habit keeps the routine empty after reload.
+- [ ] Recurring tasks create only the next occurrence after completion.
+- [ ] Task subtasks can be checked independently and reset for recurring copies.
+- [ ] Overdue tasks can be filtered, carried to today, and rescheduled.
+- [ ] Calendar and list task views show the same task data.
+- [ ] Focus sprints record study minutes and update progress.
+- [ ] Browser reminders remain off unless explicitly enabled.
+- [ ] Invalid backup files are rejected without replacing current data.
+- [ ] A multi-device conflict offers a cloud/local choice.
 
 ## Responsive UI
 
