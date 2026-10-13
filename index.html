@@ -190,6 +190,8 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 .table-wrap{border-radius:10px}.table-wrap table{min-width:640px}th{font-size:10px;letter-spacing:.08em}
 .mission-banner{border-radius:16px;background:linear-gradient(135deg,#e8f3ec,#f8f7f1);border-color:#d7e5dc}
 .command-trigger{display:inline-flex;align-items:center;gap:8px}.command-trigger kbd{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:2px 5px;background:var(--surface2)}.command-box{width:min(560px,100%)}.command-search{margin:14px 0 10px;padding:12px 13px}.command-list{display:grid;gap:5px;max-height:360px;overflow:auto}.command-item{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid transparent;background:transparent;text-align:left;border-radius:9px;padding:11px 12px;color:var(--ink)}.command-item:hover,.command-item.active{background:var(--mint);border-color:#cfe2d5}.command-item small{color:var(--muted);font-size:11px}.command-hint{margin:10px 0 0}
+.plan-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.plan-stat{padding:12px;border-radius:11px;background:var(--surface2)}.plan-stat b{display:block;font-size:20px}.plan-stat span{font-size:11px;color:var(--muted)}.plan-task{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf1ef}.plan-task:last-child{border-bottom:0}.plan-task .task-main{min-width:0;flex:1}.plan-task .task-main b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.plan-task.done b{text-decoration:line-through;color:var(--muted)}.onboarding-box{width:min(620px,100%)}.onboarding-step{display:none}.onboarding-step.active{display:block}.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.choice{padding:14px;text-align:left;border:1px solid var(--line);border-radius:11px;background:#fff}.choice.selected{background:var(--mint);border-color:#9abca8;box-shadow:0 0 0 2px #d9eee1}.choice b{display:block}.choice small{display:block;color:var(--muted);margin-top:3px}
+html[data-theme="dark"]{--bg:#17211c;--surface:#202d26;--surface2:#293930;--ink:#edf5f0;--muted:#a9b9b0;--line:#3b4c42;--mint:#2f4d3c;--sage:#30463a}html[data-theme="dark"] .sidebar,html[data-theme="dark"] .sidebar-bottom{background:#1c2821}html[data-theme="dark"] .topbar{background:rgba(32,45,38,.92)}html[data-theme="dark"] .btn,html[data-theme="dark"] .input,html[data-theme="dark"] .select,html[data-theme="dark"] .textarea,html[data-theme="dark"] .choice{background:var(--surface);color:var(--ink)}html[data-theme="dark"] th{background:#26362d}html[data-theme="dark"] .modal{background:rgba(0,0,0,.65)}
 @media(max-width:1000px){.sidebar{width:232px}.topbar{padding:0 22px}.content{padding:26px 22px 40px}}
 @media(max-width:720px){.sidebar{width:270px}.topbar{padding:0 14px}.content{padding:22px 14px 34px}.hero h2{font-size:25px}.hero{gap:14px}.top-actions #exportBtn,.command-trigger{display:none}.top-actions .btn{padding:8px 11px}.cards{gap:10px}.card{padding:14px}.panel-pad{padding:15px}}
 @media(max-width:420px){.content{padding:18px 11px 28px}.hero h2{font-size:23px}.topbar h1{font-size:16px}.mission-banner{padding:15px}.mission-metric b{font-size:22px}}
@@ -239,6 +241,7 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
     </div>
   </div>
   <div class="top-actions">
+    <button class="btn" type="button" onclick="toggleTheme()" title="Toggle appearance">Theme</button>
     <button class="btn command-trigger" type="button" onclick="openCommandPalette()" title="Open command palette">
       Find <kbd>Ctrl K</kbd>
     </button>
@@ -257,6 +260,7 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 <section class="page active" id="page-today">
   <div class="hero">
     <div><h2>Today</h2><p>Your one-screen command center — decide, focus, execute, review.</p></div>
+    <button class="btn primary" onclick="openDayPlan()">Plan my day</button>
 
   </div>
 
@@ -302,6 +306,11 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
   <div class="panel panel-pad section">
     <div class="section-head"><h3> Today's Checklist</h3><button class="btn" onclick="go('personal')">Full checklist →</button></div>
     <div id="todayChecklist"></div>
+  </div>
+
+  <div class="panel panel-pad section">
+    <div class="section-head"><div><h3>Today's plan</h3><span class="tiny muted">Tasks created from your priorities and quick planning</span></div><button class="btn soft" onclick="openDayPlan()">Adjust plan</button></div>
+    <div id="todayPlan"></div>
   </div>
 
 </section>
@@ -594,6 +603,26 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
     <div class="command-list" id="commandList"></div>
     <p class="tiny muted command-hint">Use the arrow keys to move and Enter to open.</p>
   </div>
+
+  <div class="modal" id="dayPlanModal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="dayPlanTitle">
+      <div class="modal-head"><h3 id="dayPlanTitle">Plan your day</h3><button class="btn" type="button" onclick="closeModal('dayPlanModal')">Close</button></div>
+      <p class="muted">Choose what matters most, then turn it into a realistic plan.</p>
+      <div id="dayPlanSuggestions" class="choice-grid"></div>
+      <div class="form-row"><label>Available focus time (minutes)<input class="input" id="planMinutes" type="number" min="15" step="15" value="120"></label><label>Plan date<input class="input" id="planDate" type="date"></label></div>
+      <div class="modal-actions"><button class="btn" onclick="closeModal('dayPlanModal')">Cancel</button><button class="btn primary" onclick="saveDayPlan()">Create plan</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="onboardingModal" aria-hidden="true">
+    <div class="modal-box onboarding-box" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+      <div class="modal-head"><h3 id="onboardingTitle">Set up your planner</h3><span class="badge" id="onboardingProgress">1 of 3</span></div>
+      <div class="onboarding-step active" data-onboarding-step="0"><h4>What are you working toward?</h4><p class="muted">Choose all areas you want visible in your daily planning.</p><div class="choice-grid" id="onboardingFocuses"></div></div>
+      <div class="onboarding-step" data-onboarding-step="1"><h4>How do you prefer to plan?</h4><p class="muted">You can change this later in settings.</p><div class="choice-grid" id="onboardingStyle"></div></div>
+      <div class="onboarding-step" data-onboarding-step="2"><h4>Ready for a calmer day?</h4><p class="muted">Your Today page will keep priorities, focus time, routines, and progress together. You can refine everything later.</p><div class="plan-summary"><div class="plan-stat"><b>Today</b><span>One clear command center</span></div><div class="plan-stat"><b>Focus</b><span>Time for meaningful work</span></div><div class="plan-stat"><b>Review</b><span>Progress you can act on</span></div></div></div>
+      <div class="modal-actions"><button class="btn" id="onboardingBack" onclick="changeOnboardingStep(-1)" style="display:none">Back</button><span style="flex:1"></span><button class="btn primary" id="onboardingNext" onclick="changeOnboardingStep(1)">Continue</button></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -750,6 +779,9 @@ onAuthStateChanged(auth, async (user) => {
   // Update sync status
   updateSyncStatus('● Synced with cloud');
   setAppLoading(false);
+  if (!window.state?.profile?.onboardingComplete) {
+    setTimeout(() => window.openOnboarding?.(), 350);
+  }
 });
 
 // Add User Info to UI
@@ -978,6 +1010,12 @@ console.log(' Auth integration complete - ready to sync!');
 
 const SEED = {"version": 1, "profile": {"name": "Pavithra", "monthStart": "2026-10-01", "targets": {"academics": 3, "projects": 2, "placement": 1, "ssc": 1}, "examDate": "2027-06-01"}, "habits": [{"id": "wake", "name": "Wake up at 6:00 AM", "target": "6:00 AM", "auto": false}, {"id": "meditate", "name": "Meditation (5-10 mins)", "target": "5-10 mins", "auto": false}, {"id": "academics", "name": "Academics - study", "target": 3, "auto": true, "source": "academics"}, {"id": "projects", "name": "Projects / college assignments", "target": 2, "auto": true, "source": "projects"}, {"id": "placement", "name": "Placement prep", "target": 1, "auto": true, "source": "placement"}, {"id": "ssc", "name": "SSC CGL prep", "target": 1, "auto": true, "source": "ssc"}, {"id": "learn", "name": "Learn one new thing", "target": "1 thing", "auto": false}, {"id": "read", "name": "Read a book (15-20 mins)", "target": "15-20 mins", "auto": false}, {"id": "care", "name": "Hair / Skin / Personal care", "target": "Daily", "auto": false}, {"id": "phone", "name": "Phone control (non-essential use)", "target": "< 30 mins", "auto": false}, {"id": "compare", "name": "Avoid comparing myself with others", "target": "All day", "auto": false}], "selfChecks": ["Did I give my best effort to today's Top 3 priorities?", "Did I move a step closer to my goal (SSC CGL / placement / degree)?", "Did I look after my body & mind (sleep, food, water, movement)?"], "priorities": {"1": "", "2": "", "3": ""}, "daily": {}, "academics": {"logs": [], "subjects": [], "assignments": []}, "placements": {"logs": [], "topics": [{"name": "Quantitative Aptitude", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Logical Reasoning", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Verbal Ability", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Arrays & Strings", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Linked List, Stack & Queue", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Trees & Graphs", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Recursion & Dynamic Programming", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Sorting & Searching", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "DBMS & SQL", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Operating Systems", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Computer Networks", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "OOPs Concepts", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Resume & LinkedIn", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "HR / Behavioural Interview", "status": "Not started", "targetDate": "", "notes": ""}, {"name": "Mock Interviews", "status": "Not started", "targetDate": "", "notes": ""}], "applications": []}, "ssc": {"logs": [], "sections": ["Quant", "Reasoning", "English", "General Awareness"], "mocks": [], "topics": [{"section": "Quant", "name": "Number System", "status": "Not started"}, {"section": "Quant", "name": "Simplification / BODMAS", "status": "Not started"}, {"section": "Quant", "name": "Percentage", "status": "Not started"}, {"section": "Quant", "name": "Ratio & Proportion", "status": "Not started"}, {"section": "Quant", "name": "Average", "status": "Not started"}, {"section": "Quant", "name": "Profit & Loss", "status": "Not started"}, {"section": "Quant", "name": "Discount", "status": "Not started"}, {"section": "Quant", "name": "Simple & Compound Interest", "status": "Not started"}, {"section": "Quant", "name": "Time & Work", "status": "Not started"}, {"section": "Quant", "name": "Time, Speed & Distance", "status": "Not started"}, {"section": "Quant", "name": "Mixture & Alligation", "status": "Not started"}, {"section": "Quant", "name": "Algebra", "status": "Not started"}, {"section": "Quant", "name": "Geometry", "status": "Not started"}, {"section": "Quant", "name": "Mensuration", "status": "Not started"}, {"section": "Quant", "name": "Trigonometry", "status": "Not started"}, {"section": "Quant", "name": "Data Interpretation", "status": "Not started"}, {"section": "Reasoning", "name": "Analogy", "status": "Not started"}, {"section": "Reasoning", "name": "Classification", "status": "Not started"}, {"section": "Reasoning", "name": "Series", "status": "Not started"}, {"section": "Reasoning", "name": "Coding-Decoding", "status": "Not started"}, {"section": "Reasoning", "name": "Blood Relations", "status": "Not started"}, {"section": "Reasoning", "name": "Direction & Distance", "status": "Not started"}, {"section": "Reasoning", "name": "Syllogism", "status": "Not started"}, {"section": "Reasoning", "name": "Venn Diagram", "status": "Not started"}, {"section": "Reasoning", "name": "Order & Ranking", "status": "Not started"}, {"section": "Reasoning", "name": "Non-Verbal (Figures)", "status": "Not started"}, {"section": "English", "name": "Reading Comprehension", "status": "Not started"}, {"section": "English", "name": "Cloze Test", "status": "Not started"}, {"section": "English", "name": "Error Spotting", "status": "Not started"}, {"section": "English", "name": "Sentence Improvement", "status": "Not started"}, {"section": "English", "name": "Fill in the Blanks", "status": "Not started"}, {"section": "English", "name": "Synonyms / Antonyms", "status": "Not started"}, {"section": "English", "name": "One-word Substitution", "status": "Not started"}, {"section": "English", "name": "Idioms & Phrases", "status": "Not started"}, {"section": "English", "name": "Para Jumbles", "status": "Not started"}, {"section": "General Awareness", "name": "History", "status": "Not started"}, {"section": "General Awareness", "name": "Geography", "status": "Not started"}, {"section": "General Awareness", "name": "Polity", "status": "Not started"}, {"section": "General Awareness", "name": "Economy", "status": "Not started"}, {"section": "General Awareness", "name": "General Science", "status": "Not started"}, {"section": "General Awareness", "name": "Static GK", "status": "Not started"}, {"section": "General Awareness", "name": "Current Affairs", "status": "Not started"}]}, "settings": {"theme": "light", "compact": false}};
 let state = window.state = loadLocal();
+state.daily??={};state.tasks=Array.isArray(state.tasks)?state.tasks:[];state.goals=Array.isArray(state.goals)?state.goals:[];state.settings??={theme:"light",compact:false};
+state.profile??={};state.profile.onboardingComplete??=false;state.profile.planningStyle??="flexible";state.profile.focusAreas??=["academics","placement","ssc"];
+state.tasks=state.tasks.map(task=>({...task,priority:task.priority||"medium",date:task.date||todayISO(),minutes:Number(task.minutes||30),status:task.status||"open"}));
+function applyTheme(){document.documentElement.dataset.theme=state.settings?.theme||"light"}
+applyTheme();
+window.toggleTheme=()=>{state.settings??={};state.settings.theme=state.settings.theme==="dark"?"light":"dark";applyTheme();save();toast(`${state.settings.theme==="dark"?"Dark":"Light"} theme enabled`)};
 state.daily??={};
 Object.values(state.daily).forEach(d=>{d.diary??={story:"",feelings:"",wins:"",hard:"",tomorrow:"",learn:"",better:"",different:""};if(!d.diary.tomorrow&&d.reflection)d.diary.tomorrow=d.reflection;});
 // Migration: fold removed diary prompts into the 4 remaining ones so no old writing is lost
@@ -1059,6 +1097,36 @@ function ensureDay(date){
  state.daily[date].diary??={story:"",feelings:"",wins:"",hard:"",tomorrow:"",learn:"",better:"",different:""};
  return state.daily[date];
 }
+let onboardingStep=0;
+const onboardingFocusOptions=[["academics","Academics"],["placement","Placements"],["ssc","SSC CGL"],["life","Health and routines"]];
+const onboardingStyleOptions=[["timeblock","Time-blocked"],["tasks","Task-based"],["flexible","Flexible checklist"]];
+function renderOnboarding(){
+ const focus=document.getElementById("onboardingFocuses"),style=document.getElementById("onboardingStyle");
+ state.profile??={};state.profile.focusAreas??=["academics","placement","ssc"];state.profile.planningStyle??="flexible";
+ if(focus)focus.innerHTML=onboardingFocusOptions.map(([id,label])=>`<button type="button" class="choice ${state.profile.focusAreas.includes(id)?"selected":""}" onclick="toggleOnboardingFocus('${id}')"><b>${label}</b><small>Keep this area in your daily view</small></button>`).join("");
+ if(style)style.innerHTML=onboardingStyleOptions.map(([id,label])=>`<button type="button" class="choice ${state.profile.planningStyle===id?"selected":""}" onclick="state.profile.planningStyle='${id}';renderOnboarding()"><b>${label}</b><small>${id==="timeblock"?"Plan around available time":id==="tasks"?"Work from a prioritized list":"Keep it simple and adaptable"}</small></button>`).join("");
+ document.querySelectorAll("[data-onboarding-step]").forEach((el,i)=>el.classList.toggle("active",i===onboardingStep));
+ const progress=document.getElementById("onboardingProgress");if(progress)progress.textContent=`${onboardingStep+1} of 3`;
+ const back=document.getElementById("onboardingBack"),next=document.getElementById("onboardingNext");if(back)back.style.display=onboardingStep?"inline-flex":"none";if(next)next.textContent=onboardingStep===2?"Finish":"Continue";
+}
+window.toggleOnboardingFocus=id=>{state.profile.focusAreas??=[];state.profile.focusAreas=state.profile.focusAreas.includes(id)?state.profile.focusAreas.filter(x=>x!==id):[...state.profile.focusAreas,id];renderOnboarding()};
+window.changeOnboardingStep=direction=>{onboardingStep=Math.max(0,Math.min(2,onboardingStep+direction));if(onboardingStep===2&&direction>0)state.profile.onboardingComplete=true;renderOnboarding();if(onboardingStep===2&&direction>0)save();if(onboardingStep===2&&direction>0)setTimeout(()=>closeModal("onboardingModal"),250)};
+window.openOnboarding=()=>{onboardingStep=0;renderOnboarding();openModal("onboardingModal")};
+function renderTodayPlan(){
+ const root=document.getElementById("todayPlan");if(!root)return;
+ const tasks=(state.tasks||[]).filter(x=>x.date===todayISO()).sort((a,b)=>(a.status==="done")-(b.status==="done")||({high:0,medium:1,low:2}[a.priority]??1)-({high:0,medium:1,low:2}[b.priority]??1));
+ root.innerHTML=tasks.length?tasks.map(task=>`<div class="plan-task ${task.status==="done"?"done":""}"><button class="check ${task.status==="done"?"on":""}" onclick="togglePlanTask('${task.id}')">${task.status==="done"?"":" "}</button><div class="task-main"><b>${esc(task.title)}</b><span class="tiny muted">${task.minutes} min • ${esc(task.category||"General")} • ${esc(task.priority)} priority</span></div><button class="btn danger" onclick="deletePlanTask('${task.id}')">Remove</button></div>`).join(""):'<div class="empty"><b>No plan yet</b><br><span class="tiny">Choose your most important work and create a realistic day.</span></div>';
+}
+function planningCandidates(){
+ const day=ensureDay(todayISO()),items=[];
+ Object.values(day.priorities||{}).filter(Boolean).forEach((title,index)=>items.push({title,category:"Priority",minutes:index===0?60:30,priority:index===0?"high":"medium"}));
+ const overdue=(state.tasks||[]).filter(x=>x.status!=="done"&&x.date<todayISO()).slice(0,3);overdue.forEach(x=>items.push({...x,title:`Carry over: ${x.title}`,date:todayISO()}));
+ return items.slice(0,6);
+}
+window.openDayPlan=()=>{const date=document.getElementById("planDate");if(date)date.value=todayISO();const root=document.getElementById("dayPlanSuggestions");if(root)root.innerHTML=planningCandidates().map((x,i)=>`<button type="button" class="choice selected" data-plan-index="${i}" onclick="this.classList.toggle('selected')"><b>${esc(x.title)}</b><small>${x.minutes} min • ${esc(x.category||"General")}</small></button>`).join("")||'<div class="empty">Add a Top 3 priority first, then return here.</div>';openModal("dayPlanModal")};
+window.saveDayPlan=()=>{const date=document.getElementById("planDate")?.value||todayISO(),minutes=Number(document.getElementById("planMinutes")?.value||120),items=planningCandidates(),selected=[...document.querySelectorAll("#dayPlanSuggestions .choice.selected")].map(x=>items[Number(x.dataset.planIndex)]).filter(Boolean);let used=0;selected.forEach(item=>{if(used+item.minutes>minutes)return;state.tasks.push({...item,id:"task"+Date.now()+Math.random().toString(36).slice(2),date,status:"open"});used+=item.minutes});save();renderTodayPlan();closeModal("dayPlanModal");toast(selected.length?`${selected.length} task${selected.length===1?"":"s"} added to your plan`:"Select at least one task")};
+window.togglePlanTask=id=>{const task=state.tasks.find(x=>x.id===id);if(!task)return;task.status=task.status==="done"?"open":"done";save();renderTodayPlan();renderToday()};
+window.deletePlanTask=id=>{state.tasks=state.tasks.filter(x=>x.id!==id);save();renderTodayPlan()};
 function dayScore(date){return state.habits.filter(h=>habitDone(h,date)).length}
 function monthDays(){
  const y=+selectedDate.slice(0,4),m=+selectedDate.slice(5,7),selectedDay=+selectedDate.slice(8,10);
@@ -1360,6 +1428,7 @@ function renderToday(){
  document.getElementById("attentionList").innerHTML=attention.map(x=>`<div class="alert"><div class="left"><i class="dot"></i><div><b>${esc(x[0])}</b><div class="tiny muted">${esc(x[1])}</div></div></div><span class="badge">Focus</span></div>`).join("")||`<div class="empty">Nothing needs special attention today.</div>`;
 
  renderWeeklyReview();
+ renderTodayPlan();
  updateTimerUI();
 }
 function renderWeeklyReview(){

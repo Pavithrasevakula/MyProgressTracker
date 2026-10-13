@@ -1,5 +1,30 @@
-const C="mpt-v5",FILES=["./","index.html","manifest.webmanifest","icon.png","firebase-config.js"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>Promise.all(FILES.map(f=>c.add(f).catch(()=>{})))));self.skipWaiting()});
-self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));self.clients.claim()});
-self.addEventListener("fetch",e=>{const r=e.request;if(r.method!=="GET"||new URL(r.url).origin!==location.origin)return;
-e.respondWith(fetch(r).then(res=>{const cp=res.clone();caches.open(C).then(c=>c.put(r,cp));return res}).catch(()=>caches.match(r).then(m=>m||caches.match("index.html"))))});
+const CACHE_NAME="mpt-v6";
+const APP_SHELL=["./","index.html","auth.html","manifest.webmanifest","icon.png","firebase-config.js"];
+
+self.addEventListener("install",event=>{
+  event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.all(APP_SHELL.map(file=>cache.add(file).catch(()=>null)))));
+  self.skipWaiting();
+});
+
+self.addEventListener("activate",event=>{
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))));
+  self.clients.claim();
+});
+
+self.addEventListener("fetch",event=>{
+  const request=event.request;
+  if(request.method!=="GET"||new URL(request.url).origin!==location.origin)return;
+  if(request.mode==="navigate"){
+    event.respondWith(fetch(request).then(response=>{
+      const copy=response.clone();
+      caches.open(CACHE_NAME).then(cache=>cache.put(request,copy));
+      return response;
+    }).catch(()=>caches.match(request).then(cached=>cached||caches.match("index.html"))));
+    return;
+  }
+  event.respondWith(caches.match(request).then(cached=>cached||fetch(request).then(response=>{
+    const copy=response.clone();
+    caches.open(CACHE_NAME).then(cache=>cache.put(request,copy));
+    return response;
+  })));
+});

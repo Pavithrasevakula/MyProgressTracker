@@ -84,7 +84,7 @@ MyProgressTracker/
 └── *.md                    # Documentation
 ```
 
-## 🎯 Features
+## Features
 
 - 📚 **Academics**: Study log, syllabus tracker, assignments
 - 💼 **Placements**: Prep log, topic tracker, applications
@@ -93,6 +93,10 @@ MyProgressTracker/
 - 📝 **Diary**: Personal reflection and daily journaling
 - 📊 **Analytics**: Activity heatmap, streaks, progress charts
 - ☁️ **Cloud Sync**: Automatic backup and multi-device sync
+- **Guided onboarding**: Configure focus areas and planning style after first sign-in
+- **Plan my day**: Turn priorities into realistic, time-bounded tasks
+- **Command palette**: Press `Ctrl + K` to search pages and actions
+- **Dark theme foundation**: Persisted theme support for future settings controls
 
 ## 🐛 Troubleshooting
 
