@@ -95,8 +95,8 @@ MyProgressTracker/
 - ☁️ **Cloud Sync**: Automatic backup and multi-device sync
 - **Guided onboarding**: Configure focus areas and planning style after first sign-in
 - **Plan my day**: Turn priorities into realistic, time-bounded tasks
-- **Command palette**: Press `Ctrl + K` to search pages and actions
-- **Dark theme foundation**: Persisted theme support for future settings controls
+- **Focused navigation**: A concise workspace sidebar keeps the main actions easy to find
+- **Automatic cloud sync**: Enabled by default for signed-in Google accounts, with offline-first local saving and real-time updates across devices
 
 ## 🐛 Troubleshooting
 
