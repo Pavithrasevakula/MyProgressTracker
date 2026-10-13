@@ -131,6 +131,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:
 
 /* ===== My Diary / Me Time ===== */
 .diary-intro{background:linear-gradient(135deg,#fff,#f7fbf8);padding:26px 28px;max-width:980px}.diary-greeting{font-size:25px;font-weight:900;letter-spacing:-.03em;margin-bottom:12px}.diary-intro p{margin:10px 0;color:#53635b;line-height:1.75}.diary-intro blockquote{margin:18px 0;padding:12px 16px;border-left:3px solid #9bc2aa;background:#f1f7f3;border-radius:0 10px 10px 0;font-weight:700;color:#476b57}.diary-mantra{color:#476b57!important}.diary-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 12px}.diary-section-head h3{margin:0;font-size:19px}.diary-section-head p{margin:4px 0 0;color:var(--muted)}.diary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.diary-entry-card label{display:grid;gap:4px;margin-bottom:9px}.diary-entry-card label strong{font-size:15px}.diary-entry-card label span{font-size:11px;color:var(--muted)}.diary-text{min-height:135px}.diary-wide{grid-column:1/-1}.diary-questions-panel{background:#fff}.diary-question-list{display:grid;gap:14px}.diary-question{display:grid;grid-template-columns:30px 1fr;gap:11px;align-items:start}.diary-question>span{width:28px;height:28px;border-radius:9px;background:var(--lavbg);color:var(--lav);display:grid;place-items:center;font-weight:800}.diary-question>div{display:grid;gap:7px}.diary-answer{min-height:88px}.diary-score-row{display:flex;align-items:center;gap:14px;margin:14px 0 16px;padding:12px;background:#f8fbf9;border:1px solid #e5ede8;border-radius:12px}.diary-score-row>div:first-child{display:grid;gap:2px;min-width:90px}.diary-score-row strong{font-size:17px}.diary-score-row .progress{margin:0}
+.diary-intro{background:linear-gradient(135deg,#fff8f2,#f4e4da);padding:22px 24px;max-width:760px;border-color:#ead4c8}.diary-greeting{font-size:25px;font-weight:900;letter-spacing:-.03em;margin-bottom:4px}.diary-intro p,.diary-intro blockquote{display:none}.diary-intro:after{content:"A private space to notice what happened, appreciate what went well, and choose one gentle next step.";display:block;color:#746b63;line-height:1.7;max-width:600px}.diary-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 12px}.diary-section-head h3{margin:0;font-size:19px}.diary-section-head p{margin:4px 0 0;color:var(--muted)}.diary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.diary-entry-card{box-shadow:0 8px 22px rgba(61,48,36,.05)}.diary-entry-card label{display:grid;gap:4px;margin-bottom:9px}.diary-entry-card label strong{font-size:15px}.diary-entry-card label span{font-size:11px;color:var(--muted)}.diary-text{min-height:135px}.diary-wide{grid-column:1/-1}.diary-questions-panel{background:#fff}.diary-question-list{display:grid;gap:14px}.diary-question{display:grid;grid-template-columns:30px 1fr;gap:11px;align-items:start}.diary-question>span{width:28px;height:28px;border-radius:9px;background:var(--lavbg);color:var(--lav);display:grid;place-items:center;font-weight:800}.diary-question>div{display:grid;gap:7px}.diary-answer{min-height:88px}.diary-score-row{display:flex;align-items:center;gap:14px;margin:14px 0 16px;padding:12px;background:#f8f1eb;border:1px solid #eaded4;border-radius:12px}.diary-score-row>div:first-child{display:grid;gap:2px;min-width:90px}.diary-score-row strong{font-size:17px}.diary-score-row .progress{margin:0}
 @media(max-width:760px){.diary-grid{grid-template-columns:1fr}.diary-wide{grid-column:auto}.diary-section-head{align-items:flex-start;flex-direction:column}.diary-intro{padding:20px}.diary-greeting{font-size:22px}}
 
 /* ===== Settings manager, Completed, responsive polish ===== */
@@ -146,6 +147,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:
  .hero h2{font-size:23px}#page-personal .hero>div:last-child,#page-diary .hero>div:last-child{flex-wrap:wrap}
  .calendar-grid{gap:4px}.calendar-day{min-height:58px;padding:5px}.calendar-day .mini{font-size:9px;margin-top:4px}.calendar-day .mini span:not(:first-child){display:none}
  .analytics-bar{grid-template-columns:72px 1fr 46px}.settings-sub-row .acts{width:100%}.sec-bar .input{max-width:none}.focus-box{flex-wrap:wrap}.diary-score-row{flex-wrap:wrap}.section-head{gap:8px;flex-wrap:wrap}
+ .settings-overview{grid-template-columns:1fr}.settings-shortcuts{grid-template-columns:1fr}.settings-preferences{align-items:flex-start;flex-direction:column}.appearance-actions{width:100%}.appearance-actions .btn{flex:1}
 }
 @media(max-width:420px){.cards{grid-template-columns:1fr}#exportBtn{display:none}.review-grid{grid-template-columns:1fr 1fr}.content{padding:12px}}
 
@@ -190,6 +192,7 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 .table-wrap{border-radius:10px}.table-wrap table{min-width:640px}th{font-size:10px;letter-spacing:.08em}
 .mission-banner{border-radius:16px;background:linear-gradient(135deg,#e8f3ec,#f8f7f1);border-color:#d7e5dc}
 .command-trigger{display:inline-flex;align-items:center;gap:8px}.command-trigger kbd{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:2px 5px;background:var(--surface2)}.command-box{width:min(560px,100%)}.command-search{margin:14px 0 10px;padding:12px 13px}.command-list{display:grid;gap:5px;max-height:360px;overflow:auto}.command-item{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid transparent;background:transparent;text-align:left;border-radius:9px;padding:11px 12px;color:var(--ink)}.command-item:hover,.command-item.active{background:var(--mint);border-color:#cfe2d5}.command-item small{color:var(--muted);font-size:11px}.command-hint{margin:10px 0 0}
+.settings-overview{display:grid;grid-template-columns:1fr 1.35fr;gap:14px;margin-bottom:14px}.settings-welcome{padding:22px 24px;border-radius:16px;background:linear-gradient(135deg,#8f4438,#b8664f);color:#fff;box-shadow:var(--shadow)}.settings-welcome h3{margin:8px 0 6px;font-size:22px;letter-spacing:-.03em}.settings-welcome p{margin:0;color:#f7e8df;font-size:13px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--muted)}.settings-welcome .eyebrow{color:#f4d9cb}.settings-shortcuts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.settings-shortcut{display:grid;align-content:center;text-align:left;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:16px;color:var(--ink)}.settings-shortcut:hover{border-color:#d2a99d;background:#fff8f2}.settings-shortcut b{font-size:13px}.settings-shortcut span{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}.settings-preferences{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:14px}.settings-preferences h3{margin:5px 0 0;font-size:16px}.settings-preferences p{margin:2px 0 0;font-size:12px}.appearance-actions{display:flex;gap:7px}.appearance-actions .btn{min-width:72px}
 .plan-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.plan-stat{padding:12px;border-radius:11px;background:var(--surface2)}.plan-stat b{display:block;font-size:20px}.plan-stat span{font-size:11px;color:var(--muted)}.plan-task{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf1ef}.plan-task:last-child{border-bottom:0}.plan-task .task-main{min-width:0;flex:1}.plan-task .task-main b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.plan-task.done b{text-decoration:line-through;color:var(--muted)}.onboarding-box{width:min(620px,100%)}.onboarding-step{display:none}.onboarding-step.active{display:block}.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.choice{padding:14px;text-align:left;border:1px solid var(--line);border-radius:11px;background:#fff}.choice.selected{background:var(--mint);border-color:#9abca8;box-shadow:0 0 0 2px #d9eee1}.choice b{display:block}.choice small{display:block;color:var(--muted);margin-top:3px}
 html[data-theme="dark"]{--bg:#17211c;--surface:#202d26;--surface2:#293930;--ink:#edf5f0;--muted:#a9b9b0;--line:#3b4c42;--mint:#2f4d3c;--sage:#30463a}html[data-theme="dark"] .sidebar,html[data-theme="dark"] .sidebar-bottom{background:#1c2821}html[data-theme="dark"] .topbar{background:rgba(32,45,38,.92)}html[data-theme="dark"] .btn,html[data-theme="dark"] .input,html[data-theme="dark"] .select,html[data-theme="dark"] .textarea,html[data-theme="dark"] .choice{background:var(--surface);color:var(--ink)}html[data-theme="dark"] th{background:#26362d}html[data-theme="dark"] .modal{background:rgba(0,0,0,.65)}
 @media(max-width:1000px){.sidebar{width:232px}.topbar{padding:0 22px}.content{padding:26px 22px 40px}}
@@ -232,7 +235,7 @@ body{background:var(--bg);color:var(--ink)}
   </div>
   <div class="nav">
     <div id="navBuiltin" style="display:contents"></div>
-    <div id="customNavItems"></div>
+    <div id="customNavItems" hidden></div>
     <button data-page="settings">Settings</button>
   </div>
   <div class="sidebar-bottom">
@@ -441,9 +444,21 @@ body{background:var(--bg);color:var(--ink)}
 </section>
 
 <section class="page" id="page-settings">
-  <div class="hero"><div><h2>Settings</h2><p>Tap a group to open it. Rename, re-icon, reorder, move or remove any section and page — nothing is locked.</p></div></div>
+  <div class="hero"><div><h2>Settings</h2><p>Keep your workspace calm, personal, and in sync.</p></div></div>
+  <div class="settings-overview">
+    <div class="settings-welcome"><span class="eyebrow">Workspace preferences</span><h3>Make MyProgressTrack work for you.</h3><p>Adjust the essentials here. Advanced structure controls are kept out of the way until you need them.</p></div>
+    <div class="settings-shortcuts">
+      <button class="settings-shortcut" onclick="openSet('set-targets')"><b>Daily targets</b><span>Set realistic study and career hours</span></button>
+      <button class="settings-shortcut" onclick="openSet('set-routine')"><b>Routine</b><span>Manage habits and recurring tasks</span></button>
+      <button class="settings-shortcut" onclick="openSet('set-data')"><b>Account & backup</b><span>Sync, export, import, or sign out</span></button>
+    </div>
+  </div>
+  <div class="settings-preferences panel panel-pad">
+    <div><span class="eyebrow">Appearance</span><h3>Choose your atmosphere</h3><p class="muted">Your preference follows you across devices.</p></div>
+    <div class="appearance-actions"><button class="btn" onclick="setThemePreference('light')">Light</button><button class="btn" onclick="setThemePreference('dark')">Dark</button><button class="btn" onclick="setThemePreference('system')">System</button></div>
+  </div>
   <div class="set-stack">
-    <details class="set-acc" open id="set-sections"><summary> Sections &amp; pages<span class="set-sub">rename, move, add, complete</span></summary><div class="set-body">
+    <details class="set-acc" id="set-sections"><summary> Advanced navigation<span class="set-sub">manage sections and pages</span></summary><div class="set-body">
       <div class="sec-bar" style="margin-top:0"><p class="tiny muted" style="margin:0;flex:1 1 240px">Open a section to rename or move its pages, and to add, rename or delete subsections. Press “Move to Completed” when something is finished — nothing moves by itself.</p><button class="btn primary" onclick="sAddSec()">＋ New Section</button></div>
       <div id="sectionSettingsManager" style="margin-top:12px"></div>
     </div></details>
@@ -618,6 +633,7 @@ body{background:var(--bg);color:var(--ink)}
     <div class="command-list" id="commandList"></div>
     <p class="tiny muted command-hint">Use the arrow keys to move and Enter to open.</p>
   </div>
+</div>
 
   <div class="modal" id="dayPlanModal" aria-hidden="true">
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="dayPlanTitle">
@@ -1031,6 +1047,7 @@ state.tasks=state.tasks.map(task=>({...task,priority:task.priority||"medium",dat
 function applyTheme(){document.documentElement.dataset.theme=state.settings?.theme||"light"}
 applyTheme();
 window.toggleTheme=()=>{state.settings??={};state.settings.theme=state.settings.theme==="dark"?"light":"dark";applyTheme();save();toast(`${state.settings.theme==="dark"?"Dark":"Light"} theme enabled`)};
+window.setThemePreference=theme=>{state.settings??={};state.settings.theme=theme==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):theme;state.settings.themePreference=theme;applyTheme();save();toast("Appearance updated")};
 state.daily??={};
 Object.values(state.daily).forEach(d=>{d.diary??={story:"",feelings:"",wins:"",hard:"",tomorrow:"",learn:"",better:"",different:""};if(!d.diary.tomorrow&&d.reflection)d.diary.tomorrow=d.reflection;});
 // Migration: fold removed diary prompts into the 4 remaining ones so no old writing is lost
@@ -1744,12 +1761,11 @@ function pagesIn(sec,all){const ids=Object.keys(PAGES);const o=id=>(state.pageMe
 const secStr=(t,i)=>t==='b'?i:'c:'+state.customGroups[i]?.id;
 function renderNav(){
   const el=document.getElementById('navBuiltin');if(!el)return;
-  ensureSectionSubsections();
-  el.innerHTML=secKeys().map(k=>{
-    const ids=pagesIn(k);
-    if(!ids.length&&!(state.builtinSubsections[k]||[]).length)return '';
-    return `<div class="section-label">${esc(NAVLBL[k])}</div><div class="nav-group-children">${ids.map(id=>{const p=pageDef(id);return `<button type="button" data-page="${id}" class="${id===window._curPage?'active':''}" onclick="go('${id}')">${esc(p.name)}</button>`}).join('')}<div id="builtin${k[0].toUpperCase()+k.slice(1)}Nav" class="builtin-subnav"></div></div>`;
-  }).join('');
+  const groups=[
+    {label:'Workspace',pages:['today','diary','personal']},
+    {label:'Progress',pages:['academics','placements','ssc','analytics']}
+  ];
+  el.innerHTML=groups.map(group=>`<div class="section-label">${group.label}</div><div class="nav-group-children">${group.pages.filter(id=>!state.hiddenPages.includes(id)).map(id=>{const p=pageDef(id);return `<button type="button" data-page="${id}" class="${id===window._curPage?'active':''}" onclick="go('${id}')">${esc(p.name)}</button>`}).join('')}</div>`).join('');
 }
 function applyPageTitle(id){
   if(!PAGES[id])return;const n=pageDef(id).name;
