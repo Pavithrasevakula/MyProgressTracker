@@ -189,8 +189,9 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 .sync-pill{border-radius:10px;font-size:11px}.modal-box{border-radius:16px}.toast{border-radius:9px}
 .table-wrap{border-radius:10px}.table-wrap table{min-width:640px}th{font-size:10px;letter-spacing:.08em}
 .mission-banner{border-radius:16px;background:linear-gradient(135deg,#e8f3ec,#f8f7f1);border-color:#d7e5dc}
+.command-trigger{display:inline-flex;align-items:center;gap:8px}.command-trigger kbd{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:2px 5px;background:var(--surface2)}.command-box{width:min(560px,100%)}.command-search{margin:14px 0 10px;padding:12px 13px}.command-list{display:grid;gap:5px;max-height:360px;overflow:auto}.command-item{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid transparent;background:transparent;text-align:left;border-radius:9px;padding:11px 12px;color:var(--ink)}.command-item:hover,.command-item.active{background:var(--mint);border-color:#cfe2d5}.command-item small{color:var(--muted);font-size:11px}.command-hint{margin:10px 0 0}
 @media(max-width:1000px){.sidebar{width:232px}.topbar{padding:0 22px}.content{padding:26px 22px 40px}}
-@media(max-width:720px){.sidebar{width:270px}.topbar{padding:0 14px}.content{padding:22px 14px 34px}.hero h2{font-size:25px}.hero{gap:14px}.top-actions #exportBtn{display:none}.top-actions .btn{padding:8px 11px}.cards{gap:10px}.card{padding:14px}.panel-pad{padding:15px}}
+@media(max-width:720px){.sidebar{width:270px}.topbar{padding:0 14px}.content{padding:22px 14px 34px}.hero h2{font-size:25px}.hero{gap:14px}.top-actions #exportBtn,.command-trigger{display:none}.top-actions .btn{padding:8px 11px}.cards{gap:10px}.card{padding:14px}.panel-pad{padding:15px}}
 @media(max-width:420px){.content{padding:18px 11px 28px}.hero h2{font-size:23px}.topbar h1{font-size:16px}.mission-banner{padding:15px}.mission-metric b{font-size:22px}}
 </style>
 </head>
@@ -238,8 +239,11 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
     </div>
   </div>
   <div class="top-actions">
+    <button class="btn command-trigger" type="button" onclick="openCommandPalette()" title="Open command palette">
+      Find <kbd>Ctrl K</kbd>
+    </button>
     <button class="btn" id="exportBtn" onclick="exportJSON()" title="Download backup">
-      <span style="font-size:16px;margin-right:4px"></span> Export
+      Export
     </button>
     <button class="btn primary" onclick="openModal('quickAddModal')" style="box-shadow:0 2px 8px rgba(71,118,95,.25)">
       <span style="font-size:16px;margin-right:4px">＋</span> Add
@@ -583,6 +587,15 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 </div>
 </div></div>
 
+<div class="modal" id="commandPalette" aria-hidden="true">
+  <div class="modal-box command-box" role="dialog" aria-modal="true" aria-labelledby="commandTitle">
+    <div class="modal-head"><h3 id="commandTitle">Quick navigation</h3><button class="btn" type="button" onclick="closeModal('commandPalette')" aria-label="Close quick navigation">Close</button></div>
+    <input class="input command-search" id="commandSearch" type="search" placeholder="Search pages and actions" autocomplete="off">
+    <div class="command-list" id="commandList"></div>
+    <p class="tiny muted command-hint">Use the arrow keys to move and Enter to open.</p>
+  </div>
+</div>
+
 <script>
 // Update sync modal with user info when opened
 window.addEventListener('load', function() {
@@ -609,6 +622,53 @@ window.addEventListener('load', function() {
       }
     }
   };
+});
+
+const commandItems = [
+  {label:'Today', detail:'Dashboard', action:()=>go('today')},
+  {label:'My Diary', detail:'Reflection and mood', action:()=>go('diary')},
+  {label:'Daily Routine', detail:'Habits and checklist', action:()=>go('personal')},
+  {label:'Academics', detail:'Study and assignments', action:()=>go('academics')},
+  {label:'Placements', detail:'Career preparation', action:()=>go('placements')},
+  {label:'SSC CGL 2027', detail:'Exam preparation', action:()=>go('ssc')},
+  {label:'Analytics', detail:'Progress and review', action:()=>go('analytics')},
+  {label:'Settings', detail:'Preferences and data', action:()=>go('settings')},
+  {label:'Quick add', detail:'Create a new entry', action:()=>openModal('quickAddModal')},
+  {label:'Export backup', detail:'Download your planner data', action:()=>exportJSON()}
+];
+let commandSelection=0;
+function renderCommandItems(query=''){
+  const list=document.getElementById('commandList');
+  if(!list)return;
+  const normalized=query.trim().toLowerCase();
+  const visible=commandItems.filter(item=>!normalized||`${item.label} ${item.detail}`.toLowerCase().includes(normalized));
+  commandSelection=Math.min(commandSelection,Math.max(0,visible.length-1));
+  list.innerHTML=visible.length?visible.map((item,index)=>`<button class="command-item ${index===commandSelection?'active':''}" type="button" data-command-index="${index}"><span>${esc(item.label)}</span><small>${esc(item.detail)}</small></button>`).join(''):'<div class="empty">No matching destinations.</div>';
+  list.querySelectorAll('[data-command-index]').forEach(button=>button.addEventListener('click',()=>{
+    const item=visible[Number(button.dataset.commandIndex)];
+    closeModal('commandPalette');
+    if(item)item.action();
+  }));
+  list.querySelector('.active')?.scrollIntoView({block:'nearest'});
+}
+window.openCommandPalette=()=>{
+  commandSelection=0;
+  openModal('commandPalette');
+  renderCommandItems();
+  const input=document.getElementById('commandSearch');
+  if(input){input.value='';setTimeout(()=>input.focus(),30)}
+};
+document.getElementById('commandSearch')?.addEventListener('input',event=>{commandSelection=0;renderCommandItems(event.target.value)});
+document.getElementById('commandSearch')?.addEventListener('keydown',event=>{
+  const input=event.target;
+  const query=input.value.trim().toLowerCase();
+  const visible=commandItems.filter(item=>!query||`${item.label} ${item.detail}`.toLowerCase().includes(query));
+  if(event.key==='ArrowDown'){event.preventDefault();commandSelection=Math.min(commandSelection+1,Math.max(0,visible.length-1));renderCommandItems(input.value)}
+  if(event.key==='ArrowUp'){event.preventDefault();commandSelection=Math.max(commandSelection-1,0);renderCommandItems(input.value)}
+  if(event.key==='Enter'&&visible[commandSelection]){event.preventDefault();closeModal('commandPalette');visible[commandSelection].action()}
+});
+document.addEventListener('keydown',event=>{
+  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();openCommandPalette()}
 });
 </script>
 
