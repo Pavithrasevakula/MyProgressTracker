@@ -1,470 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#edf5f0">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>MyProgressTrack</title>
-
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8fc">
+  <meta name="description" content="A calm student planner for tasks, study sessions, routines, and progress.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="firebase-config.js"></script>
+  <script src="app-shell.js" defer></script>
+  <script type="module" src="firebase-auth.js"></script>
+  <script type="module" src="planner.js"></script>
+  <title>MyProgressTrack</title>
 </head>
 <body>
-<div class="app-loading" id="appLoading" role="status" aria-live="polite">
-  <div class="app-loading-card">
-    <img src="icon.png" alt="">
-    <strong>Loading your planner</strong>
-    <p>Connecting to your Google account and cloud data…</p>
-    <div class="app-loading-spinner" aria-hidden="true"></div>
-  </div>
-</div>
-<div class="app">
-<aside class="sidebar" id="sidebar">
-  <div class="brand">
-    <div class="logo"><img src="icon.png" alt="MyProgressTrack logo"></div>
-    <div>
-      <b style="background:linear-gradient(135deg,#6d9b83,#47765f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">MyProgressTrack</b>
-      <small>Study • Career • Life</small>
-    </div>
-  </div>
-  <div class="nav">
-    <div id="navBuiltin" style="display:contents"></div>
-    <div id="customNavItems" hidden></div>
-  </div>
-  <div class="sidebar-bottom">
-    <div class="sync-pill" id="syncStatus" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#edf6f0,#e8f1eb);border-color:#c8ddd0">
-      <span style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(109,155,131,.5);animation:pulse 2s infinite"></span>
-      <span id="syncLabel" style="font-weight:600;color:var(--green2)">Cloud sync on</span>
-    </div>
-  </div>
-
-</aside>
-<div class="sb-backdrop" onclick="toggleMenu()"></div>
-<main class="main">
-<header class="topbar">
-  <div style="display:flex;gap:12px;align-items:center">
-    <button class="btn mobile-menu" type="button" onclick="toggleMenu()" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"></button>
-    <div>
-      <h1 id="topTitle">Today</h1>
-      <div class="date" id="liveDate"></div>
-    </div>
-  </div>
-  <div class="top-actions">
-    <div class="profile-menu" id="profileMenu">
-      <button class="profile-trigger" type="button" onclick="toggleProfileMenu()" aria-expanded="false" aria-controls="profileDropdown">
-        <span id="profileFirstName">Account</span>
-      </button>
-      <div class="profile-dropdown" id="profileDropdown" hidden>
-        <div class="profile-summary"><strong id="profileMenuName">Account</strong><span id="profileMenuEmail"></span></div>
-        <button type="button" onclick="closeProfileMenu();openModal('syncModal')">Profile &amp; sync</button>
-        <button type="button" onclick="closeProfileMenu();go('settings')">Settings</button>
-        <button type="button" class="profile-signout" onclick="closeProfileMenu();signOutUser()">Sign out</button>
+  <div id="appLoading" class="app-loading"><div class="loading-card"><img src="icon.png" alt=""><strong>Preparing your workspace</strong><span>Loading your plans and progress</span></div></div>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><img src="icon.png" alt=""><div><b>MyProgressTrack</b><small>Student workspace</small></div></div>
+      <nav class="nav" aria-label="Main navigation">
+        <div class="nav-label">Workspace</div>
+        <button data-page="today" class="active" onclick="go('today')"><span>Today</span><small>Your next best actions</small></button>
+        <button data-page="tasks" onclick="go('tasks')"><span>Tasks</span><small>Plan and prioritize</small></button>
+        <button data-page="study" onclick="go('study')"><span>Study</span><small>Sessions and subjects</small></button>
+        <button data-page="routine" onclick="go('routine')"><span>Routine</span><small>Small daily habits</small></button>
+        <div class="nav-label">Reflect</div>
+        <button data-page="progress" onclick="go('progress')"><span>Progress</span><small>See your momentum</small></button>
+        <button data-page="diary" onclick="go('diary')"><span>Diary</span><small>Notes and reflection</small></button>
+      </nav>
+      <div class="sidebar-foot"><div id="syncStatus" class="sync-pill"><span class="sync-dot"></span><span id="syncLabel">Cloud sync on</span></div><button class="settings-link" onclick="go('settings')">Settings</button></div>
+    </aside>
+    <div class="sidebar-backdrop" onclick="toggleMenu()"></div>
+    <main class="main">
+      <header class="topbar"><div class="topbar-left"><button class="mobile-menu" onclick="toggleMenu()" aria-label="Open navigation">Menu</button><div><h1 id="topTitle">Today</h1><span id="topDate"></span></div></div><div class="top-actions"><button class="btn primary" onclick="openTaskModal()">Add task</button><div id="profileMenu" class="profile-menu"><button class="profile-trigger" onclick="toggleProfileMenu()" aria-expanded="false"><span id="profileFirstName">Account</span></button><div id="profileDropdown" class="profile-dropdown" hidden><b id="profileMenuName">Account</b><small id="profileMenuEmail"></small><hr><button onclick="go('settings');closeProfileMenu()">Settings</button><button onclick="signOutUser()">Sign out</button></div></div></div></header>
+      <div class="content">
+        <section class="page active" id="page-today">
+          <div class="hero"><div><span class="eyebrow">Your day</span><h2 id="todayGreeting">Good morning</h2><p>Focus on what matters, one clear step at a time.</p></div><button class="btn soft" onclick="startFocus()">Start focus</button></div>
+          <div class="today-grid"><div class="welcome-card"><div><span class="eyebrow">Today at a glance</span><h3 id="todaySummary">A fresh day to make progress.</h3><p id="todaySummaryText">Choose your priorities and make a realistic plan.</p></div><div class="ring" id="todayRing"><b id="todayPercent">0%</b><span>done</span></div></div><div class="quick-card"><div class="card-head"><h3>Top priorities</h3><button class="text-btn" onclick="go('tasks')">View all</button></div><div id="todayPriorities"></div></div></div>
+          <div class="section-head"><div><span class="eyebrow">Next actions</span><h3>Today's plan</h3></div><button class="btn" onclick="openTaskModal()">Add task</button></div><div class="panel task-list" id="todayTasks"></div>
+          <div class="section-head"><div><span class="eyebrow">Keep the streak gentle</span><h3>Routine check-in</h3></div><button class="text-btn" onclick="go('routine')">Open routine</button></div><div class="routine-preview" id="routinePreview"></div>
+        </section>
+        <section class="page" id="page-tasks"><div class="hero"><div><span class="eyebrow">Plan clearly</span><h2>Tasks</h2><p>Everything you want to finish, sorted by what deserves attention first.</p></div><button class="btn primary" onclick="openTaskModal()">Add task</button></div><div class="toolbar"><div class="filter-tabs" id="taskFilters"><button class="active" onclick="setTaskFilter('all',this)">All</button><button onclick="setTaskFilter('today',this)">Today</button><button onclick="setTaskFilter('open',this)">Open</button><button onclick="setTaskFilter('done',this)">Completed</button></div><select class="select compact-select" id="taskSort" onchange="renderTasks()"><option value="priority">Priority first</option><option value="date">Due date</option><option value="created">Recently added</option></select></div><div class="panel task-list" id="allTasks"></div></section>
+        <section class="page" id="page-study"><div class="hero"><div><span class="eyebrow">Build your future</span><h2>Study workspace</h2><p>Log focused work, keep subjects visible, and see steady progress.</p></div><button class="btn primary" onclick="openStudyModal()">Log session</button></div><div class="study-overview" id="studyOverview"></div><div class="grid two"><div class="panel panel-pad"><div class="section-head"><h3>Subjects</h3><button class="text-btn" onclick="addSubject()">Add subject</button></div><div id="subjectList"></div></div><div class="panel panel-pad"><div class="section-head"><h3>Recent sessions</h3><span class="tiny muted">Your latest work</span></div><div id="studySessions"></div></div></div></section>
+        <section class="page" id="page-routine"><div class="hero"><div><span class="eyebrow">Daily rhythm</span><h2>Routine</h2><p>Track the few habits that help you feel and work better.</p></div><button class="btn primary" onclick="addHabit()">Add habit</button></div><div class="routine-header panel"><div><b id="routineScore">0%</b><span>completed today</span></div><div class="week-dots" id="weekDots"></div></div><div class="panel routine-list" id="routineList"></div></section>
+        <section class="page" id="page-progress"><div class="hero"><div><span class="eyebrow">Look back</span><h2>Progress</h2><p>Small completed actions become visible momentum.</p></div></div><div class="progress-grid" id="progressOverview"></div><div class="grid two"><div class="panel panel-pad"><div class="section-head"><h3>Weekly activity</h3><span class="tiny muted">Last 7 days</span></div><div class="activity-bars" id="activityBars"></div></div><div class="panel panel-pad"><div class="section-head"><h3>Study balance</h3><span class="tiny muted">This month</span></div><div id="studyBalance"></div></div></div></section>
+        <section class="page" id="page-diary"><div class="hero"><div><span class="eyebrow">Make space to reflect</span><h2>Diary</h2><p>Notice what worked, what felt difficult, and what comes next.</p></div><button class="btn primary" onclick="saveDiary()">Save reflection</button></div><div class="diary-date"><button class="btn" onclick="changeDiaryDate(-1)">Previous</button><b id="diaryDate"></b><button class="btn" onclick="changeDiaryDate(1)">Next</button></div><div class="diary-grid"><label class="panel panel-pad"><b>What went well?</b><span>Wins, progress, or something you appreciated.</span><textarea id="diaryWins" class="textarea"></textarea></label><label class="panel panel-pad"><b>What did you learn?</b><span>A useful insight from today.</span><textarea id="diaryLearn" class="textarea"></textarea></label><label class="panel panel-pad wide"><b>What is your next best step?</b><span>Keep it specific and kind.</span><textarea id="diaryNext" class="textarea"></textarea></label></div></section>
+        <section class="page" id="page-settings"><div class="hero"><div><span class="eyebrow">Make it yours</span><h2>Settings</h2><p>Simple controls for a workspace that fits your life.</p></div></div><div class="settings-grid"><div class="settings-card"><span class="settings-icon">01</span><div><h3>Profile and sync</h3><p>Your Google account keeps your planner available across devices.</p><button class="btn" onclick="openModal('syncModal')">View account</button></div></div><div class="settings-card"><span class="settings-icon">02</span><div><h3>Daily goals</h3><p>Set the study time you want to protect each day.</p><div class="inline-fields"><label>Study hours<input id="settingStudyHours" class="input" type="number" min="0" step=".25"></label><label>Reminder<input id="settingReminder" class="input" type="time"></label></div><button class="btn primary" onclick="saveSettings()">Save goals</button></div></div><div class="settings-card"><span class="settings-icon">03</span><div><h3>Backup your data</h3><p>Keep a personal copy or restore a previous export.</p><button class="btn" onclick="exportJSON()">Download backup</button> <button class="btn" onclick="document.getElementById('importFile').click()">Import</button><input id="importFile" type="file" accept=".json" hidden onchange="importJSON(this)"></div></div><div class="settings-card danger-card"><span class="settings-icon">04</span><div><h3>Reset local workspace</h3><p>Remove this device's local copy. Cloud data remains available.</p><button class="btn danger" onclick="clearPlannerData()">Clear local data</button></div></div></div></section>
       </div>
-    </div>
+    </main>
   </div>
-</header>
-<div class="content">
-
-
-
-<section class="page active" id="page-today">
-  <div class="hero">
-    <div><h2>Today</h2><p>Your one-screen command center — decide, focus, execute, review.</p></div>
-    <button class="btn primary" onclick="openDayPlan()">Plan my day</button>
-
-  </div>
-
-  <div class="mission-banner" style="grid-template-columns:1fr">
-    <div class="mission-metrics" style="grid-template-columns:repeat(2,1fr)">
-      <div class="mission-metric"><b id="todayCompletion">0%</b><span>Today</span></div>
-      <div class="mission-metric"><b id="weeklyCompletion">0%</b><span>This week</span></div>
-    </div>
-  </div>
-
-  <div class="grid cards section" id="dashboardCards"></div>
-
-  <div class="grid two section" id="todayTopSection">
-    <div class="panel panel-pad">
-      <div class="section-head"><h3>Today's priorities</h3><span class="tiny muted">Choose up to three outcomes</span></div>
-      <div id="todayTop3"></div>
-    </div>
-    <div class="panel panel-pad">
-      <div class="section-head"><h3>Focus Session</h3><span class="badge">Deep work</span></div>
-      <div class="focus-box">
-        <div class="timer-ring" id="timerRing"><div class="timer-text" id="timerText">50:00</div></div>
-        <div>
-          <b id="timerMode">Deep Work</b>
-          <div class="tiny muted" id="timerHint">Work for 50 minutes, then take a 10-minute break.</div>
-          <label class="tiny muted" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">Log time to <select class="select" id="focusArea" onchange="setFocusArea(this.value)" style="width:auto;min-width:150px"><option value="academics"> Academics</option><option value="placement"> Placements</option><option value="ssc"> SSC CGL</option><option value="none">Don't log (timer only)</option></select></label>
-          <div class="timer-controls" style="margin-top:9px"><button class="btn primary" onclick="toggleTimer()" id="timerStart">Start</button><button class="btn" onclick="finishFocus()">Stop &amp; log</button><button class="btn" onclick="resetTimer()">Reset</button><button class="btn" onclick="switchTimerMode()" id="timerModeBtn">25/5</button></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid two section" id="todayAlertsSection">
-    <div class="panel panel-pad">
-      <div class="section-head"><h3> Deadline Radar</h3><button class="btn" onclick="go('academics')">Open →</button></div>
-      <div class="alert-list" id="deadlineRadar"></div>
-    </div>
-    <div class="panel panel-pad">
-      <div class="section-head"><h3> Needs Attention</h3><span class="tiny muted">Based on your actual logs</span></div>
-      <div class="alert-list" id="attentionList"></div>
-    </div>
-  </div>
-
-  <div class="panel panel-pad section" id="todayChecklistPanel">
-    <div class="section-head"><h3> Today's Checklist</h3><button class="btn" onclick="go('personal')">Full checklist →</button></div>
-    <div id="todayChecklist"></div>
-  </div>
-
-  <div class="panel panel-pad section">
-    <div class="section-head"><div><h3>Priority plan</h3><span class="tiny muted">A realistic plan built from your most important work</span></div><button class="btn soft" onclick="openDayPlan()">Adjust plan</button></div>
-    <div id="todayPlan"></div>
-  </div>
-
-</section>
-
-
-<section class="page" id="page-diary">
-  <div class="hero">
-    <div><h2>My Diary & Me Time </h2><p>A quiet space to talk to yourself honestly, without judgment or pressure.</p></div>
-    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="btn" onclick="changeDay(-1)" title="Previous day">←</button><button class="btn soft date-picker-btn" id="diaryDateBtn" onclick="openCalendarForSelectedDate()" title="Choose diary date"> <span></span></button><button class="btn" onclick="changeDay(1)" title="Next day">→</button><button class="btn" onclick="goToday()">Today</button></div>
-  </div>
-  <div class="diary-intro card">
-    <div class="diary-greeting">Hello, Pavithra </div>
-    <p>This is a new beginning — a journey to become a <strong>better, stronger, happier, and more successful version of yourself</strong>. The version you dream of, the version you love, and most importantly, the version you are <strong>proud to be</strong>. </p>
-    <p>This diary is a space where I talk to myself honestly. I will reflect on my day — what I accomplished, what I learned, where I went wrong, what I could have done better, and what I want to change tomorrow.</p>
-    <p><strong>You are me, and I am you.</strong> So every day, I promise to come here and have an honest conversation with myself. </p>
-    <p>I believe that <strong>Consistency, Discipline, and Attitude</strong> can completely change my life.  I don't need to transform overnight. Even one small task completed, one better decision, or a tiny improvement every day is enough — <strong>but I must keep going.</strong></p>
-    <p>There will be difficult days, lazy days, failures, distractions, and moments when I don't feel motivated. But this journey isn't about being perfect; it's about <strong>showing up anyway</strong>. </p>
-    <p>I want to be able to say:</p>
-    <blockquote>“Pavithra, you kept the promise you made to yourself.” </blockquote>
-    <p>I am not competing with anyone else. <strong>My only competition is the person I was yesterday.</strong></p>
-    <p class="diary-mantra"><strong>One day at a time.</strong><br><strong>One task at a time.</strong><br><strong>One improvement at a time.</strong></p>
-    <p class="diary-mantra"><strong>Keep going. Keep growing. Keep becoming the person you want to be.</strong> </p>
-  </div>
-
-  <div class="panel panel-pad section" id="moodPanel"><div class="section-head"><h3>How are you feeling today?</h3><span class="tiny muted">One tap</span></div><div id="moodRow" style="display:flex;gap:8px;flex-wrap:wrap"></div></div>
-  <div class="diary-section-head"><div><h3>Write whatever you feel</h3><p>Four simple prompts. Skip any you don't need.</p></div><span class="badge">Me time • <span id="diaryDateLabel"></span></span></div>
-  <div class="diary-grid">
-    <div class="panel panel-pad diary-entry-card diary-wide"><label><strong>Today's story</strong><span>What happened today, and how did I feel? Write freely.</span></label><textarea id="diaryStory" class="textarea diary-text" placeholder="Tell yourself what happened today..."></textarea></div>
-    <div class="panel panel-pad diary-entry-card"><label><strong>Wins & gratitude</strong><span>What am I proud of or thankful for?</span></label><textarea id="diaryWins" class="textarea diary-text" placeholder="Small wins count too..."></textarea></div>
-    <div class="panel panel-pad diary-entry-card"><label><strong>Learned & could do better</strong><span>One lesson from today, and one thing I'd improve.</span></label><textarea id="diaryLearn" class="textarea diary-text" placeholder="Be honest, but be kind to yourself..."></textarea></div>
-    <div class="panel panel-pad diary-entry-card diary-wide"><label><strong>Tomorrow's promise</strong><span>One clear thing I will do differently tomorrow.</span></label><textarea id="diaryTomorrow" class="textarea diary-text" placeholder="One clear promise to yourself for tomorrow..."></textarea></div>
-  </div>
-
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><div><h3> Daily self-check</h3><p class="tiny muted">These questions are part of your diary check-in. Edit them whenever your priorities change.</p></div><div><span class="badge" id="selfCount" style="margin-right:6px">Questions</span><button class="btn soft" onclick="addSelfCheck()">＋ Question</button></div></div><div class="diary-score-row"><div><span class="muted tiny">Today's check-in</span><strong id="diarySelfScore">0 / 5</strong></div><div class="progress" style="flex:1"><i id="diarySelfScoreBar"></i></div></div><div class="table-wrap desktop-only"><table id="selfTable"></table></div><div class="self-list mobile-only" id="selfListMobile"></div></div></div>
-</section>
-
-<section class="page" id="page-personal">
-  <div class="hero"><div><h2>My Daily Checklist</h2><p>Excel-style habit tracking, but faster to update.</p></div><div style="display:flex;align-items:center;gap:6px"><button class="btn" onclick="changeDay(-1)" title="Previous day">←</button> <button class="btn soft date-picker-btn" id="selectedDateBtn" onclick="openCalendarForSelectedDate()" title="Open calendar"> <span></span></button> <button class="btn" onclick="changeDay(1)" title="Next day">→</button> <button class="btn" onclick="goToday()">Today</button></div></div>
-
-  <div class="grid two">
-    <div class="card"><div class="stat"><div><div class="label">Today's score</div><div class="num" id="todayScore">0%</div></div><div class="iconbox"></div></div><div class="progress"><i id="todayScoreBar"></i></div></div>
-    <div class="card blue"><div class="stat"><div><div class="label">Month completion</div><div class="num" id="monthScore">0%</div></div><div class="iconbox">◷</div></div><div class="progress"><i id="monthScoreBar"></i></div></div>
-  </div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Today's Top 3 priorities</h3><span class="badge lav">Daily</span></div><div class="top3"><div class="top3-row"><span>1</span><input class="input priority" data-p="1" placeholder="Most important task"></div><div class="top3-row"><span>2</span><input class="input priority" data-p="2" placeholder="Second priority"></div><div class="top3-row"><span>3</span><input class="input priority" data-p="3" placeholder="Third priority"></div></div></div></div>
-  <div class="panel section calendar"><table id="habitTable"></table></div>
-  <p class="tiny muted" style="margin-top:10px">Add, edit or remove habits in <a href="#" onclick="go('settings');openSet('set-routine');return false" style="color:var(--green2)">Settings → Daily routine setup</a>.</p>
-</section>
-
-<section class="page" id="page-academics">
-  <div class="hero"><div><h2>Academics</h2><p>Study log • syllabus tracker • assignments & projects</p></div><button class="btn primary" onclick="openModal('acadLogModal')">＋ Log Study</button></div>
-  <div class="grid cards" id="acadCards"></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Subject / syllabus tracker</h3><button class="btn soft" onclick="addSubject()">＋ Subject</button></div><div class="table-wrap"><table id="subjectTable"></table></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Daily study log</h3><button class="btn" onclick="openModal('acadLogModal')">＋ Add row</button></div><div class="table-wrap"><table id="acadLogTable"></table></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Assignments & Projects</h3><button class="btn soft" onclick="addAssignment()">＋ Add</button></div><div class="table-wrap"><table id="assignTable"></table></div></div></div>
-</section>
-
-<section class="page" id="page-placements">
-  <div class="hero"><div><h2>Placements</h2><p>Prep log • topic tracker • applications</p></div><button class="btn primary" onclick="openModal('placeLogModal')">＋ Log Prep</button></div>
-  <div class="grid cards" id="placeCards"></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Prep topic tracker</h3><button class="btn soft" onclick="addPlacementTopic()">＋ Topic</button></div><div class="table-wrap"><table id="placeTopicTable"></table></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Daily prep log</h3><button class="btn" onclick="openModal('placeLogModal')">＋ Add row</button></div><div class="table-wrap"><table id="placeLogTable"></table></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Company applications</h3><button class="btn soft" onclick="addApplication()">＋ Application</button></div><div class="table-wrap"><table id="appTable"></table></div></div></div>
-</section>
-
-<section class="page" id="page-ssc">
-  <div class="hero"><div><h2>SSC CGL 2027</h2><p>Study log • section progress • mock tests • syllabus</p></div><button class="btn primary" onclick="openModal('sscLogModal')">＋ Log Study</button></div>
-  <div class="grid cards" id="sscCards"></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Section-wise progress</h3></div><div id="sscSectionProgress"></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>SSC syllabus topic tracker</h3><button class="btn soft" onclick="addSSCTopic()">＋ Topic</button></div><div class="table-wrap"><table id="sscTopicTable"></table></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Daily study log</h3><button class="btn" onclick="openModal('sscLogModal')">＋ Add row</button></div><div class="table-wrap"><table id="sscLogTable"></table></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Mock test log</h3><button class="btn soft" onclick="addMock()">＋ Mock</button></div><div class="table-wrap"><table id="mockTable"></table></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Mock analysis</h3><span class="tiny muted">+2 correct, −0.5 wrong</span></div><div id="mockStats"></div></div></div>
-  <div class="panel section"><div class="panel-pad"><div class="section-head"><h3>Mock details</h3><span class="tiny muted">Fill in to unlock net score, accuracy &amp; pace</span></div><div class="table-wrap"><table id="mockDetailTable"></table></div></div></div>
-</section>
-
-
-
-
-<section class="page" id="page-analytics">
-  <div class="hero"><div><h2>Analytics</h2><p>What actually happened — activity, streaks, milestones and weekly review.</p></div></div>
-  <div class="grid cards" id="analyticsCards"></div>
-  <div class="panel panel-pad section">
-    <div class="section-head"><div><h3> Activity — last 12 months</h3><p class="tiny muted" style="margin:3px 0 0">Darker = more of your daily routine completed. Tap any day for details.</p></div></div>
-    <div class="review-grid" id="heatStats" style="margin-bottom:14px"></div>
-    <div class="gh-row"><div class="gh-days"><span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span></div><div class="gh-scroll" id="heatScroll"></div></div>
-    <div class="gh-legend"><span>Less</span><i class="gh-cell l0"></i><i class="gh-cell l1"></i><i class="gh-cell l2"></i><i class="gh-cell l3"></i><i class="gh-cell l4"></i><span>More</span></div>
-    <div class="heat-detail" id="heatDetail"></div>
-  </div>
-  <div class="panel panel-pad section"><div class="section-head"><h3> Upcoming milestones</h3><span class="tiny muted">Exams, deadlines &amp; applications</span></div><div id="goalMilestones" class="alert-list"></div></div>
-
-  <div class="panel panel-pad section"><div class="section-head"><h3> Mood — last 30 days</h3></div><div id="moodStats"></div></div>
-
-  <div class="panel panel-pad section">
-    <div class="section-head"><h3> Weekly Review</h3><span class="badge">Auto-calculated</span></div>
-    <div class="review-grid" id="weeklyReview"></div>
-    <div style="margin-top:14px" class="muted" id="weeklyInsight"></div>
-  </div>
-
-  <div class="grid two section">
-    <div class="panel panel-pad"><div class="section-head"><h3>Last 7 days</h3></div><div id="analyticsWeek"></div></div>
-    <div class="panel panel-pad"><div class="section-head"><h3>Area balance</h3></div><div id="analyticsBalance"></div></div>
-  </div>
-  <div class="grid two section">
-    <div class="panel panel-pad"><div class="section-head"><h3>SSC accuracy by section</h3></div><div id="analyticsSSC"></div></div>
-    <div class="panel panel-pad"><div class="section-head"><h3>Placement topic progress</h3></div><div id="analyticsPlacement"></div></div>
-  </div>
-</section>
-
-<section class="page" id="page-custom">
-  <div class="hero"><div><h2 id="customPageTitle">Section</h2><p id="customPageSubtitle">Choose a subsection from the sidebar, or create one under a section.</p></div></div>
-  <div id="customSections" class="section-manager"></div>
-</section>
-
-<section class="page" id="page-settings">
-  <div class="hero"><div><h2>Workspace settings</h2><p>Shape your planner once, then get back to making progress.</p></div></div>
-  <div class="set-stack settings-card-grid">
-    <details class="set-acc" id="set-sections"><summary>Workspace layout<span class="set-sub">Organize sections and pages</span></summary><div class="set-body">
-      <div class="sec-bar" style="margin-top:0"><p class="tiny muted" style="margin:0;flex:1 1 240px">Open a section to rename or move its pages, and to add, rename or delete subsections. Press “Move to Completed” when something is finished — nothing moves by itself.</p><button class="btn primary" onclick="sAddSec()">＋ New Section</button></div>
-      <div id="sectionSettingsManager" style="margin-top:12px"></div>
-    </div></details>
-    <details class="set-acc" id="set-done"><summary>Archived items <span class="badge" id="doneCount">0</span><span class="set-sub">Finished pages and subsections</span></summary><div class="set-body"><div id="completedManager"></div></div></details>
-    <details class="set-acc" id="set-targets"><summary>Daily goals<span class="set-sub">Study hours and reminders</span></summary><div class="set-body">
-      <p class="muted" style="margin-top:0">Changing these updates Today, Daily Routine and Analytics automatically.</p>
-      <div class="targets-grid">
-        <label> Academics (h)<input class="input target-setting" id="targetAcademics" type="number" min="0" step="0.25"></label>
-        <label> Projects (h)<input class="input target-setting" id="targetProjects" type="number" min="0" step="0.25"></label>
-        <label> Placement (h)<input class="input target-setting" id="targetPlacement" type="number" min="0" step="0.25"></label>
-        <label> SSC CGL (h)<input class="input target-setting" id="targetSSC" type="number" min="0" step="0.25"></label>
-        <label> SSC exam date<input class="input" id="sscExamDate" type="date"></label>
-        <label> Daily reminder<input class="input" id="reminderTime" type="time"></label>
-      </div>
-      <div style="text-align:right;margin-top:12px"><button class="btn primary" onclick="saveTargets()">Save targets</button></div>
-    </div></details>
-    <details class="set-acc" id="set-routine"><summary>Routines and recurring tasks<span class="set-sub">Habits you want to repeat</span></summary><div class="set-body">
-      <div class="section-head"><h3 style="font-size:14px">Habits &amp; tasks</h3><button class="btn soft" onclick="addHabit()">＋ Habit / Task</button></div>
-      <p class="tiny muted">Study habits are tracked automatically from your logs; manual habits can be ticked directly.</p>
-      <div class="table-wrap"><table id="habitManageTable"></table></div>
-      <div class="section-head" style="margin-top:22px"><h3 style="font-size:14px">Recurring tasks</h3><button class="btn soft" onclick="addRecurring()">＋ Recurring Task</button></div>
-      <p class="tiny muted">Repeating tasks in one place. Switch them off without deleting.</p>
-      <div class="table-wrap"><table id="recurringTable"></table></div>
-    </div></details>
-    <details class="set-acc" id="set-priorities"><summary>Priority planning<span class="set-sub">Make important work visible</span></summary><div class="set-body">
-      <p class="muted" style="margin-top:0">Every planned task has a priority. Use High for work that moves today forward, Medium for important progress, and Low for work that can wait.</p>
-      <div class="priority-guide"><div><span class="priority-badge high">High</span><b> Must move today</b></div><div><span class="priority-badge medium">Medium</span><b> Important progress</b></div><div><span class="priority-badge low">Low</span><b> Flexible work</b></div></div>
-      <div style="text-align:right;margin-top:14px"><button class="btn primary" onclick="go('today');openDayPlan()">Open priority planner</button></div>
-    </div></details>
-    <details class="set-acc" id="set-data"><summary>Account and data<span class="set-sub">Sync, backup, and recovery</span></summary><div class="set-body">
-      <h3 style="font-size:14px;margin:0 0 4px">Your Account</h3><p class="muted" style="margin-top:0">Your data is automatically synced to the cloud and available on all devices.</p>
-      <button class="btn primary" onclick="openModal('syncModal')">View Account Info</button>
-      
-      <h3 style="font-size:14px;margin:22px 0 4px">Data Backup</h3><p class="muted" style="margin-top:0">Export your data as JSON for backup or import data from a previous export.</p>
-      <button class="btn" onclick="exportJSON()"> Download Backup</button> <button class="btn" onclick="document.getElementById('importFile').click()"> Import Backup</button> <input id="importFile" type="file" accept=".json" style="display:none" onchange="importJSON(this)">
-      
-      <h3 style="font-size:14px;margin:22px 0 4px">Danger Zone</h3><p class="muted" style="margin-top:0">These actions cannot be undone. Your cloud data will remain safe.</p>
-      <button class="btn danger" onclick="clearPlannerData()"> Clear Local Data</button>
-    </div></details>
-  </div>
-</section>
-
-</div></main></div>
-
-<!-- Modals -->
-<div class="modal" id="quickAddModal"><div class="modal-box" style="max-width:520px"><div class="modal-head"><h3> Quick Add</h3><button class="btn" onclick="closeModal('quickAddModal')" style="font-size:20px;padding:4px 12px">×</button></div>
-<div style="margin-top:20px">
-  <p class="muted" style="font-size:13px;margin:0 0 16px;text-align:center">What would you like to add?</p>
-  <div style="display:grid;gap:10px">
-    <div style="background:#f8fbf9;padding:12px;border-radius:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em"> Study Sessions</div>
-      <div style="display:grid;gap:8px">
-        <button class="btn" onclick="closeModal('quickAddModal');openModal('acadLogModal')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px"></span> Academic study session
-        </button>
-        <button class="btn" onclick="closeModal('quickAddModal');openModal('placeLogModal')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px"></span> Placement prep session
-        </button>
-        <button class="btn" onclick="closeModal('quickAddModal');openModal('sscLogModal')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px"></span> SSC study session
-        </button>
-      </div>
-    </div>
-    <div style="background:#f8fbf9;padding:12px;border-radius:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em"> Tasks & Goals</div>
-      <div style="display:grid;gap:8px">
-        <button class="btn" onclick="closeModal('quickAddModal');go('settings');openSet('set-routine');addHabit()" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px"></span> Habit or routine
-        </button>
-        <button class="btn" onclick="closeModal('quickAddModal');addAssignment();go('academics')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px"></span> Assignment or project
-        </button>
-        <button class="btn" onclick="closeModal('quickAddModal');addApplication();go('placements')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px"></span> Job application
-        </button>
-      </div>
-    </div>
-    <div style="background:#f8fbf9;padding:12px;border-radius:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em"> Personal</div>
-      <div style="display:grid;gap:8px">
-        <button class="btn" onclick="closeModal('quickAddModal');addSelfCheck();go('diary')" style="text-align:left;padding:12px;background:white">
-          <span style="font-size:18px;margin-right:10px"></span> Self-check question
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-</div></div>
-
-<div class="modal" id="acadLogModal"><div class="modal-box"><div class="modal-head"><h3>Log Academic Session</h3><button class="btn" onclick="closeModal('acadLogModal')">×</button></div><form id="acadForm" style="margin-top:15px"><div class="form-grid"><label>Date<input class="input" type="date" name="date" required></label><label>Subject<input class="input" name="subject" placeholder="e.g. Machine Learning" required></label><label>Type<select class="select" name="type"><option>Study</option><option>Revision</option><option>Project</option><option>Assignment</option></select></label><label>Hours<input class="input" type="number" step=".25" min="0" name="hours" required></label><label class="full">What I studied / did<input class="input" name="what"></label><label class="full">Notes<textarea class="textarea" name="notes"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn primary">Save session</button></div></form></div></div>
-
-<div class="modal" id="placeLogModal"><div class="modal-box"><div class="modal-head"><h3>Log Placement Prep</h3><button class="btn" onclick="closeModal('placeLogModal')">×</button></div><form id="placeForm" style="margin-top:15px"><div class="form-grid"><label>Date<input class="input" type="date" name="date" required></label><label>Area<input class="input" name="area" placeholder="Aptitude / DSA / SQL..." required></label><label>Hours<input class="input" type="number" step=".25" min="0" name="hours" required></label><label>Problems solved<input class="input" type="number" min="0" name="problems" value="0"></label><label class="full">What I did<input class="input" name="what"></label><label class="full">Notes<textarea class="textarea" name="notes"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn primary">Save session</button></div></form></div></div>
-
-<div class="modal" id="sscLogModal"><div class="modal-box"><div class="modal-head"><h3>Log SSC Study</h3><button class="btn" onclick="closeModal('sscLogModal')">×</button></div><form id="sscForm" style="margin-top:15px"><div class="form-grid"><label>Date<input class="input" type="date" name="date" required></label><label>Subject<select class="select" name="subject"><option>Quant</option><option>Reasoning</option><option>English</option><option>General Awareness</option></select></label><label>Hours<input class="input" type="number" step=".25" min="0" name="hours" required></label><label>Questions attempted<input class="input" type="number" min="0" name="attempted" value="0"></label><label>Correct<input class="input" type="number" min="0" name="correct" value="0"></label><label class="full">Topic / what I did<input class="input" name="what"></label><label class="full">Notes<textarea class="textarea" name="notes"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn primary">Save session</button></div></form></div></div>
-
-<div class="modal" id="syncModal"><div class="modal-box">
-<div class="modal-head">
-<h3> Account & Cloud Sync</h3>
-<button class="btn" onclick="closeModal('syncModal')">×</button>
-</div>
-<div style="margin-top:20px">
-  
-  <!-- Account Info -->
-  <div style="background:linear-gradient(135deg,#edf6f0,#f7f4ec);border:1px solid #d8e6dd;border-radius:16px;padding:20px;margin-bottom:20px">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-      <div style="width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:800">
-        
-      </div>
-      <div style="flex:1">
-        <div style="font-weight:700;font-size:16px;margin-bottom:4px" id="modalUserEmail">Loading...</div>
-        <div style="font-size:12px;color:var(--muted)">Signed in with Firebase Auth</div>
-      </div>
-    </div>
-    
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div style="background:rgba(255,255,255,0.7);padding:12px;border-radius:12px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">ACCOUNT STATUS</div>
-        <div style="font-weight:700;color:var(--green2)"> Active</div>
-      </div>
-      <div style="background:rgba(255,255,255,0.7);padding:12px;border-radius:12px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">LAST SYNCED</div>
-        <div style="font-weight:700" id="modalLastSync">Just now</div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Sync Status -->
-  <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:20px">
-    <h4 style="margin:0 0 12px;font-size:14px;display:flex;align-items:center;gap:8px">
-      <span></span> Auto-Sync Status
-    </h4>
-    <div style="display:grid;gap:10px;font-size:13px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:var(--green2)"></span>
-        <span>Automatic cloud sync enabled</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:var(--green2)"></span>
-        <span>Real-time sync active</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:var(--green2)"></span>
-        <span>Multi-device support</span>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Info Message -->
-  <div style="background:#f8fbf9;border-left:3px solid var(--green);padding:12px 14px;border-radius:8px;font-size:13px;margin-bottom:20px">
-    <strong> How it works:</strong>
-    <p style="margin:8px 0 0;line-height:1.6;color:var(--muted)">
-      Cloud sync is enabled by default. Your data saves automatically after changes and is available on any device where you sign in with the same Google account.
-    </p>
-  </div>
-  
-  <!-- Actions -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <button class="btn" onclick="closeModal('syncModal')">Close</button>
-    <button class="btn soft" onclick="if(window.forceCloudSync){window.forceCloudSync();toast(' Synced successfully!',2000)}">
-      Sync Now
-    </button>
-  </div>
-  
-  <div style="text-align:center;margin-top:16px">
-    <button class="btn danger" onclick="signOutUser()" style="font-size:13px">
-      Sign Out of Account
-    </button>
-  </div>
-  
-</div>
-</div></div>
-
-  <div class="modal" id="dayPlanModal" aria-hidden="true">
-    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="dayPlanTitle">
-      <div class="modal-head"><h3 id="dayPlanTitle">Plan your day</h3><button class="btn" type="button" onclick="closeModal('dayPlanModal')">Close</button></div>
-      <p class="muted">Choose what matters most, then turn it into a realistic plan.</p>
-      <div id="dayPlanSuggestions" class="choice-grid"></div>
-      <div class="form-row"><label>Available focus time (minutes)<input class="input" id="planMinutes" type="number" min="15" step="15" value="120"></label><label>Plan date<input class="input" id="planDate" type="date"></label></div>
-      <div class="modal-actions"><button class="btn" onclick="closeModal('dayPlanModal')">Cancel</button><button class="btn primary" onclick="saveDayPlan()">Create plan</button></div>
-    </div>
-  </div>
-
-  <div class="modal" id="onboardingModal" aria-hidden="true">
-    <div class="modal-box onboarding-box" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
-      <div class="modal-head"><h3 id="onboardingTitle">Set up your planner</h3><span class="badge" id="onboardingProgress">1 of 3</span></div>
-      <div class="onboarding-step active" data-onboarding-step="0"><h4>What are you working toward?</h4><p class="muted">Choose all areas you want visible in your daily planning.</p><div class="choice-grid" id="onboardingFocuses"></div></div>
-      <div class="onboarding-step" data-onboarding-step="1"><h4>How do you prefer to plan?</h4><p class="muted">You can change this later in settings.</p><div class="choice-grid" id="onboardingStyle"></div></div>
-      <div class="onboarding-step" data-onboarding-step="2"><h4>Ready for a calmer day?</h4><p class="muted">Your Today page will keep priorities, focus time, routines, and progress together. You can refine everything later.</p><div class="plan-summary"><div class="plan-stat"><b>Today</b><span>One clear command center</span></div><div class="plan-stat"><b>Focus</b><span>Time for meaningful work</span></div><div class="plan-stat"><b>Review</b><span>Progress you can act on</span></div></div></div>
-      <div class="modal-actions"><button class="btn" id="onboardingBack" onclick="changeOnboardingStep(-1)" style="display:none">Back</button><span style="flex:1"></span><button class="btn primary" id="onboardingNext" onclick="changeOnboardingStep(1)">Continue</button></div>
-    </div>
-  </div>
-</div>
-
-<script src="app-shell.js" defer></script>
-
-<div class="toast" id="toast"></div>
-
-<script src="firebase-config.js"></script>
-
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!--  FIREBASE AUTHENTICATION INTEGRATION                          -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<script type="module" src="firebase-auth.js"></script>
-<!-- ═══════════════════════════════════════════════════════════════ -->
-
-<script type="module" src="planner.js"></script>
-
-<div class="modal date-picker-modal" id="datePickerModal" onclick="if(event.target===this)closeModal('datePickerModal')">
-  <div class="modal-box">
-    <div class="date-picker-head">
-      <h3 id="datePickerMonth">October 2026</h3>
-      <div class="date-picker-nav">
-        <button class="btn" type="button" onclick="changeDatePickerMonth(-1)">←</button>
-        <button class="btn" type="button" onclick="changeDatePickerMonth(1)">→</button>
-      </div>
-    </div>
-    <div class="date-picker-grid" id="datePickerGrid"></div>
-    <div class="date-picker-footer">
-      <span class="tiny muted">Select a date</span>
-      <button class="btn soft" type="button" onclick="selectDatePickerToday()">Today</button>
-    </div>
-  </div>
-</div>
+  <div class="modal" id="taskModal"><div class="modal-box"><div class="modal-head"><div><span class="eyebrow">Plan one thing</span><h3>Add task</h3></div><button class="icon-btn" onclick="closeModal('taskModal')">×</button></div><form onsubmit="saveTask(event)"><label>Task name<input id="taskTitle" class="input" required maxlength="120" placeholder="What needs your attention?"></label><div class="form-grid"><label>Due date<input id="taskDate" class="input" type="date"></label><label>Minutes<input id="taskMinutes" class="input" type="number" min="5" step="5" value="30"></label></div><label>Priority<select id="taskPriority" class="select"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label><label>Area<select id="taskArea" class="select"><option>Study</option><option>Career</option><option>Personal</option><option>Admin</option></select></label><div class="modal-actions"><button type="button" class="btn" onclick="closeModal('taskModal')">Cancel</button><button class="btn primary">Add task</button></div></form></div></div>
+  <div class="modal" id="studyModal"><div class="modal-box"><div class="modal-head"><div><span class="eyebrow">Capture progress</span><h3>Log study session</h3></div><button class="icon-btn" onclick="closeModal('studyModal')">×</button></div><form onsubmit="saveStudySession(event)"><label>Subject<input id="sessionSubject" class="input" required placeholder="e.g. Data structures"></label><div class="form-grid"><label>Date<input id="sessionDate" class="input" type="date"></label><label>Hours<input id="sessionHours" class="input" type="number" min="0.25" step=".25" value="1"></label></div><label>What did you work on?<textarea id="sessionNote" class="textarea" placeholder="Optional note"></textarea><div class="modal-actions"><button type="button" class="btn" onclick="closeModal('studyModal')">Cancel</button><button class="btn primary">Save session</button></div></form></div></div>
+  <div class="modal" id="syncModal"><div class="modal-box"><div class="modal-head"><div><span class="eyebrow">Your account</span><h3>Cloud sync</h3></div><button class="icon-btn" onclick="closeModal('syncModal')">×</button></div><p class="muted">Your planner is connected to your Google account. Changes are saved locally first and synced automatically when you are online.</p><div class="sync-pill"><span class="sync-dot"></span><span>Cloud sync on</span></div><div class="modal-actions"><button class="btn" onclick="closeModal('syncModal')">Done</button></div></div></div>
+  <div class="toast" id="toast"></div>
 </body>
 </html>
