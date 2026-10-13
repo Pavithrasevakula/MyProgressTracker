@@ -1,22 +1,28 @@
 # MyProgressTrack
 
-A comprehensive daily planner and progress tracker with Firebase authentication and cloud sync.
+MyProgressTrack is a Google-authenticated student workspace for planning study time, managing assignments, tracking subject progress, building routines, and reflecting on each day.
 
-## 🚀 Quick Start
+## What it includes
 
-1. **Sign In**: Open `auth.html` and continue with your Google account
-2. **Start Tracking**: Use the app to log study time, habits, goals, and diary entries
-3. **Multi-Device**: Sign in on any device with the same account - your data syncs automatically!
+- **Today** — a calm daily overview with priorities, deadlines, habits, and weekly study time.
+- **Tasks & deadlines** — create tasks with subjects, due dates, priority, notes, estimated time, and completion state.
+- **Subjects** — organize academic work by subject and see subject-level progress.
+- **Progress** — review completion, study minutes, routine check-ins, and recent activity.
+- **Journal** — save short daily reflections and next steps.
+- **Settings** — manage habits, weekly study targets, profile details, backup, and sync.
+- **Google sign-in and automatic cloud sync** — data is stored in Firestore under the signed-in account and synchronized across devices.
+- **Offline-first PWA** — local changes remain available offline and sync when the connection returns.
 
-## 🔐 Authentication & Cloud Sync
+## Run locally
 
-### First Time Setup:
+Serve the project over HTTP or HTTPS. Firebase Authentication does not work correctly from `file://`.
 
-1. **Firebase Console Setup** (one-time):
-   - Go to [Firebase Console](https://console.firebase.google.com/)
-   - Create/select your project
-   - Enable **Authentication** → Google
-   - Update **Firestore Rules**:
+1. Enable Google sign-in and Firestore in Firebase.
+2. Add the project values to `firebase-config.js`.
+3. Add your local or deployed domain to Firebase Authentication's authorized domains.
+4. Open `auth.html`.
+
+## Firestore rules
 
 ```javascript
 rules_version = '2';
@@ -29,92 +35,18 @@ service cloud.firestore {
 }
 ```
 
-2. **Update Firebase Config**:
-   - Edit `firebase-config.js` with your Firebase project details
-   - This file contains public values (safe to commit)
-
-3. **Test It**:
-   - Open `auth.html` in browser
-   - Continue with Google
-   - Start using the app!
-
-### Features:
-- ✅ Google Sign-In (one-click)
-- ✅ Automatic cloud sync
-- ✅ Real-time sync across devices
-- ✅ Secure data storage
-
-## 📱 Install as a Phone App (PWA)
-
-Host these files on any web server (GitHub Pages works):
-- `index.html`, `auth.html`
-- `manifest.webmanifest`
-- `sw.js`
-- `icon.png`
-- `firebase-config.js`
-
-Open on your phone → browser menu → "Add to Home screen" / "Install app"
-
-Requirements:
-- Must be served over HTTPS (GitHub Pages is HTTPS by default)
-- Sign in once, and you're set!
-
-## 📖 Documentation
-
-- **`TEST_NOW.md`** - Step-by-step testing guide
-- **`AUTHENTICATION_SETUP.md`** - Detailed authentication setup
-
-## 🔒 Privacy & Security
-
-- Your data is stored securely in Firestore
-- Only you can access your data (enforced by Firestore Rules)
-- Google Sign-In uses OAuth 2.0 standard
-- All data encrypted in transit (HTTPS)
-
-## 📁 File Structure
+## Structure
 
 ```
-MyProgressTracker/
-├── index.html              # App markup and page templates
-├── styles.css              # Shared planner styles and responsive layout
-├── app-shell.js            # Shared shell and modal enhancements
-├── firebase-auth.js        # Google authentication and Firestore sync
-├── planner.js              # Planner state, rendering, and interactions
-├── auth.html               # Google sign-in markup
-├── auth.css                # Sign-in page styles
-├── auth.js                 # Sign-in and Firebase account creation
-├── firebase-config.js      # Firebase configuration
-├── icon.png                # App icon
-├── manifest.webmanifest    # PWA manifest
-├── sw.js                   # Service worker
-└── *.md                    # Documentation
+index.html          Main workspace markup
+styles.css          Responsive visual system
+planner.js          State, migration, rendering, and interactions
+firebase-auth.js    Google authentication and Firestore sync
+app-shell.js        Shared account and sync modal behavior
+auth.html           Sign-in page
+auth.css            Sign-in styles
+auth.js             Sign-in behavior
+firebase-config.js  Public Firebase configuration
+sw.js               Offline app-shell cache
+manifest.webmanifest PWA metadata
 ```
-
-The app keeps its HTML templates separate from styling and behavior so each area
-can be changed and tested without editing one very large file. Firebase setup
-and planner logic remain separate modules, while the service worker caches all
-of the app-shell assets for offline use.
-
-## Features
-
-- 📚 **Academics**: Study log, syllabus tracker, assignments
-- 💼 **Placements**: Prep log, topic tracker, applications
-- 🏛️ **SSC CGL**: Study log, mock tests, section progress
-- ✅ **Daily Habits**: Track routine tasks with calendar view
-- 📝 **Diary**: Personal reflection and daily journaling
-- 📊 **Analytics**: Activity heatmap, streaks, progress charts
-- ☁️ **Cloud Sync**: Automatic backup and multi-device sync
-- **Guided onboarding**: Configure focus areas and planning style after first sign-in
-- **Plan my day**: Turn priorities into realistic, time-bounded tasks
-- **Focused navigation**: A concise workspace sidebar keeps the main actions easy to find
-- **Automatic cloud sync**: Enabled by default for signed-in Google accounts, with offline-first local saving and real-time updates across devices
-
-## 🐛 Troubleshooting
-
-Check `TEST_NOW.md` for common issues and solutions.
-
-## 💬 Support
-
-- Browser Console (F12) shows helpful logs
-- Check documentation files for detailed guides
-- Firebase Console → Authentication → Users to verify accounts

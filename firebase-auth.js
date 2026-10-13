@@ -115,8 +115,7 @@ async function loadCloudData() {
           || (window.state.tasks || []).length > 0
           || (window.state.goals || []).length > 0
           || (window.state.academics?.logs || []).length > 0
-          || (window.state.placements?.logs || []).length > 0
-          || (window.state.ssc?.logs || []).length > 0;
+          || (window.state.timeLogs || []).length > 0;
         if (completedLocally || window.state.profile.onboardingComplete === true || hasPlannerActivity) {
           window.state.profile.onboardingComplete = true;
         } else {

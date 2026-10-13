@@ -7,7 +7,7 @@ window.addEventListener('load', function() {
     
     if (id === 'syncModal' && window.currentUser) {
       const emailEl = document.getElementById('modalUserEmail');
-      const syncEl = document.getElementById('modalLastSync');
+      const syncEl = document.getElementById('lastSyncTime') || document.getElementById('modalLastSync');
       if (emailEl) emailEl.textContent = window.currentUser.email;
       if (syncEl) {
         const last = localStorage.getItem('lastCloudSync');
