@@ -107,6 +107,8 @@ async function loadCloudData() {
       const cloudData = docSnap.data();
       
       if (cloudData.state) {
+        const localHabitsConfigured = window.state.settings?.habitsConfigured === true;
+        const localHabits = Array.isArray(window.state.habits) ? window.state.habits : [];
         const localChangeAt = localStorage.getItem('plannerLocalChangeAt') || '';
         const cloudTime = cloudData.updatedAt || '';
         if (localChangeAt && (!cloudTime || localChangeAt > cloudTime)) {
@@ -119,6 +121,11 @@ async function loadCloudData() {
         const cloudHasCompletion = cloudData.state.profile?.onboardingComplete === true;
         // Merge cloud data with current state
         Object.assign(window.state, cloudData.state);
+        if (localHabitsConfigured) {
+          window.state.habits = localHabits;
+          window.state.settings ??= {};
+          window.state.settings.habitsConfigured = true;
+        }
         window.state.profile ??= {};
         const hasPlannerActivity = Object.keys(window.state.daily || {}).length > 0
           || (window.state.tasks || []).length > 0
@@ -230,7 +237,14 @@ function setupRealtimeSync() {
         }
         console.log(' Syncing data from another device...');
         
+        const localHabitsConfigured = window.state.settings?.habitsConfigured === true;
+        const localHabits = Array.isArray(window.state.habits) ? window.state.habits : [];
         Object.assign(window.state, cloudData.state);
+        if (localHabitsConfigured) {
+          window.state.habits = localHabits;
+          window.state.settings ??= {};
+          window.state.settings.habitsConfigured = true;
+        }
         localStorage.setItem('dailyPlannerState', JSON.stringify(window.state));
         localStorage.setItem('lastCloudSync', cloudTime);
         

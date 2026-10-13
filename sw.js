@@ -1,4 +1,4 @@
-const CACHE_NAME="mpt-v12";
+const CACHE_NAME="mpt-v13";
 const APP_SHELL=["./","index.html","manifest.webmanifest","icon.png","favicon.ico","firebase-config.js","styles.css?v=8","auth.css","app-shell.js?v=8","firebase-auth.js?v=8","planner.js?v=8","auth.js"];
 
 self.addEventListener("install",event=>{
