@@ -52,3 +52,38 @@ select[multiple].field{min-height:72px}
 @media(max-width:1000px){.settings-card,.settings-card:nth-child(4),.settings-card:nth-child(5){grid-column:span 6}}
 @media(max-width:720px){.settings-grid{grid-template-columns:1fr}.settings-card,.settings-card:nth-child(4),.settings-card:nth-child(5){grid-column:span 1;min-height:0}.settings-card p{min-height:0}.content{padding:28px 16px 45px}.page-heading h2{font-size:27px}}
 @media(prefers-reduced-motion:reduce){.subject-card,.settings-card,.surface{transition:none}}
+
+/* Settings layout: identity, preferences, routine, and data are grouped by task. */
+#page-settings .page-heading{max-width:760px;margin-bottom:32px}
+#page-settings .settings-grid{grid-template-columns:repeat(12,minmax(0,1fr));gap:20px}
+#page-settings .settings-card{grid-column:span 4;min-height:270px;padding:26px}
+#page-settings .settings-card:nth-child(6){order:1}
+#page-settings .settings-card:nth-child(5){order:2}
+#page-settings .settings-card:nth-child(1){order:3}
+#page-settings .settings-card:nth-child(2){order:4}
+#page-settings .settings-card:nth-child(3){order:5}
+#page-settings .settings-card:nth-child(4){order:6;grid-column:span 6}
+#page-settings .settings-card:nth-child(5){grid-column:span 6}
+#page-settings .settings-card h3{font-size:17px}
+#page-settings .settings-card p{line-height:1.65}
+#page-settings .settings-card>.button{width:max-content;max-width:100%;margin-top:auto}
+#page-settings .settings-card>.text-button{margin-top:2px}
+#page-settings .settings-card .text-button+.text-button{margin-top:0}
+#page-settings #habitSettings{display:grid;gap:8px;max-height:125px;overflow:auto;padding-right:3px}
+#page-settings .habit-setting{display:flex;gap:8px;align-items:center}
+#page-settings .habit-setting .field{min-width:0}
+#page-settings .habit-setting .icon-button{flex:0 0 31px}
+#page-settings #advancedFeatures{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
+#page-settings #advancedFeatures>label:first-child,
+#page-settings #advancedFeatures>.setting-note{grid-column:1/-1}
+#page-settings #advancedFeatures>.button{width:100%;text-align:center}
+#page-settings #advancedFeatures select[multiple]{min-height:84px}
+@media(max-width:1000px){
+  #page-settings .settings-card,#page-settings .settings-card:nth-child(4),#page-settings .settings-card:nth-child(5){grid-column:span 6}
+}
+@media(max-width:720px){
+  #page-settings .settings-grid{grid-template-columns:1fr;gap:14px}
+  #page-settings .settings-card,#page-settings .settings-card:nth-child(4),#page-settings .settings-card:nth-child(5){grid-column:span 1;min-height:0;padding:21px}
+  #page-settings #advancedFeatures{grid-template-columns:1fr}
+  #page-settings #advancedFeatures>label:first-child,#page-settings #advancedFeatures>.setting-note{grid-column:auto}
+}
