@@ -6,7 +6,8 @@ MyProgressTrack is a Google-authenticated student workspace for planning study t
 
 - **Today** — a calm daily overview with priorities, deadlines, habits, and weekly study time.
 - **Tasks & deadlines** — create tasks with subjects, due dates, priority, notes, estimated time, and completion state.
-- **Subjects** — organize academic work by subject and see subject-level progress.
+- **Subjects** — select a subject to view, add, and edit its tasks directly within that subject card.
+- **Today priorities** — opt specific tasks into the top-priorities list instead of automatically including every task.
 - **Progress** — review completion, study minutes, routine check-ins, and recent activity.
 - **Focus sprints** — run a lightweight 25-minute Pomodoro with automatic study-time logging and breaks.
 - **Weekly review insights** — get an actionable next step based on overdue work and recent focus time.
@@ -16,13 +17,6 @@ MyProgressTrack is a Google-authenticated student workspace for planning study t
 - **Offline-first PWA** — local changes remain available offline and sync when the connection returns.
 - **Persistent preferences** — deleted subjects remain deleted, reminder preferences survive refresh and sync, and the interface supports light, dark, and system themes.
 - **Account-wide live sync** — newer changes from any signed-in device are applied automatically without a conflict confirmation prompt.
-
-## Advanced feature setup
-
-- **Smart reminders** and **backup snapshots** work locally and sync their planner settings through Firestore.
-- **Calendar export** downloads all dated tasks as an `.ics` file that can be imported into Google Calendar, Apple Calendar, or Outlook. OAuth calendar sync is intentionally not enabled until a server-side OAuth client and redirect URL are configured; client-side secrets are not safe.
-- **Background push notifications** require a Web Push provider. Put only the public VAPID key in `push-config.js`; keep the private key and the subscription delivery endpoint on a server. The browser creates and stores the subscription, but a server must send the payload.
-- **Automatic daily planning**, recurring tasks, streaks, and focus analytics are available from Settings. Recurring tasks create their next occurrence when completed.
 
 ## Run locally
 

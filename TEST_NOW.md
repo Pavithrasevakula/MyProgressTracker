@@ -43,6 +43,14 @@
 - [ ] Backup snapshots can be saved and restored.
 - [ ] Streak and focus analytics update after a habit check-in or focus sprint.
 - [ ] Push setup refuses safely when no public VAPID key is configured.
+- [ ] Selecting a subject shows its tasks and task controls inside that subject card.
+- [ ] No separate selected-subject panel appears below the subject cards.
+- [ ] New tasks default only the due date to today; priority, duration, and recurrence stay unset.
+- [ ] Newly added tasks are absent from Today top priorities unless explicitly selected.
+- [ ] Completed tasks are hidden from Tasks > All and remain available under Completed.
+- [ ] All task views, including calendar view, exclude completed tasks unless Completed is selected.
+- [ ] Subject colors use the sage, dusty blue, and muted clay palette.
+- [ ] Settings page has no Advanced tools disclosure.
 - [ ] A deleted subject stays deleted after refresh, sign-in, and cloud sync.
 - [ ] Enabling reminders stays enabled after refresh until manually disabled.
 - [ ] Theme selection remains after refresh and follows the selected light, dark, or system mode.

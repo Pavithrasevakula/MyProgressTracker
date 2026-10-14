@@ -1,7 +1,7 @@
 /* Advanced planning, reminders, analytics, backups, and calendar tools. */
 (function () {
   const wait = setInterval(() => {
-    if (!window.state || !window.saveLocal || !document.getElementById("advancedFeatures")) return;
+    if (!window.state || !window.saveLocal) return;
     clearInterval(wait);
     init();
   }, 50);
@@ -44,12 +44,12 @@
 
   function render() {
     const root = document.getElementById("advancedFeatures");
-    if (!root) return;
     const s = window.state.settings;
     const appearance = document.getElementById("appearanceControl");
     if (appearance) {
       appearance.innerHTML = `<label class="sr-only" for="themeMode">Theme</label><select class="field" id="themeMode" onchange="setTheme(this.value)"><option value="light" ${s.theme === "light" ? "selected" : ""}>Light theme</option><option value="dark" ${s.theme === "dark" ? "selected" : ""}>Dark theme</option><option value="system" ${s.theme === "system" ? "selected" : ""}>Use system theme</option></select>`;
     }
+    if (!root) return;
     const streak = calculateStreak();
     const analytics = calculateAnalytics();
     root.innerHTML = `
