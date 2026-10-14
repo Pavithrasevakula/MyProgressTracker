@@ -511,3 +511,41 @@ textarea.field{min-height:92px;resize:vertical}
   .nav-item.active,.button.primary,.check.done,.filter-tabs button.active{border:1px solid ButtonText}
   .subject-card,.surface,.settings-section,.stat-card{border:1px solid CanvasText}
 }
+
+/* Subject drill-in view */
+.subject-card{cursor:default}
+.subject-card-open{
+  display:flex;
+  width:100%;
+  flex:1;
+  flex-direction:column;
+  align-items:stretch;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+}
+.subject-card-open:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 60%,white);outline-offset:4px;border-radius:8px}
+.subject-card-open:hover{color:inherit}
+.subject-open-hint{margin-top:12px;color:var(--primary-dark);font-size:11px;font-weight:700}
+.subject-detail-view{display:grid;gap:14px}
+.subject-detail-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.subject-detail-card{padding:0;overflow:hidden}
+.subject-detail-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 24px;border-bottom:1px solid var(--line)}
+.subject-detail-heading h3{font-size:20px;line-height:1.3;margin:5px 0}
+.subject-detail-heading p{margin:0;color:var(--muted);font-size:12px}
+.subject-detail-list{padding:6px 24px}
+.subject-detail-list .task-row{min-height:64px}
+.subject-detail-list .subject-empty{margin:16px 0}
+[hidden].subject-detail-view,[hidden].subject-grid{display:none!important}
+@media(max-width:600px){
+  .subject-detail-toolbar{align-items:stretch}
+  .subject-detail-toolbar .button{flex:1}
+  .subject-detail-heading{align-items:flex-start;padding:18px 16px}
+  .subject-detail-list{padding:6px 16px}
+}
+@media(max-width:420px){
+  .subject-detail-heading{flex-direction:column}
+  .subject-detail-heading .text-button{align-self:flex-start}
+}
