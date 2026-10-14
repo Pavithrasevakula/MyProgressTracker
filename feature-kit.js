@@ -100,7 +100,7 @@
   function applyTheme(theme) {
     const dark = theme === "dark" || (theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
     document.documentElement.dataset.theme = dark ? "dark" : "light";
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#101522" : "#f7f8fc");
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#101522" : "#f3f5f2");
   }
   window.toggleReminderSkip = enabled => {
     window.state.settings.skipReminderAfterCheckIn = enabled;

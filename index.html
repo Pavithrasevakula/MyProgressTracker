@@ -6,20 +6,20 @@
   <meta name="theme-color" content="#f3f5f2">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="icon" type="image/svg+xml" href="brand-icon.svg">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="apple-touch-icon" href="brand-icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=17">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=18">
   <title>MyProgressTrack</title>
 </head>
 <body>
-  <div class="app-loading" id="appLoading"><div class="loading-card"><img src="icon.png" alt=""><strong>Preparing your workspace</strong><span>Loading your synced planner…</span></div></div>
+  <div class="app-loading" id="appLoading"><div class="loading-card"><img src="brand-icon.svg" alt=""><strong>Preparing your workspace</strong><span>Loading your synced planner…</span></div></div>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <div class="brand"><img src="icon.png" alt="MyProgressTrack"><div><strong>MyProgressTrack</strong><small>Student workspace</small></div></div>
+      <div class="brand"><img src="brand-icon.svg" alt="MyProgressTrack"><div><strong>MyProgressTrack</strong><small>Student workspace</small></div></div>
       <nav class="primary-nav" aria-label="Main navigation">
         <button class="nav-item active" data-page="today" onclick="go('today')"><span class="nav-icon">◷</span>Today</button>
         <button class="nav-item" data-page="tasks" onclick="go('tasks')"><span class="nav-icon">✓</span>Tasks</button>
@@ -88,6 +88,6 @@
   <div class="modal" id="subjectModal"><div class="modal-card"><div class="modal-header"><div><span class="eyebrow">Academic map</span><h3 id="subjectModalTitle">Add a subject</h3></div><button class="icon-button" onclick="closeModal('subjectModal')">×</button></div><form id="subjectForm" onsubmit="saveSubject(event)"><input type="hidden" id="subjectId" name="subjectId"><label for="subjectName">Subject name<input class="field" id="subjectName" name="subjectName" required placeholder="e.g. Data Structures"></label><label for="subjectColor">Color<select class="field" id="subjectColor" name="subjectColor"><option value="sage">Soft sage</option><option value="blue">Dusty blue</option><option value="clay">Muted clay</option></select></label><div class="modal-actions"><button type="button" class="button secondary" onclick="closeModal('subjectModal')">Cancel</button><button class="button primary" id="subjectSubmitButton">Add subject</button></div></form></div></div>
   <div class="modal" id="syncModal"><div class="modal-card"><div class="modal-header"><div><span class="eyebrow">Account</span><h3>Cloud sync</h3></div><button class="icon-button" onclick="closeModal('syncModal')">×</button></div><p class="modal-copy">Your planner is connected to your Google account. Changes are saved automatically and synchronized across your devices.</p><div class="sync-detail"><span>Account</span><strong id="modalUserEmail">Signed in</strong></div><div class="sync-detail"><span>Last saved</span><strong id="lastSyncTime">Waiting for sync</strong></div><div class="modal-actions"><button class="button primary" onclick="closeModal('syncModal')">Done</button></div></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="firebase-config.js"></script><script src="push-config.js"></script><script src="app-shell.js?v=9" defer></script><script type="module" src="planner.js?v=11"></script><script type="module" src="firebase-auth.js?v=9"></script><script src="feature-kit.js?v=4"></script>
+  <script src="firebase-config.js"></script><script src="push-config.js"></script><script src="app-shell.js?v=9" defer></script><script type="module" src="planner.js?v=11"></script><script type="module" src="firebase-auth.js?v=9"></script><script src="feature-kit.js?v=5"></script>
 </body>
 </html>

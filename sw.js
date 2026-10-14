@@ -1,5 +1,5 @@
-const CACHE_NAME="mpt-v23";
-const APP_SHELL=["./","index.html","manifest.webmanifest","icon.png","favicon.ico","firebase-config.js","push-config.js","styles.css?v=17","auth.css","app-shell.js?v=9","planner.js?v=11","firebase-auth.js?v=9","feature-kit.js?v=4","auth.js"];
+const CACHE_NAME="mpt-v24";
+const APP_SHELL=["./","index.html","manifest.webmanifest","brand-icon.svg","firebase-config.js","push-config.js","styles.css?v=18","auth.css","app-shell.js?v=9","planner.js?v=11","firebase-auth.js?v=9","feature-kit.js?v=5","auth.js"];
 
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.all(APP_SHELL.map(file=>cache.add(file).catch(()=>null)))));
@@ -32,7 +32,7 @@ self.addEventListener("fetch",event=>{
 self.addEventListener("push",event=>{
   let data={title:"MyProgressTrack",body:"You have a study step waiting.",url:"./index.html"};
   try{if(event.data)data={...data,...event.data.json()}}catch(error){console.error("Could not read push payload",error)}
-  event.waitUntil(self.registration.showNotification(data.title,{body:data.body,icon:"icon.png",data:{url:data.url}}));
+  event.waitUntil(self.registration.showNotification(data.title,{body:data.body,icon:"brand-icon.svg",data:{url:data.url}}));
 });
 self.addEventListener("notificationclick",event=>{
   event.notification.close();
