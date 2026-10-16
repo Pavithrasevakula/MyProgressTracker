@@ -615,3 +615,48 @@ button,input,select,textarea{font-family:"Inter",system-ui,-apple-system,"Segoe 
   .subject-result-count{width:100%;margin-left:0}
   .subject-detail-toolbar .button{min-width:0;padding:9px 10px}
 }
+@media(max-width:720px){
+  .sidebar{
+    position:fixed;
+    inset:auto 0 0;
+    z-index:10;
+    display:grid;
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    align-items:stretch;
+    width:100%;
+    height:calc(66px + env(safe-area-inset-bottom));
+    padding:5px 4px calc(5px + env(safe-area-inset-bottom));
+    border:0;
+    border-top:1px solid var(--line);
+    box-shadow:0 -8px 28px rgba(40,55,46,.09);
+    transform:none;
+    transition:none;
+  }
+  .sidebar.open{transform:none}
+  .brand,.sync-status{display:none}
+  .primary-nav,.sidebar-footer{display:contents}
+  .nav-item{
+    min-width:0;
+    min-height:0;
+    flex-direction:column;
+    justify-content:center;
+    gap:2px;
+    padding:4px 2px;
+    border-radius:12px;
+    font-size:9px;
+    line-height:1.2;
+    white-space:nowrap;
+  }
+  .nav-item.active{box-shadow:none}
+  .nav-icon{
+    display:grid;
+    place-items:center;
+    width:30px;
+    height:27px;
+    border-radius:10px;
+    font-size:18px;
+  }
+  .nav-item.active .nav-icon{background:var(--soft)}
+  .menu-button,.mobile-backdrop{display:none}
+  .content{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+}

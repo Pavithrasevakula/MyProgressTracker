@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=18">
+  <link rel="stylesheet" href="styles.css?v=19">
   <title>MyProgressTrack</title>
 </head>
 <body>
@@ -21,7 +21,7 @@
     <aside class="sidebar" id="sidebar">
       <div class="brand"><img src="brand-icon.svg" alt="MyProgressTrack"><div><strong>MyProgressTrack</strong><small>Student workspace</small></div></div>
       <nav class="primary-nav" aria-label="Main navigation">
-        <button class="nav-item active" data-page="today" onclick="go('today')"><span class="nav-icon">◷</span>Today</button>
+        <button class="nav-item active" data-page="today" aria-current="page" onclick="go('today')"><span class="nav-icon">◷</span>Today</button>
         <button class="nav-item" data-page="tasks" onclick="go('tasks')"><span class="nav-icon">✓</span>Tasks</button>
         <button class="nav-item" data-page="subjects" onclick="go('subjects')"><span class="nav-icon">▤</span>Subjects</button>
         <button class="nav-item" data-page="progress" onclick="go('progress')"><span class="nav-icon">↗</span>Progress</button>
