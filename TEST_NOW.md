@@ -57,6 +57,13 @@
 - [ ] Settings cards remain readable and aligned on desktop, tablet, and mobile widths.
 - [ ] A newer change from another signed-in device syncs automatically without a confirmation dialog.
 - [ ] Settings use a compact two-column layout on desktop and stack cleanly on mobile.
+- [ ] Task search matches task titles, notes, and subjects in both list and calendar views.
+- [ ] Building a daily plan ranks open tasks and never changes their due dates.
+- [ ] Reminder days, smart reminder wording, and skip-after-check-in preferences remain correct after refresh and sync.
+- [ ] A journal entry from a previous date does not suppress today's reminder.
+- [ ] Monthly recurring tasks due on the 29th, 30th, or 31st use the last valid day of shorter months.
+- [ ] Quick backup snapshots restore the planner state, including tasks, settings, and habits.
+- [ ] Sign-out syncs pending online changes, blocks when pending changes are offline, and preserves unrelated site storage.
 
 ## Responsive UI
 
@@ -66,4 +73,6 @@
 - [ ] Open and close the mobile navigation.
 - [ ] Open and close each modal.
 - [ ] Press Escape to close an open modal.
+- [ ] Modals place focus on a useful field, keep keyboard focus inside, and return focus to the opener when closed.
+- [ ] Settings section navigation follows the section currently in view.
 - [ ] Tables scroll horizontally without breaking the page.

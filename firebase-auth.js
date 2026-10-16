@@ -182,11 +182,11 @@ async function loadCloudData() {
 async function saveToCloud() {
   if (!window.userDocRef || !window.state) {
     console.warn(' Cannot save - no user or state');
-    return;
+    return false;
   }
   if (!navigator.onLine) {
     updateSyncStatus('Offline — changes stay on this device');
-    return;
+    return false;
   }
   
   try {
@@ -206,10 +206,12 @@ async function saveToCloud() {
     updateSyncStatus('● Cloud synced');
     
     console.log(' Data saved to cloud');
+    return true;
     
   } catch (error) {
     console.error(' Error saving to cloud:', error);
     updateSyncStatus('● Sync error');
+    return false;
   }
 }
 
@@ -281,6 +283,19 @@ window.signOutUser = async function() {
   }
   
   try {
+    if (window.localChangesPending) {
+      if (!navigator.onLine) {
+        window.toast?.('Reconnect to sync your latest changes before signing out.');
+        return;
+      }
+      clearTimeout(cloudSaveTimer);
+      const synced = await saveToCloud();
+      if (!synced) {
+        window.toast?.('Your changes could not be synced. Please try again before signing out.');
+        return;
+      }
+    }
+
     console.log(' Signing out...');
     
     // Cleanup sync listener
@@ -292,8 +307,9 @@ window.signOutUser = async function() {
     // Sign out from Firebase
     await signOut(auth);
     
-    // Clear local data
-    localStorage.clear();
+    // Clear this account's app data without deleting other apps' origin storage.
+    ['dailyPlannerState', 'plannerLocalChangeAt', 'lastCloudSync', 'studyReminderDate', 'plannerBackupSnapshots']
+      .forEach(key => localStorage.removeItem(key));
     
     // Redirect to auth page
     window.location.href = 'auth.html';

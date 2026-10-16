@@ -1,5 +1,5 @@
-const CACHE_NAME="mpt-v25";
-const APP_SHELL=["./","index.html","manifest.webmanifest","brand-icon.svg","firebase-config.js","push-config.js","styles.css?v=19","auth.css","app-shell.js?v=9","planner.js?v=11","firebase-auth.js?v=9","feature-kit.js?v=5","auth.js"];
+const CACHE_NAME="mpt-v26";
+const APP_SHELL=["./","index.html","manifest.webmanifest","brand-icon.svg","firebase-config.js","push-config.js","styles.css?v=20","auth.css","app-shell.js?v=9","planner.js?v=12","firebase-auth.js?v=9","feature-kit.js?v=6","auth.js"];
 
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.all(APP_SHELL.map(file=>cache.add(file).catch(()=>null)))));

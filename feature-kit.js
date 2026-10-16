@@ -15,8 +15,13 @@
     settings.calendarConnected ??= false;
     settings.theme ??= "light";
     applyTheme(settings.theme);
+    const systemTheme = window.matchMedia?.("(prefers-color-scheme: dark)");
+    systemTheme?.addEventListener?.("change", () => {
+      if (window.state.settings.theme === "system") applyTheme("system");
+    });
     window.renderAdvancedFeatures = render;
     render();
+    window.renderAll?.();
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("sw.js").catch(error => console.error("Could not register service worker", error));
     }
@@ -74,7 +79,7 @@
       const key = dateKey(cursor);
       const active = window.state.timeLogs.some(log => log.date === key && Number(log.minutes) > 0)
         || window.state.habits.some(habit => habit.done?.[key])
-        || window.state.tasks.some(task => task.status === "done" && task.completedAt?.slice(0, 10) === key);
+        || window.state.tasks.some(task => task.status === "done" && task.completedAt && dateKey(new Date(task.completedAt)) === key);
       if (!active) break;
       streak++;
       cursor.setDate(cursor.getDate() - 1);
@@ -93,12 +98,13 @@
     save(enabled ? "Smart reminders enabled" : "Smart reminders disabled");
   };
   window.setTheme = theme => {
+    if (!["light", "dark", "system"].includes(theme)) return;
     window.state.settings.theme = theme;
     applyTheme(theme);
     save("Theme preference saved");
   };
   function applyTheme(theme) {
-    const dark = theme === "dark" || (theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+    const dark = theme === "dark" || (theme === "system" && window.matchMedia?.("(prefers-color-scheme: dark)").matches);
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#101522" : "#f3f5f2");
   }
@@ -107,7 +113,10 @@
     save("Reminder rule saved");
   };
   window.saveReminderDays = select => {
-    window.state.settings.reminderDays = Array.from(select.selectedOptions).map(option => Number(option.value));
+    const dayInputs = select.querySelectorAll("[data-reminder-day]");
+    window.state.settings.reminderDays = dayInputs.length
+      ? Array.from(dayInputs).filter(input => input.checked).map(input => Number(input.dataset.reminderDay))
+      : Array.from(select.selectedOptions).map(option => Number(option.value));
     save("Reminder days saved");
   };
 
@@ -120,26 +129,39 @@
     const time = s.reminderTime || "18:00";
     const current = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
     if (current !== time || localStorage.getItem("studyReminderDate") === dateKey()) return;
-    const task = window.state.tasks.filter(item => item.status !== "done").sort((a, b) => String(a.due).localeCompare(String(b.due)))[0];
-    new Notification(task ? `Next step: ${task.title}` : "A small study check-in?", { body: "Take one focused step in MyProgressTrack." });
-    localStorage.setItem("studyReminderDate", dateKey());
+    const task = window.state.tasks.filter(item => item.status !== "done").sort((a, b) => {
+      const aOverdue = a.due && a.due < dateKey(), bOverdue = b.due && b.due < dateKey();
+      const priority = { high: 0, medium: 1, low: 2 };
+      return Number(bOverdue) - Number(aOverdue)
+        || (priority[a.priority] ?? 3) - (priority[b.priority] ?? 3)
+        || String(a.due || "9999-12-31").localeCompare(String(b.due || "9999-12-31"));
+    })[0];
+    try {
+      new Notification(task ? `Next step: ${task.title}` : "A small study check-in?", { body: "Take one focused step in MyProgressTrack." });
+      localStorage.setItem("studyReminderDate", dateKey());
+    } catch (error) {
+      console.error("Could not show browser reminder", error);
+    }
   }
 
   window.suggestDailyPlan = () => {
     const open = window.state.tasks.filter(task => task.status !== "done").sort((a, b) => {
       const priority = { high: 0, medium: 1, low: 2 };
-      return (priority[a.priority] ?? 1) - (priority[b.priority] ?? 1) || String(a.due).localeCompare(String(b.due));
+      const aOverdue = a.due && a.due < dateKey(), bOverdue = b.due && b.due < dateKey();
+      return Number(bOverdue) - Number(aOverdue)
+        || (priority[a.priority] ?? 3) - (priority[b.priority] ?? 3)
+        || String(a.due || "9999-12-31").localeCompare(String(b.due || "9999-12-31"));
     });
     const today = dateKey();
-    open.slice(0, 3).forEach((task, index) => { if (!task.due || task.due < today) task.due = today; task.planOrder = index + 1; });
     window.state.daily[today] ??= {};
+    window.state.daily[today].plannedTaskIds = open.slice(0, 3).map(task => task.id);
     window.state.daily[today].planGeneratedAt = new Date().toISOString();
     save("Today's plan created from your priorities");
     window.go?.("today");
   };
 
   window.downloadCalendar = () => {
-    const events = window.state.tasks.filter(task => task.due).map(task => {
+    const events = window.state.tasks.filter(task => task.due && task.status !== "done").map(task => {
       const next = new Date(`${task.due}T09:00:00`);
       const end = new Date(next.getTime() + Number(task.minutes || 30) * 60000);
       const stamp = value => value.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
@@ -148,23 +170,43 @@
     const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//MyProgressTrack//Planner//EN\n${events.join("\n")}\nEND:VCALENDAR`;
     const blob = new Blob([ics], { type: "text/calendar" });
     const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob); link.download = "myprogresstrack-calendar.ics"; link.click(); URL.revokeObjectURL(link.href);
+    link.href = URL.createObjectURL(blob); link.download = "myprogresstrack-calendar.ics"; link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
   };
   function escapeICS(value) { return String(value).replace(/[\\;,]/g, match => `\\${match}`).replace(/\n/g, "\\n"); }
 
   window.createBackupSnapshot = () => {
-    const snapshots = JSON.parse(localStorage.getItem("plannerBackupSnapshots") || "[]");
-    snapshots.unshift({ savedAt: new Date().toISOString(), state: JSON.parse(JSON.stringify(window.state)) });
-    localStorage.setItem("plannerBackupSnapshots", JSON.stringify(snapshots.slice(0, 5)));
-    save("Backup snapshot saved");
+    try {
+      const snapshots = JSON.parse(localStorage.getItem("plannerBackupSnapshots") || "[]");
+      if (!Array.isArray(snapshots)) throw new Error("Backup snapshots are not a list");
+      snapshots.unshift({ savedAt: new Date().toISOString(), state: JSON.parse(JSON.stringify(window.state)) });
+      localStorage.setItem("plannerBackupSnapshots", JSON.stringify(snapshots.slice(0, 5)));
+      save("Backup snapshot saved");
+    } catch (error) {
+      console.error("Could not save backup snapshot", error);
+      window.toast?.("Could not save a backup snapshot. Download a backup file instead.");
+    }
   };
   window.restoreBackupSnapshot = () => {
-    const snapshot = JSON.parse(localStorage.getItem("plannerBackupSnapshots") || "[]")[0];
-    if (!snapshot || !confirm("Restore the latest backup snapshot?")) return;
-    window.state = window.state = snapshot.state;
-    window.saveLocal();
-    window.renderAll();
-    window.toast?.("Latest backup restored");
+    try {
+      const snapshots = JSON.parse(localStorage.getItem("plannerBackupSnapshots") || "[]");
+      const snapshot = Array.isArray(snapshots) ? snapshots[0] : null;
+      const value = snapshot?.state;
+      if (!value || !Array.isArray(value.tasks) || !Array.isArray(value.subjects)
+        || !Array.isArray(value.habits) || !value.daily || typeof value.daily !== "object"
+        || !value.settings || typeof value.settings !== "object") {
+        window.toast?.("No valid backup snapshot is available.");
+        return;
+      }
+      if (!confirm("Restore the latest backup snapshot? Your current workspace will be replaced.")) return;
+      window.state = JSON.parse(JSON.stringify(value));
+      window.saveLocal();
+      window.renderAll();
+      window.toast?.("Latest backup restored");
+    } catch (error) {
+      console.error("Could not restore backup snapshot", error);
+      window.toast?.("Could not restore the backup snapshot.");
+    }
   };
 
   window.setupPushNotifications = async () => {
@@ -174,10 +216,15 @@
     if (existing) { window.state.settings.pushEnabled = true; save("Background notifications are already configured"); return; }
     const key = window.PUSH_PUBLIC_KEY;
     if (!key) { window.toast?.("Add PUSH_PUBLIC_KEY and a push endpoint to enable background notifications."); return; }
-    const subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(key) });
-    window.state.settings.pushSubscription = subscription.toJSON();
-    window.state.settings.pushEnabled = true;
-    save("Push subscription created; connect it to your push server");
+    try {
+      const subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(key) });
+      window.state.settings.pushSubscription = subscription.toJSON();
+      window.state.settings.pushEnabled = true;
+      save("Push subscription created; connect it to your push server");
+    } catch (error) {
+      console.error("Could not set up push notifications", error);
+      window.toast?.("Could not set up background notifications. Check browser permission and try again.");
+    }
   };
   function urlBase64ToUint8Array(value) {
     const padding = "=".repeat((4 - value.length % 4) % 4);

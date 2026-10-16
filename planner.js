@@ -1,4 +1,5 @@
-const todayISO=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+const localDateISO=date=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+const todayISO=()=>localDateISO(new Date());
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dateLabel=value=>value?new Date(`${value}T12:00:00`).toLocaleDateString(undefined,{month:"short",day:"numeric"}):"No deadline";
 const uid=prefix=>`${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
@@ -38,42 +39,95 @@ window.saveLocalOnly=saveLocal;
 function save(){window.saveLocal()}
 function toast(message){const el=document.getElementById("toast");if(!el)return;el.textContent=message;el.classList.add("show");clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>el.classList.remove("show"),2600)}
 window.toast=toast;
-function openModal(id){const el=document.getElementById(id);if(el)el.classList.add("show")}
-function closeModal(id){const el=document.getElementById(id);if(el)el.classList.remove("show")}
+const modalReturnFocus=new WeakMap();
+function openModal(id){
+  const el=document.getElementById(id);if(!el)return;
+  const heading=el.querySelector(".modal-header h3");
+  if(heading){heading.id||=`${id}Title`;el.setAttribute("aria-labelledby",heading.id)}
+  el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");
+  modalReturnFocus.set(el,document.activeElement);
+  el.classList.add("show");
+  el.querySelector("input:not([type=hidden]),select,textarea,button")?.focus();
+}
+function closeModal(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.remove("show");
+  const returnFocus=modalReturnFocus.get(el);
+  if(returnFocus?.isConnected)returnFocus.focus();
+}
 window.openModal=openModal;window.closeModal=closeModal;
 document.addEventListener("click",event=>{if(event.target.classList.contains("modal"))closeModal(event.target.id)});
-document.addEventListener("keydown",event=>{if(event.key==="Escape")document.querySelectorAll(".modal.show").forEach(el=>closeModal(el.id))});
+document.addEventListener("keydown",event=>{
+  const modal=document.querySelector(".modal.show");
+  if(event.key==="Escape"&&modal){event.preventDefault();closeModal(modal.id);return}
+  if(event.key!=="Tab"||!modal)return;
+  const focusable=Array.from(modal.querySelectorAll("a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex='-1'])")).filter(el=>el.getClientRects().length);
+  if(!focusable.length){event.preventDefault();modal.focus();return}
+  const first=focusable[0],last=focusable[focusable.length-1];
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+});
 function subjectName(id){return state.subjects.find(s=>s.id===id)?.name||"General"}
 function subjectColor(id){return state.subjects.find(s=>s.id===id)?.color||"sage"}
 function dueSoon(task){if(!task.due)return false;const diff=(new Date(`${task.due}T12:00:00`)-new Date(`${todayISO()}T12:00:00`))/86400000;return diff>=0&&diff<=7}
 function openTasks(){return state.tasks.filter(t=>t.status!=="done")}
 function completedTasks(){return state.tasks.filter(t=>t.status==="done")}
 function setPageTitle(page){const names={today:["Workspace","Today"],tasks:["Plan","Tasks & deadlines"],subjects:["Study","Subjects"],progress:["Review","Progress"],journal:["Reflect","Journal"],settings:["Workspace","Settings"]};const n=names[page]||names.today;document.getElementById("pageKicker").textContent=n[0];document.getElementById("topTitle").textContent=n[1];document.querySelectorAll(".nav-item[data-page]").forEach(b=>{const active=b.dataset.page===page;b.classList.toggle("active",active);if(active)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")})}
-window.go=page=>{document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===`page-${page}`));setPageTitle(page);window._page=page;document.getElementById("sidebar")?.classList.remove("open");renderAll()};
+window.go=page=>{const target=document.getElementById(`page-${page}`);if(!target)return;document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p===target));setPageTitle(page);window._page=page;document.getElementById("sidebar")?.classList.remove("open");window.scrollTo({top:0,behavior:"smooth"});renderAll()};
 window.toggleMenu=()=>document.getElementById("sidebar")?.classList.toggle("open");
 window.toggleProfileMenu=()=>{const el=document.getElementById("profileDropdown"),trigger=document.querySelector(".profile-trigger");if(!el)return;el.hidden=!el.hidden;trigger?.setAttribute("aria-expanded",String(!el.hidden))};
 window.closeProfileMenu=()=>{const el=document.getElementById("profileDropdown");if(el)el.hidden=true};
 document.addEventListener("click",event=>{if(!event.target.closest("#profileMenu"))window.closeProfileMenu()});
-function renderTasks(){
-  const root=document.getElementById("taskList"),calendar=document.getElementById("taskCalendar"),filter=window._taskFilter||"all",subject=document.getElementById("taskSubjectFilter")?.value||"";
-  const items=state.tasks.filter(task=>matchesTaskFilter(task,filter)&&(!subject||task.subjectId===subject)).sort((a,b)=>(priorityRank[a.priority]??3)-(priorityRank[b.priority]??3)||String(a.due||"9999-12-31").localeCompare(String(b.due||"9999-12-31")));
-  if(window._taskView==="calendar"){root.hidden=true;calendar.hidden=false;renderTaskCalendar();return}root.hidden=false;calendar.hidden=true;
-  if(root)root.innerHTML=items.length?items.map(task=>taskListRow(task)).join(""):`<div class="empty">No tasks match this view. Add one small next step to get started.</div>`;
+function setActiveSettingsLink(sectionId){
+  document.querySelectorAll(".settings-nav-link").forEach(link=>{
+    const active=link.hash===`#${sectionId}`;
+    link.classList.toggle("active",active);
+    if(active)link.setAttribute("aria-current","location");
+    else link.removeAttribute("aria-current");
+  });
 }
-function matchesTaskFilter(task,filter){if(filter==="done")return task.status==="done";if(task.status==="done")return false;if(filter==="today")return task.due===todayISO();if(filter==="upcoming")return dueSoon(task);if(filter==="overdue")return Boolean(task.due&&task.due<todayISO());return true}
+document.querySelector(".settings-nav")?.addEventListener("click",event=>{
+  const link=event.target.closest(".settings-nav-link");
+  if(link)setActiveSettingsLink(link.hash.slice(1));
+});
+if("IntersectionObserver" in window){
+  const settingsObserver=new IntersectionObserver(entries=>{
+    const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(visible)setActiveSettingsLink(visible.target.id);
+  },{rootMargin:"-90px 0px -60% 0px",threshold:[0,.25,.5,.75]});
+  document.querySelectorAll(".settings-section").forEach(section=>settingsObserver.observe(section));
+}
+function renderTasks(){
+  const root=document.getElementById("taskList"),calendar=document.getElementById("taskCalendar"),filter=window._taskFilter||"all",subject=document.getElementById("taskSubjectFilter")?.value||"",query=document.getElementById("taskSearch")?.value.trim().toLowerCase()||"";
+  const items=state.tasks.filter(task=>matchesTaskFilter(task,filter)&&(!subject||task.subjectId===subject)&&(!query||`${task.title} ${task.notes||""} ${subjectName(task.subjectId)}`.toLowerCase().includes(query))).sort((a,b)=>(priorityRank[a.priority]??3)-(priorityRank[b.priority]??3)||String(a.due||"9999-12-31").localeCompare(String(b.due||"9999-12-31")));
+  if(window._taskView==="calendar"){root.hidden=true;calendar.hidden=false;renderTaskCalendar();return}root.hidden=false;calendar.hidden=true;
+  if(root)root.innerHTML=items.length?items.map(task=>taskListRow(task)).join(""):`<div class="empty">${query||subject||filter!=="all"?"No tasks match these filters. Try changing your search or filters.":"No tasks yet. Add one small next step to get started."}</div>`;
+}
+function matchesTaskFilter(task,filter){if(filter==="done")return task.status==="done";if(task.status==="done")return false;if(filter==="today")return task.due===todayISO();if(filter==="upcoming")return Boolean(task.due&&task.due>todayISO()&&dueSoon(task));if(filter==="overdue")return Boolean(task.due&&task.due<todayISO());return true}
 function taskListRow(task){const overdue=task.status!=="done"&&task.due&&task.due<todayISO();const checklist=task.subtasks?.length?`<div class="subtask-preview">${task.subtasks.map(item=>`<button class="subtask-line ${item.done?"done":""}" onclick="toggleSubtask('${task.id}','${item.id}')"><span class="check ${item.done?"done":""}">${item.done?"✓":""}</span>${esc(item.title)}</button>`).join("")}</div>`:"";const meta=[subjectName(task.subjectId),dateLabel(task.due),Number(task.minutes)>0?`${task.minutes} min`:"",task.recurrence&&task.recurrence!=="none"?`repeats ${task.recurrence}`:""].filter(Boolean).join(" · ");return `<div class="task-row ${task.status==="done"?"completed":""} ${overdue?"overdue":""}"><button class="check ${task.status==="done"?"done":""}" onclick="toggleTask('${task.id}')" aria-label="Toggle ${esc(task.title)}">${task.status==="done"?"✓":""}</button><div class="item-main"><strong>${esc(task.title)}</strong><small>${meta}</small>${checklist}</div>${overdue?'<span class="tag overdue-tag">Overdue</span>':""}${task.priority?`<span class="tag ${task.priority}">${task.priority}</span>`:""}<div class="task-actions">${overdue?`<button class="text-button" onclick="carryOverTask('${task.id}')">Today</button><button class="text-button" onclick="editTask('${task.id}')">Reschedule</button>`:""}<button class="icon-button" onclick="editTask('${task.id}')" aria-label="Edit task">✎</button><button class="icon-button" onclick="deleteTask('${task.id}')" aria-label="Delete task">×</button></div></div>`}
-window.setTaskView=view=>{window._taskView=view;document.getElementById("listViewButton")?.classList.toggle("active",view==="list");document.getElementById("calendarViewButton")?.classList.toggle("active",view==="calendar");renderTasks()};
-function renderTaskCalendar(){const root=document.getElementById("taskCalendar");if(!root)return;const base=new Date(window._calendarMonth||new Date());base.setDate(1);const year=base.getFullYear(),month=base.getMonth(),days=new Date(year,month+1,0).getDate(),start=new Date(year,month,1).getDay(),filter=window._taskFilter||"all",subject=document.getElementById("taskSubjectFilter")?.value||"";let html=`<div class="calendar-heading"><button class="icon-button" onclick="shiftTaskMonth(-1)">‹</button><strong>${base.toLocaleDateString(undefined,{month:"long",year:"numeric"})}</strong><button class="icon-button" onclick="shiftTaskMonth(1)">›</button></div><div class="calendar-grid">${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>`<b>${d}</b>`).join("")}`;for(let i=0;i<start;i++)html+="<span></span>";for(let day=1;day<=days;day++){const date=`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`,tasks=state.tasks.filter(t=>t.due===date&&matchesTaskFilter(t,filter)&&(!subject||t.subjectId===subject));html+=`<div class="calendar-day ${date===todayISO()?"today":""}"><b>${day}</b>${tasks.slice(0,3).map(t=>`<button class="calendar-task ${t.status==="done"?"done":""}" onclick="editTask('${t.id}')">${esc(t.title)}</button>`).join("")}</div>`}root.innerHTML=html+"</div>"}
+window.setTaskView=view=>{window._taskView=view;document.getElementById("listViewButton")?.classList.toggle("active",view==="list");document.getElementById("listViewButton")?.setAttribute("aria-pressed",String(view==="list"));document.getElementById("calendarViewButton")?.classList.toggle("active",view==="calendar");document.getElementById("calendarViewButton")?.setAttribute("aria-pressed",String(view==="calendar"));renderTasks()};
+function renderTaskCalendar(){
+  const root=document.getElementById("taskCalendar");if(!root)return;
+  const base=new Date(window._calendarMonth||new Date());base.setDate(1);
+  const year=base.getFullYear(),month=base.getMonth(),days=new Date(year,month+1,0).getDate(),start=new Date(year,month,1).getDay(),filter=window._taskFilter||"all",subject=document.getElementById("taskSubjectFilter")?.value||"",query=document.getElementById("taskSearch")?.value.trim().toLowerCase()||"";
+  let html=`<div class="calendar-heading"><button class="icon-button" onclick="shiftTaskMonth(-1)" aria-label="Previous month">‹</button><strong>${base.toLocaleDateString(undefined,{month:"long",year:"numeric"})}</strong><button class="icon-button" onclick="shiftTaskMonth(1)" aria-label="Next month">›</button></div><div class="calendar-grid">${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>`<b>${d}</b>`).join("")}`;
+  for(let i=0;i<start;i++)html+="<span></span>";
+  for(let day=1;day<=days;day++){
+    const date=`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`,tasks=state.tasks.filter(task=>task.due===date&&matchesTaskFilter(task,filter)&&(!subject||task.subjectId===subject)&&(!query||`${task.title} ${task.notes||""} ${subjectName(task.subjectId)}`.toLowerCase().includes(query)));
+    html+=`<div class="calendar-day ${date===todayISO()?"today":""}"><b>${day}</b>${tasks.slice(0,3).map(task=>`<button class="calendar-task ${task.status==="done"?"done":""}" onclick="editTask('${task.id}')">${esc(task.title)}</button>`).join("")}${tasks.length>3?`<span class="calendar-more" title="${tasks.length-3} more tasks">+${tasks.length-3} more</span>`:""}</div>`;
+  }
+  root.innerHTML=html+"</div>";
+}
 window.shiftTaskMonth=offset=>{const date=new Date(window._calendarMonth||new Date());date.setMonth(date.getMonth()+offset);window._calendarMonth=date;renderTaskCalendar()};
-window.setTaskFilter=(filter,button)=>{window._taskFilter=filter;document.querySelectorAll("#taskFilters button").forEach(b=>b.classList.remove("active"));button?.classList.add("active");renderTasks()};
+window.setTaskFilter=(filter,button)=>{window._taskFilter=filter;document.querySelectorAll("#taskFilters button").forEach(b=>{const active=b===button;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});renderTasks()};
 function populateSubjectSelects(){const options=state.subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");["taskSubject","taskSubjectFilter"].forEach(id=>{const el=document.getElementById(id);if(!el)return;const current=el.value;el.innerHTML=(id==="taskSubjectFilter"?'<option value="">All subjects</option>':"<option value=''>General / no subject</option>")+options;el.value=current})}
 function renderToday(){
   const open=openTasks(),done=completedTasks(),due=open.filter(dueSoon),pct=state.tasks.length?Math.round(done.length/state.tasks.length*100):0;
   document.getElementById("todayPercent").textContent=`${pct}%`;document.getElementById("todayProgress").style.width=`${pct}%`;document.getElementById("openTaskCount").textContent=open.length;document.getElementById("dueSoonCount").textContent=due.length;
-  const name=state.profile.name||window.currentUser?.displayName?.split(" ")[0]||"there";document.getElementById("greetingName").textContent=esc(name);document.getElementById("todaySummary").textContent=open.length?`${open.length} open task${open.length===1?"":"s"} waiting for your attention.`:"Your plan is clear. Add a task whenever something new comes up.";
-  const priorities=open.filter(task=>task.todayPriority).sort((a,b)=>(priorityRank[a.priority]??3)-(priorityRank[b.priority]??3)||String(a.due||"9999-12-31").localeCompare(String(b.due||"9999-12-31"))).slice(0,4),priorityRoot=document.getElementById("todayPriorities");priorityRoot.innerHTML=priorities.length?priorities.map(taskRow).join(""):'<div class="empty">Choose tasks for your top priorities when adding or editing them.</div>';
+  const name=state.profile.name||window.currentUser?.displayName?.split(" ")[0]||"there";document.getElementById("greetingName").textContent=name;document.getElementById("todaySummary").textContent=open.length?`${open.length} open task${open.length===1?"":"s"} waiting for your attention.`:"Your plan is clear. Add a task whenever something new comes up.";
+  const plannedIds=state.daily[todayISO()]?.plannedTaskIds||[],plannedTasks=plannedIds.map(id=>open.find(task=>task.id===id)).filter(Boolean),priorities=(plannedIds.length?plannedTasks:open.filter(task=>task.todayPriority).sort((a,b)=>(priorityRank[a.priority]??3)-(priorityRank[b.priority]??3)||String(a.due||"9999-12-31").localeCompare(String(b.due||"9999-12-31")))).slice(0,4),priorityRoot=document.getElementById("todayPriorities");priorityRoot.innerHTML=priorities.length?priorities.map(taskRow).join(""):plannedIds.length?'<div class="empty">Today’s plan is complete. Build a new plan or review your tasks.</div>':'<div class="empty">Choose tasks for your top priorities when adding or editing them, or build a plan for today.</div>';
   const deadlineRoot=document.getElementById("todayDeadlines"),deadlines=open.filter(t=>t.due).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,4);deadlineRoot.innerHTML=deadlines.length?deadlines.map(t=>`<div class="deadline-item"><div class="item-main"><strong>${esc(t.title)}</strong><small>${esc(subjectName(t.subjectId))}</small></div><span class="tag ${t.due<todayISO()?"high":"subject"}">${t.due<todayISO()?"Overdue":dateLabel(t.due)}</span></div>`).join(""):'<div class="empty">No deadlines yet.</div>';
-  const habits=document.getElementById("todayHabits");habits.innerHTML=state.habits.slice(0,4).map(h=>{const checked=Boolean(h.done?.[todayISO()]);return `<div class="habit-item"><button class="check ${checked?"done":""}" onclick="toggleHabit('${h.id}')">${checked?"✓":""}</button><div class="item-main"><strong>${esc(h.name)}</strong><small>${esc(h.target)}</small></div></div>`}).join("")||'<div class="empty">Add a routine in Settings.</div>';
+  const habits=document.getElementById("todayHabits");habits.innerHTML=state.habits.slice(0,4).map(h=>{const checked=Boolean(h.done?.[todayISO()]);return `<div class="habit-item"><button class="check ${checked?"done":""}" aria-label="${checked?"Mark incomplete":"Mark complete"}: ${esc(h.name)}" onclick="toggleHabit('${h.id}')">${checked?"✓":""}</button><div class="item-main"><strong>${esc(h.name)}</strong><small>${esc(h.target)}</small></div></div>`}).join("")||'<div class="empty">Add a routine in Settings.</div>';
   renderWeekBars();
 }
 function taskRow(task){return `<div class="priority-item"><button class="check" onclick="toggleTask('${task.id}')" aria-label="Complete ${esc(task.title)}"></button><div class="item-main"><strong>${esc(task.title)}</strong><small>${esc(subjectName(task.subjectId))}${Number(task.minutes)>0?` · ${task.minutes} min`:""}</small></div>${task.priority?`<span class="tag ${task.priority}">${task.priority}</span>`:""}<button class="icon-button" onclick="editTask('${task.id}')" aria-label="Edit task">✎</button><button class="icon-button" onclick="deleteTask('${task.id}')" aria-label="Delete task">×</button></div>`}
@@ -107,12 +161,29 @@ function renderSubjects(){
 window.renderSubjects=renderSubjects;
 window.selectSubject=id=>{if(!state.subjects.some(subject=>subject.id===id))return;state.selectedSubject=id;window._subjectDetailOpen=true;renderSubjects();window.scrollTo({top:0,behavior:"smooth"})};
 window.closeSubjectTasks=()=>{window._subjectDetailOpen=false;renderSubjects()};
-function renderProgress(){const total=state.tasks.length,done=completedTasks().length,minutes=state.timeLogs.reduce((a,x)=>a+Number(x.minutes||0),0),streak=state.habits.reduce((a,h)=>a+Object.keys(h.done||{}).length,0);document.getElementById("progressStats").innerHTML=[["Tasks completed",done],["Completion rate",`${total?Math.round(done/total*100):0}%`],["Study minutes",minutes],["Routine check-ins",streak]].map(x=>`<div class="progress-stat"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join("");document.getElementById("subjectProgress").innerHTML=state.subjects.map(s=>{const ts=state.tasks.filter(t=>t.subjectId===s.id),p=ts.length?Math.round(ts.filter(t=>t.status==="done").length/ts.length*100):0;return `<div class="progress-line"><div class="progress-line-head"><b>${esc(s.name)}</b><span>${p}% · ${ts.length} tasks</span></div><div class="line"><i style="width:${p}%"></i></div></div>`}).join("")||'<div class="empty">Add subjects to see progress by area.</div>';const activity=document.getElementById("activityGrid");activity.innerHTML=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(13-i));const k=d.toISOString().slice(0,10),n=state.tasks.filter(t=>t.status==="done"&&t.completedAt?.slice(0,10)===k).length;return `<i class="activity-cell ${n>1?"strong":n?"active":""}" title="${k}"></i>`}).join("")}
+function renderProgress(){
+  const total=state.tasks.length,done=completedTasks().length,minutes=state.timeLogs.reduce((a,x)=>a+Number(x.minutes||0),0),checkIns=state.habits.reduce((total,habit)=>total+Object.values(habit.done||{}).filter(Boolean).length,0);
+  document.getElementById("progressStats").innerHTML=[["Tasks completed",done],["Completion rate",`${total?Math.round(done/total*100):0}%`],["Study minutes",minutes],["Routine check-ins",checkIns]].map(x=>`<div class="progress-stat"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join("");
+  document.getElementById("subjectProgress").innerHTML=state.subjects.map(subject=>{const tasks=state.tasks.filter(task=>task.subjectId===subject.id),percent=tasks.length?Math.round(tasks.filter(task=>task.status==="done").length/tasks.length*100):0;return `<div class="progress-line"><div class="progress-line-head"><b>${esc(subject.name)}</b><span>${percent}% · ${tasks.length} tasks</span></div><div class="line"><i style="width:${percent}%"></i></div></div>`}).join("")||'<div class="empty">Add subjects to see progress by area.</div>';
+  const activity=document.getElementById("activityGrid"),recentKeys=Array.from({length:14},(_,i)=>{const date=new Date();date.setDate(date.getDate()-(13-i));return localDateISO(date)}),activityByDay=new Map(recentKeys.map(key=>[key,{completed:0,minutes:0,habits:0}]));
+  state.tasks.forEach(task=>{if(task.status!=="done"||!task.completedAt)return;const key=localDateISO(new Date(task.completedAt));if(activityByDay.has(key))activityByDay.get(key).completed++});
+  state.timeLogs.forEach(log=>{const day=activityByDay.get(log.date);if(day)day.minutes+=Number(log.minutes||0)});
+  state.habits.forEach(habit=>Object.keys(habit.done||{}).forEach(key=>{const day=activityByDay.get(key);if(day&&habit.done[key])day.habits++}));
+  activity.innerHTML=recentKeys.map(key=>{const day=activityByDay.get(key),count=day.completed+day.minutes+day.habits;return `<i class="activity-cell ${count>1?"strong":count?"active":""}" title="${key}: ${day.completed} tasks completed, ${day.minutes} study minutes, ${day.habits} habits checked in"></i>`}).join("");
+}
 function loadJournal(){const date=document.getElementById("journalDate")?.value||todayISO(),entry=state.daily[date]?.journal||{};document.getElementById("journalWins").value=entry.wins||"";document.getElementById("journalLearn").value=entry.learn||"";document.getElementById("journalNext").value=entry.next||""}
 window.loadJournal=loadJournal;
 function renderJournalHistory(){const root=document.getElementById("journalHistory"),entries=Object.entries(state.daily).filter(([,d])=>d.journal&&(d.journal.wins||d.journal.learn||d.journal.next)).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,8);root.innerHTML=entries.length?entries.map(([date,d])=>`<article class="journal-entry"><time>${dateLabel(date)}</time><p>${esc(d.journal.wins||d.journal.learn||d.journal.next)}</p></article>`).join(""):'<div class="empty">Your saved reflections will appear here.</div>'}
 window.saveJournal=()=>{const date=document.getElementById("journalDate").value||todayISO();state.daily[date]??={};state.daily[date].journal={wins:document.getElementById("journalWins").value,learn:document.getElementById("journalLearn").value,next:document.getElementById("journalNext").value};save();renderJournalHistory();toast("Journal entry saved")};
-function nextDue(date,recurrence){const d=new Date(`${date||todayISO()}T12:00:00`);if(recurrence==="daily")d.setDate(d.getDate()+1);else if(recurrence==="weekly")d.setDate(d.getDate()+7);else if(recurrence==="monthly")d.setMonth(d.getMonth()+1);return d.toISOString().slice(0,10)}
+function nextDue(date,recurrence){
+  const d=new Date(`${date||todayISO()}T12:00:00`);
+  if(recurrence==="daily")d.setDate(d.getDate()+1);
+  else if(recurrence==="weekly")d.setDate(d.getDate()+7);
+  else if(recurrence==="monthly"){
+    const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+1);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));
+  }
+  return localDateISO(d);
+}
 window.toggleTask=id=>{const task=state.tasks.find(t=>t.id===id);if(!task)return;if(task.status==="done"){task.status="open";task.completedAt=""}else{task.status="done";task.completedAt=new Date().toISOString();if(task.recurrence&&task.recurrence!=="none"&&!state.tasks.some(t=>t.parentId===task.id&&t.due===nextDue(task.due,task.recurrence))){state.tasks.push({...task,id:uid("task"),parentId:task.id,due:nextDue(task.due,task.recurrence),status:"open",completedAt:"",subtasks:(task.subtasks||[]).map(item=>({...item,id:uid("subtask"),done:false}))})}}save();renderAll()};
 window.toggleSubtask=(taskId,subtaskId)=>{const task=state.tasks.find(t=>t.id===taskId),item=task?.subtasks?.find(x=>x.id===subtaskId);if(!item)return;item.done=!item.done;save();renderAll()};
 window.carryOverTask=id=>{const task=state.tasks.find(t=>t.id===id);if(!task)return;task.due=todayISO();save();renderAll();toast("Task carried over to today")};
@@ -125,13 +196,14 @@ window.editSelectedSubject=()=>{const subject=state.subjects.find(x=>x.id===stat
 window.editSubject=id=>{const subject=state.subjects.find(x=>x.id===id);if(subject)openSubjectModal(subject)};
 window.saveSubject=event=>{event.preventDefault();const id=document.getElementById("subjectId").value,name=document.getElementById("subjectName").value.trim();if(!name)return;if(state.subjects.some(subject=>subject.id!==id&&subject.name.trim().toLowerCase()===name.toLowerCase())){toast("A subject with that name already exists");return}const data={name,color:document.getElementById("subjectColor").value};if(id){const subject=state.subjects.find(x=>x.id===id);if(subject)Object.assign(subject,data)}else{const subject={id:uid("subject"),...data};state.subjects.push(subject);state.selectedSubject=subject.id}save();closeModal("subjectModal");renderAll();toast(id?"Subject updated":"Subject added")};
 window.deleteSubject=id=>{const subject=state.subjects.find(x=>x.id===id);if(!subject)return;const count=state.tasks.filter(t=>t.subjectId===id).length;if(!confirm(`Delete "${subject.name}"? ${count?`${count} task${count===1?"":"s"} will be kept without a subject.`:"This subject has no tasks."}`))return;state.deletedSubjectIds??=[];if(!state.deletedSubjectIds.includes(id))state.deletedSubjectIds.push(id);state.tasks.forEach(task=>{if(task.subjectId===id)task.subjectId=""});state.subjects=state.subjects.filter(x=>x.id!==id);if(state.selectedSubject===id){state.selectedSubject=state.subjects[0]?.id||"";window._subjectDetailOpen=false}save();renderAll();toast("Subject deleted permanently")};
-window.toggleHabit=id=>{const habit=state.habits.find(h=>h.id===id);if(!habit)return;habit.done??={};habit.done[todayISO()]=!habit.done[todayISO()];save();renderAll()};
+window.toggleHabit=id=>{const habit=state.habits.find(h=>h.id===id);if(!habit)return;habit.done??={};if(habit.done[todayISO()])delete habit.done[todayISO()];else habit.done[todayISO()]=true;save();renderAll()};
 window.addHabit=()=>{const name=prompt("Habit name:");if(!name?.trim())return;state.settings.habitsConfigured=true;state.habits.push({id:uid("habit"),name:name.trim(),target:"Daily",done:{}});save();renderAll();toast("Habit added")};
-function renderSettings(){document.getElementById("weeklyTarget").value=state.settings.weeklyTarget||12;document.getElementById("profileNameInput").value=state.profile.name||"";const root=document.getElementById("habitSettings");root.innerHTML=state.habits.map(h=>`<div class="habit-setting"><label class="sr-only" for="habit-${esc(h.id)}">Habit name</label><input class="field" id="habit-${esc(h.id)}" name="habit-${esc(h.id)}" value="${esc(h.name)}" onchange="renameHabit('${h.id}',this.value)"><button class="icon-button" type="button" onclick="removeHabit('${h.id}')">×</button></div>`).join("")}
+function renderSettings(){document.getElementById("weeklyTarget").value=state.settings.weeklyTarget??12;document.getElementById("profileNameInput").value=state.profile.name||"";const root=document.getElementById("habitSettings");root.innerHTML=state.habits.map(h=>`<div class="habit-setting"><label class="sr-only" for="habit-${esc(h.id)}">Habit name</label><input class="field" id="habit-${esc(h.id)}" name="habit-${esc(h.id)}" value="${esc(h.name)}" onchange="renameHabit('${h.id}',this.value)"><button class="icon-button" type="button" aria-label="Remove ${esc(h.name)}" onclick="removeHabit('${h.id}')">×</button></div>`).join("")}
 window.renameHabit=(id,name)=>{const h=state.habits.find(x=>x.id===id);if(h){state.settings.habitsConfigured=true;h.name=name.trim()||h.name;save();renderToday()}};window.removeHabit=id=>{state.settings.habitsConfigured=true;state.habits=state.habits.filter(h=>h.id!==id);save();renderAll();toast("Habit removed")};window.saveSettings=()=>{state.settings.weeklyTarget=Number(document.getElementById("weeklyTarget").value)||0;save();toast("Settings saved")};window.saveProfile=()=>{state.profile.name=document.getElementById("profileNameInput").value.trim();save();renderAll();toast("Profile updated")};
-window.exportJSON=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="myprogresstrack-backup.json";a.click();URL.revokeObjectURL(a.href)};
-function isValidBackup(value){if(!value||typeof value!=="object"||Array.isArray(value)||!Array.isArray(value.tasks)||!Array.isArray(value.subjects)||!Array.isArray(value.habits)||typeof value.daily!=="object"||Array.isArray(value.daily)||typeof value.settings!=="object"||Array.isArray(value.settings))return false;return value.tasks.every(task=>task&&typeof task==="object"&&typeof task.title==="string"&&(!task.status||["open","done"].includes(task.status))&&(!task.priority||priorityRank[task.priority]!==undefined)&&(!task.subtasks||Array.isArray(task.subtasks)))&&value.subjects.every(subject=>subject&&typeof subject==="object"&&typeof subject.name==="string")};
-window.importJSON=input=>{const file=input.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=event=>{try{const imported=JSON.parse(event.target.result);if(!isValidBackup(imported))throw new Error("Invalid planner backup");if(!confirm("Restore this backup? Your current local workspace will be replaced."))return;state=window.state=imported;migrateState();save();renderAll();toast("Backup restored")}catch(error){console.error("Could not restore backup",error);toast("That backup file is not valid")}};reader.readAsText(file);input.value=""};
+window.exportJSON=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="myprogresstrack-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+function isValidBackup(value){if(!value||typeof value!=="object"||Array.isArray(value)||!Array.isArray(value.tasks)||!Array.isArray(value.subjects)||!Array.isArray(value.habits)||!value.daily||typeof value.daily!=="object"||Array.isArray(value.daily)||!value.settings||typeof value.settings!=="object"||Array.isArray(value.settings))return false;return value.tasks.every(task=>task&&typeof task==="object"&&typeof task.title==="string"&&(!task.status||["open","done"].includes(task.status))&&(!task.priority||priorityRank[task.priority]!==undefined)&&(!task.subtasks||Array.isArray(task.subtasks)))&&value.subjects.every(subject=>subject&&typeof subject==="object"&&typeof subject.name==="string")};
+window.restorePlannerState=value=>{if(!isValidBackup(value))throw new Error("Invalid planner backup");state=window.state=value;migrateState();save();renderAll()};
+window.importJSON=input=>{const file=input.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=event=>{try{const imported=JSON.parse(event.target.result);if(!isValidBackup(imported))throw new Error("Invalid planner backup");if(!confirm("Restore this backup? Your current local workspace will be replaced."))return;window.restorePlannerState(imported);toast("Backup restored")}catch(error){console.error("Could not restore backup",error);toast("That backup file is not valid")}finally{input.value=""}};reader.onerror=()=>{console.error("Could not read planner backup",reader.error);toast("Could not read that backup file");input.value=""};reader.readAsText(file)};
 function renderAll(){if(!document.getElementById("page-today"))return;migrateState();const page=window._page||"today";populateSubjectSelects();renderToday();renderTasks();renderSubjects();renderProgress();renderJournalHistory();renderSettings();window.renderAdvancedFeatures?.();setPageTitle(page);if(!document.getElementById("journalDate").value){document.getElementById("journalDate").value=todayISO();loadJournal()}const now=new Date();document.getElementById("liveDate").textContent=now.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});window.saveLocalOnly()}
 window.renderAll=renderAll;window.openOnboarding=()=>{state.profile.onboardingComplete=true;save()};
 window.addEventListener("load",()=>{renderAll();document.getElementById("appLoading").hidden=true});
@@ -169,27 +241,43 @@ function renderWeeklyInsight(){
   const root=document.getElementById("weeklyInsight");if(!root)return;
   const weekStart=new Date();weekStart.setHours(0,0,0,0);weekStart.setDate(weekStart.getDate()-6);
   const minutes=state.timeLogs.filter(x=>new Date(`${x.date}T12:00:00`)>=weekStart).reduce((a,x)=>a+Number(x.minutes||0),0);
-  const target=Math.round(Number(state.settings.weeklyTarget||0)*60),overdue=openTasks().filter(t=>t.due&&t.due<todayISO()),next=openTasks().sort((a,b)=>priorityRank[a.priority]-priorityRank[b.priority]||String(a.due).localeCompare(String(b.due)))[0];
+  const target=Math.round(Number(state.settings.weeklyTarget||0)*60),overdue=openTasks().filter(t=>t.due&&t.due<todayISO()),next=openTasks().sort((a,b)=>(priorityRank[a.priority]??3)-(priorityRank[b.priority]??3)||String(a.due||"9999-12-31").localeCompare(String(b.due||"9999-12-31")))[0];
   root.textContent=overdue.length?`Clear "${overdue[0].title}" first — it is overdue.`:next?`${minutes}${target?` of ${target}`:""} minutes logged this week. Next: ${next.title}.`:minutes?`Nice momentum: ${minutes} focused minutes this week. Add a task for your next session.`:"Start with one 25-minute sprint today; consistency beats catching up.";
 }
 function renderReminderSettings(){
   const enabled=document.getElementById("remindersEnabled"),time=document.getElementById("reminderTime"),status=document.getElementById("reminderStatus");
   if(enabled)enabled.checked=Boolean(state.settings.remindersEnabled);
   if(time)time.value=state.settings.reminderTime||"18:00";
-  if(status)status.textContent=state.settings.remindersEnabled?`Reminder set for ${state.settings.reminderTime||"18:00"}.`:"Off until you opt in.";
+  const smart=document.getElementById("smartReminders"),skip=document.getElementById("skipReminderAfterCheckIn"),days=state.settings.reminderDays||[1,2,3,4,5];
+  if(smart)smart.checked=Boolean(state.settings.smartReminders);
+  if(skip)skip.checked=Boolean(state.settings.skipReminderAfterCheckIn);
+  document.querySelectorAll("[data-reminder-day]").forEach(input=>{input.checked=days.includes(Number(input.dataset.reminderDay))});
+  if(status){
+    if(!state.settings.remindersEnabled)status.textContent="Off until you opt in.";
+    else if(!("Notification" in window))status.textContent="Browser notifications are not supported on this device.";
+    else if(Notification.permission!=="granted")status.textContent="Allow notifications in your browser to receive reminders.";
+    else status.textContent=`Reminder set for ${state.settings.reminderTime||"18:00"}.`;
+  }
 }
 window.toggleReminders=async enabled=>{
   if(enabled&&!("Notification" in window)){toast("Browser notifications are not supported here.");renderReminderSettings();return}
-  if(enabled&&Notification.permission!=="granted"){const permission=await Notification.requestPermission();if(permission!=="granted"){toast("Notifications remain off until permission is granted.");renderReminderSettings();return}}
-  state.settings.remindersEnabled=enabled;save();renderReminderSettings();toast(enabled?"Browser reminders enabled":"Browser reminders disabled");
+  try{
+    if(enabled&&Notification.permission!=="granted"){const permission=await Notification.requestPermission();if(permission!=="granted"){toast("Notifications remain off until permission is granted.");renderReminderSettings();return}}
+    state.settings.remindersEnabled=enabled;save();renderReminderSettings();toast(enabled?"Browser reminders enabled":"Browser reminders disabled");
+  }catch(error){console.error("Could not update browser reminders",error);renderReminderSettings();toast("Could not update reminders. Please try again.")}
 };
 window.saveReminderTime=value=>{state.settings.reminderTime=value||"18:00";save();renderReminderSettings()};
 function checkReminder(){
   if(!state.settings.remindersEnabled||state.settings.smartReminders||!("Notification" in window)||Notification.permission!=="granted")return;
   const now=new Date(),time=state.settings.reminderTime||"18:00",at=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  if(!(state.settings.reminderDays||[1,2,3,4,5]).includes(now.getDay()))return;
   if(at!==time||localStorage.getItem("studyReminderDate")===todayISO())return;
-  const checkedIn=state.timeLogs.some(x=>x.date===todayISO())||state.habits.some(h=>h.done?.[todayISO()]);
-  if(!checkedIn){new Notification("A small study check-in?",{body:"Take one focused step in MyProgressTrack."});localStorage.setItem("studyReminderDate",todayISO())}
+  const checkedIn=state.timeLogs.some(x=>x.date===todayISO())||state.habits.some(h=>h.done?.[todayISO()])||Boolean(state.daily[todayISO()]?.journal?.wins||state.daily[todayISO()]?.journal?.learn);
+  if(state.settings.skipReminderAfterCheckIn!==false&&checkedIn)return;
+  try{
+    new Notification("A small study check-in?",{body:"Take one focused step in MyProgressTrack."});
+    localStorage.setItem("studyReminderDate",todayISO());
+  }catch(error){console.error("Could not show browser reminder",error)}
 }
 const originalRenderAll=renderAll;
 renderAll=function(){originalRenderAll();renderTimer();renderWeeklyInsight();renderReminderSettings()};

@@ -5,18 +5,20 @@ MyProgressTrack is a Google-authenticated student workspace for planning study t
 ## What it includes
 
 - **Today** — a calm daily overview with priorities, deadlines, habits, and weekly study time.
-- **Tasks & deadlines** — create tasks with subjects, due dates, priority, notes, estimated time, and completion state.
+- **Daily plan** — build a short, ranked plan from open tasks without changing their deadlines.
+- **Tasks & deadlines** — search tasks by title, notes, or subject; filter by date and status; switch between list and calendar views; and export open, dated tasks to a calendar.
 - **Subjects** — select a subject to view, add, and edit its tasks directly within that subject card.
 - **Today priorities** — opt specific tasks into the top-priorities list instead of automatically including every task.
-- **Progress** — review completion, study minutes, routine check-ins, and recent activity.
+- **Progress** — review completion, study minutes, routine check-ins, and recent activity across tasks, study sessions, and habits.
 - **Focus sprints** — run a lightweight 25-minute Pomodoro with automatic study-time logging and breaks.
 - **Weekly review insights** — get an actionable next step based on overdue work and recent focus time.
 - **Journal** — save short daily reflections and next steps.
-- **Settings** — manage habits, weekly study targets, optional browser reminders, profile details, backup, and sync. Settings are saved locally immediately and synced to the signed-in account, so they remain unchanged until you manually update them.
+- **Settings** — manage habits, weekly study targets, reminder times and days, themes, profile details, downloadable backups, quick local snapshots, and sync. Profile and target changes apply when saved; other preferences save immediately and sync to the signed-in account.
 - **Google sign-in and automatic cloud sync** — data is stored in Firestore under the signed-in account and synchronized across devices.
 - **Offline-first PWA** — local changes remain available offline and sync when the connection returns.
 - **Persistent preferences** — deleted subjects remain deleted, reminder preferences survive refresh and sync, and the interface supports light, dark, and system themes.
 - **Account-wide live sync** — newer changes from any signed-in device are applied automatically without a conflict confirmation prompt.
+- **Responsive navigation** — a persistent mobile bottom bar keeps every workspace section within easy reach.
 
 ## Run locally
 

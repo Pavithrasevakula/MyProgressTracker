@@ -660,3 +660,20 @@ button,input,select,textarea{font-family:"Inter",system-ui,-apple-system,"Segoe 
   .menu-button,.mobile-backdrop{display:none}
   .content{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 }
+.section-actions{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.task-search{width:min(220px,100%)}
+.settings-reminder-options{display:grid;gap:7px;width:100%}
+.settings-reminder-options .setting-check{margin:0;color:var(--ink);font-size:12px}
+.settings-reminder-options .setting-check input,.reminder-days input{accent-color:var(--primary)}
+.reminder-days{display:flex;flex-wrap:wrap;gap:6px;border:0;padding:0;margin:4px 0 0}
+.reminder-days legend{width:100%;padding:0;margin-bottom:4px;color:var(--muted);font-size:11px;font-weight:700}
+.reminder-days label{display:flex;align-items:center;gap:5px;padding:6px 9px;border:1px solid var(--line);border-radius:99px;background:var(--surface-alt);font-size:11px;cursor:pointer}
+.reminder-days label:has(input:checked){background:var(--soft);border-color:color-mix(in srgb,var(--primary) 40%,var(--line));color:var(--primary-dark)}
+.calendar-more{color:var(--muted);font-size:9px;padding:2px 4px}
+@media(max-width:760px){
+  .task-view-controls{grid-template-columns:minmax(0,1fr) auto auto}
+  .task-search{grid-column:1/-1;width:100%}
+  .settings-reminder-options{width:100%}
+  .settings-reminder-options .setting-check{white-space:normal}
+  .section-actions{width:100%;justify-content:flex-start}
+}
